@@ -1,0 +1,166 @@
+<?php
+
+
+class Participants {
+	
+	private $db = null;
+	private $game = '';
+	
+	private $plist = null;
+	private $pname = null;
+	private $order = '';
+		
+	function __construct($db, $gametype, $order='') {
+		$this->db = $db;
+		$this->game = $gametype;
+		$this->order = $order;
+	}
+	
+	function queryList() {
+		$qry = "SELECT p.bot_id, p.battles, p.score_pct, p.score_elo, p.score_dmg,
+				        p.score_survival, p.deviation, p.pairings, p.count_wins, p.timestamp,
+						b.full_name AS name, b.timestamp AS created
+				FROM  participants AS p INNER JOIN bot_data AS b ON p.bot_id = b.bot_id
+				WHERE p.gametype='" . mysql_escape_string($this->game) . "'
+				  AND p.state='" . STATE_OK . "'";
+		if ($this->order!='')
+			$qry .= " ORDER BY `" . mysql_escape_string($this->order) . "` DESC";
+		$this->db->query($qry);
+		foreach($this->db->all() as $rs) {
+			$this->plist[ $rs['bot_id'] ] = $rs;
+			$this->pname[ $rs['name'] ] =& $this->plist[ $rs['bot_id'] ];
+		}
+	}
+	
+	function getBot($id) {
+		if ($this->plist==null)
+			$this->queryList();
+		if (!isset($this->plist[ $id ]))
+			trigger_error('Invalid robot id "' . ( (int) $id ) . '"', E_USER_ERROR);
+		return $this->plist[ $id ];
+	}
+	
+	function getByName($name) {
+		if ($this->pname==null)
+			$this->queryList();
+		if (!isset($this->pname[ $name ]))
+			trigger_error('Invalid robot name "' . substr($name, 0, 50) . '"', E_USER_ERROR);
+		return $this->pname[ $name ];
+	}
+	
+	function getList() {
+		if ($this->plist==null)
+			$this->queryList();
+		return $this->plist;
+	}
+	
+	function checkNames($botnames) {
+		// force input to be an array
+		if (!is_array($botnames))
+			$bots = array($botnames);
+		
+		if ($this->plist==null)
+			$this->queryList();
+		
+		$botids = array();
+		foreach($botnames as $name) {
+			if (!isset($this->pname[$name]))
+				$botids[$name] = $this->activateParticipant($name);
+			else
+				$botids[$name] = $this->pname[$name]['bot_id'];
+		}
+		return $botids;
+	}
+	
+	function activateParticipant($name) {
+		// create bot id if necessary
+		$bot = new BotData($name);
+		$id = $bot->getID($this->db);
+		
+		// find record in participant table (if retired)
+		$qry = "SELECT bot_id, state
+			 	FROM   participants
+				WHERE  gametype='" . mysql_escape_string($this->game) . "'
+				  AND  bot_id='" . mysql_escape_string($id) . "'";
+		if ($this->db->query($qry) > 0) {
+			// bring out of retirement
+			$battles = new BattleResults($this->db);
+			$battles->updateState($this->game, $id, STATE_RATED, STATE_RETIRED);
+			
+			$pairings = new GamePairings($this->db, $this->game);
+			$pairings->updateState($id, STATE_OK, STATE_RETIRED);
+			
+			$this->updateParticipant($id);
+		} else {
+			$this->addParticipant($id);
+		}
+		return $id;
+	}
+	
+	function addParticipant($id) {
+		$qry = "INSERT INTO participants
+				SET gametype='" . mysql_escape_string($this->game) . "',
+					bot_id='" . mysql_escape_string($id) . "',
+					state='" . STATE_OK . "',
+					timestamp=NOW()";
+		$this->db->query($qry);
+		return true;
+	}
+	
+	function updateParticipant($id, $state=STATE_OK) {
+		$qry = "UPDATE participants
+				SET    state='" . mysql_escape_string($state) . "'
+				WHERE  gametype = '" . mysql_escape_string($this->game) . "'
+				  AND  bot_id = '" . mysql_escape_string($id) . "'";
+		return($this->db->query($qry) > 0);
+	}
+	
+	function retireParticipant($name) {
+		// find bot id (but don't add to database)
+		$bot = new BotData($name);
+		$id = $bot->getID($this->db, false);
+		
+		$battles = new BattleResults($this->db);
+		$battles->updateState($this->game, $id, STATE_RETIRED, STATE_NEW);		// could do all, but want to exclude 'X' state
+		$battles->updateState($this->game, $id, STATE_RETIRED, STATE_OK);
+		$battles->updateState($this->game, $id, STATE_RETIRED, STATE_RATED);
+		
+		$pairings = new GamePairings($this->db, $this->game);
+		$pairings->updateState($id, STATE_RETIRED, STATE_NEW);
+		$pairings->updateState($id, STATE_RETIRED, STATE_OK);
+		
+		$this->updateParticipant($id, STATE_RETIRED);
+		return true;
+	}
+	
+	function updateScores($id, $newscores) {
+		// update local participant list
+		if ($this->plist==null)
+			$this->queryList();
+		if (!isset($this->plist[$id]))
+			return false;
+		
+		$p =& $this->plist[$id];
+		$fields = array('battles', 'score_pct', 'score_elo', 'score_dmg', 'score_survival',
+		 				'deviation', 'pairings', 'count_wins');
+		foreach($fields as $f) {
+			if (isset($newscores[$f]))
+				$p[$f] = $newscores[$f];
+		}
+		$qry = "UPDATE participants
+				SET battles='" . mysql_escape_string($p['battles']) . "',
+					score_pct='" . mysql_escape_string($p['score_pct']) . "',
+					score_elo='" . mysql_escape_string($p['score_elo']) . "',
+					score_dmg='" . mysql_escape_string($p['score_dmg']) . "',
+					score_survival='" . mysql_escape_string($p['score_survival']) . "',
+					deviation='" . mysql_escape_string($p['deviation']) . "',
+					pairings='" . mysql_escape_string($p['pairings']) . "',
+					count_wins='" . mysql_escape_string($p['count_wins']) . "',
+					timestamp=NOW(), state='" . STATE_OK . "'
+				WHERE gametype = '" . mysql_escape_string($this->game) . "'
+				  AND bot_id = '" . mysql_escape_string($id) . "'";
+		return($this->db->query($qry) > 0);
+	}
+}
+
+?>

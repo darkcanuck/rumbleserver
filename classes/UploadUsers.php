@@ -84,7 +84,7 @@ class UploadUsers {
 			trigger_error('Could not find user ' . ((int)$id) . '!' . print_r($this->ulist[$id], true), E_USER_ERROR);
 		
 		$user =& $this->ulist[$id];
-		$user['battles'] =+ $newbattles;
+		$user['battles'] += $newbattles;
 		$qry = "UPDATE {$this->table} SET battles='" . mysql_escape_string($user['battles']) . "'
 				WHERE user_id = '" . mysql_escape_string($id) . "'";
 		return($this->db->query($qry) > 0);

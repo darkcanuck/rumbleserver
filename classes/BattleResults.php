@@ -63,7 +63,8 @@ class BattleResults {
 		/* lock tables for faster inserts */
 		$this->db->query('LOCK TABLES
 									battle_results WRITE,
-									game_pairings WRITE,
+									game_pairings WRITE, game_pairings AS g WRITE,
+									participants WRITE,
 									upload_users WRITE');
 		
 		/* get user upload id */
@@ -78,18 +79,26 @@ class BattleResults {
 		
 		/* update pairings */
 		$pairing = new GamePairings($this->db, $this->gametype, $this->id1, $this->id2);
-		$pairing->updateScores(array(
-								$this->id1 => array('score' => $this->score1,
-								 					'bulletdmg' => $this->bulletdmg1,
-													'survival' => $this->survival1),
-								$this->id2 => array('score' => $this->score2,
-								 					'bulletdmg' => $this->bulletdmg2,
-													'survival' => $this->survival2)
-								));
+		$scores = array(
+						$this->id1 => array('score' => $this->score1,
+						 					'bulletdmg' => $this->bulletdmg1,
+											'survival' => $this->survival1),
+						$this->id2 => array('score' => $this->score2,
+						 					'bulletdmg' => $this->bulletdmg2,
+											'survival' => $this->survival2)
+						);
+		$pairing->updateScores($scores);
+		$allpairings = $pairing->getAllPairings();
+		
+		/* update ratings */
+		$rankings = new RankingsUpdate($this->db);
+		$updates = $rankings->updatePair($this->gametype, $scores, $party, $allpairings);
+		$party->updateScores($this->id1, $updates[$this->id1]);
+		$party->updateScores($this->id2, $updates[$this->id2]);
 		
 		/* determine missing pairings */
 		$complete = array($this->id1 => array($this->id1 => 1), $this->id2 => array($this->id2 => 1));
-		foreach($pairing->getAllPairings() as $pair)
+		foreach($allpairings as $pair)
 			$complete[ $pair['bot_id'] ][ $pair['vs_id'] ] = 1;
 		$missing = array();
 		$botlist = $party->getList();
@@ -103,7 +112,6 @@ class BattleResults {
 		/* total battles fought to date */
 		$battles = array($botlist[$this->id1]['battles'], $botlist[$this->id2]['battles']);
 		
-		$this->db->query('UNLOCK TABLES');
 		return array('missing' => $missing, 'battles' => $battles);
 	}
 		
@@ -121,7 +129,7 @@ class BattleResults {
 					vs_score      = '" . mysql_escape_string(($winner) ? $this->score2 : $this->score1) . "',
 					vs_bulletdmg  = '" . mysql_escape_string(($winner) ? $this->bulletdmg2 : $this->bulletdmg1) . "',
 					vs_survival   = '" . mysql_escape_string(($winner) ? $this->survival2 : $this->survival1) . "',
-					state = '" . STATE_OK . "' ";
+					state = '" . STATE_RATED . "' ";
 		if ($this->db->query($qry) < 1)
 			trigger_error('Failed to add battle result to database.', E_USER_ERROR);
 		return true;

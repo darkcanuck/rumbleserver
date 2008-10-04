@@ -31,8 +31,8 @@ CREATE TABLE `participants` (
 	KEY `active` (`gametype`, `state`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `battle_results_old`;
-CREATE TABLE `battle_results` (
+DROP TABLE IF EXISTS `battles_old`;
+CREATE TABLE `battles_old` (
 	`version` varchar(8) NOT NULL,
 	`user` varchar(20) NOT NULL,
 	`ip_addr` varchar(15) NOT NULL,

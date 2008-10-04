@@ -26,7 +26,7 @@ class RankingsUpdate {
 		
 		// keep other processes out!
 		$this->db->query('LOCK TABLES battle_results WRITE, upload_users READ,
-									game_pairings READ,
+									game_pairings READ, game_pairings AS g READ,
 									participants WRITE, participants AS p WRITE,
 									bot_data READ, bot_data AS b READ');
 		
@@ -109,6 +109,78 @@ class RankingsUpdate {
 		return true;
 	}
 	
+	function updatePair($gametype, $newscores, $party=null, $allpairings=null) {
+		// $newscores should be an assoc. array with winner & loser ids as array keys
+		// data must contain score, bullet dmg. and survival for each bot
+		if (!is_array($newscores) || (count($newscores)!=2))
+			trigger_error("Invalid score data!", E_USER_ERROR);
+		list($id1, $id2) = array_keys($newscores);
+		
+		// create new participants list if needed
+		if ($party==null)
+			$party = new Participants($this->db, $gametype);
+		$partylist = $party->getList();
+		
+		// summarize pairings
+		if (($allpairings==null) || (!is_array($allpairings))) {
+			$gamepairings = new GamePairings($this->db, $game, $id1, $id2);
+			$allpairings = $gamepairings->getAllPairings();
+		}
+		$pairings = array(
+						$id1 => array('score_pct'=>0, 'score_dmg'=>0, 'score_survival'=>0,
+								'pairings'=>0, 'battles'=>0, 'count_wins'=>0, 'list'=>array()),
+						$id2 => array('score_pct'=>0, 'score_dmg'=>0, 'score_survival'=>0,
+								'pairings'=>0, 'battles'=>0, 'count_wins'=>0, 'list'=>array())
+						);
+		$allfields = array('score_pct', 'score_dmg', 'score_survival', 'battles', 'count_wins', 'pairings');
+		$sumfields = array('score_pct', 'score_dmg', 'score_survival', 'battles', 'count_wins');
+		$avgfields = array('score_pct', 'score_dmg', 'score_survival');
+		foreach($allpairings as $p) {
+			foreach($sumfields as $f)
+				$pairings[ $p['bot_id'] ][$f] += $p[$f];
+			$pairings[ $p['bot_id'] ]['pairings']++;
+			$pairings[ $p['bot_id'] ]['list'][] = $p;
+		}
+		foreach($avgfields as $f) {
+			$pairings[$id1][$f] /= $pairings[$id1]['pairings'];
+			$pairings[$id2][$f] /= $pairings[$id2]['pairings'];
+		}
+		
+		// update scores
+		$scores = array();
+		$glicko = new GlickoRating();
+		foreach($pairings as $id => $data) {
+			// get bot's current scores
+			$scores[$id] = $party->getBot($id);
+			$score =& $scores[$id];
+				
+			// update pairing data
+			
+			foreach($allfields as $f)
+				$score[$f] = $data[$f];
+				
+			// prepare for ratings update
+			$ratingdata = array();
+			foreach($data['list'] as $pair) {
+				$vs = $pair['vs_id'];
+				if (isset($partylist[$vs])) {
+					$ratingdata[] = array(
+							'rating' => $this->validRating($partylist[$vs]['score_elo'], $partylist[$vs]['battles']),
+							'RD'     => $this->validDeviation($partylist[$vs]['deviation'], $partylist[$vs]['battles']),
+							'score'  => $pair['score_pct'] / 1000.0 / 100.0
+							);
+				}
+			}
+			
+			// update Glicko rating
+			$newrating = $glicko->calcRating($this->validRating($score['score_elo'], $score['battles']),
+											$this->validDeviation($score['deviation'], $score['battles']),
+											$ratingdata);
+			$score['score_elo'] = (int)($newrating['rating'] * 1000.0);
+			$score['deviation'] = (int)($newrating['RD'] * 1000.0);
+		}
+		return $scores;
+	}
 }
 
 ?>

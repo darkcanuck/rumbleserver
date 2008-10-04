@@ -4,13 +4,17 @@ require_once 'classes/common.php';
 
 
 // get contributor data
-$qry = "SELECT user, MAX(timestamp) as last, COUNT(version) as count
+/*$qry = "SELECT user, MAX(timestamp) as last, COUNT(version) as count
 		FROM battle_results
 		WHERE state IN ('" . STATE_NEW . "', '" . STATE_OK . "', '" . STATE_RATED . "')
 		GROUP BY user
 		ORDER BY count DESC";
 $db->query($qry);
 $allrows = $db->all();
+*/
+$users = new UploadUsers($db);
+$allrows = $users->getList();
+
 
 //output header
 echo "<h2>CONTRIBUTORS</h2>
@@ -26,10 +30,10 @@ echo "<h2>CONTRIBUTORS</h2>
 $total = 0;
 foreach ($allrows as $rs) {
 	echo "<tr>";
-	echo "<td>{$rs['user']}</td>";
-	echo "<td>" . $rs['count']/2 . "</td>";
-	echo "<td>{$rs['last']}</td>";
-	$total += $rs['count']/2;
+	echo "<td>{$rs['username']}</td>";
+	echo "<td>" . $rs['battles'] . "</td>";
+	echo "<td>{$rs['updated']}</td>";
+	$total += $rs['battles'];
 }
 
 //output footer

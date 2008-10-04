@@ -38,8 +38,10 @@ class RankingsUpdate {
 		
 		// organize update list by game / bot / vs
 		$updatelist = array();
-		foreach($newbattles as $battle)
+		foreach($newbattles as $battle) {
 			$updatelist[ $battle['gametype'] ][ $battle['bot_id'] ][ $battle['vs_id'] ][] = $battle;
+			$updatelist[ $battle['gametype'] ][ $battle['vs_id'] ][ $battle['bot_id'] ][] = $battle;
+		}
 		
 		// update scores
 		$party = array();

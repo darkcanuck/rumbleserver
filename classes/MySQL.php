@@ -10,7 +10,8 @@
  *              Jerome Lavigne <jerome@vapourtrails.ca>
  *              Luca Lizzeri <luca.lizzeri@gmail.com>
  *
- * $Id: MySQL.php 60 2005-08-08 15:20:11Z ludo $
+ * Modified for use in the RoboRumble PHP Server project by:
+ *				Jerome Lavigne <jerome@vapourtrails.ca>
  ******************************************************************************/
 
 class DBlite_MySQL {

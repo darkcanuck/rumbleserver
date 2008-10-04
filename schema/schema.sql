@@ -31,7 +31,7 @@ CREATE TABLE `participants` (
 	KEY `active` (`gametype`, `state`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `battle_results`;
+DROP TABLE IF EXISTS `battle_results_old`;
 CREATE TABLE `battle_results` (
 	`version` varchar(8) NOT NULL,
 	`user` varchar(20) NOT NULL,
@@ -52,6 +52,44 @@ CREATE TABLE `battle_results` (
 	KEY `scoring` (`gametype`, `bot_id`, `state`),
 	KEY `versus` (`gametype`, `vs_id`, `state`),
 	KEY `updates` (`state`, `timestamp`, `millisecs`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `upload_users`;
+CREATE TABLE `upload_users` (
+	`user_id` smallint(4) UNSIGNED AUTO_INCREMENT UNIQUE NOT NULL,
+	`username` varchar(20) NOT NULL,
+	`ip_addr` varchar(15) NOT NULL,
+	`version` varchar(20) NOT NULL,
+	`battles` int(7) UNSIGNED NOT NULL DEFAULT '0',
+	`updated` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`created` timestamp NOT NULL,
+	PRIMARY KEY (`user_id`),
+	KEY `user` (`username`, `ip_addr`, `version`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+	
+
+DROP TABLE IF EXISTS `battle_results`;
+CREATE TABLE `battle_results` (
+	`gametype` char(1) NOT NULL,
+	`bot_id` int(5) UNSIGNED NOT NULL,
+	`bot_score` smallint(4) UNSIGNED NOT NULL,
+	`bot_bulletdmg` smallint(4) UNSIGNED NOT NULL,
+	`bot_survival` smallint(4) UNSIGNED NOT NULL,
+	`vs_id` int(5) UNSIGNED NOT NULL,
+	`vs_score` smallint(4) UNSIGNED NOT NULL,
+	`vs_bulletdmg` smallint(4) UNSIGNED NOT NULL,
+	`vs_survival` smallint(4) UNSIGNED NOT NULL,
+	`state` char(1) NOT NULL DEFAULT '1',
+	`created` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`user_id` smallint(4) UNSIGNED NOT NULL,
+	`timestamp` timestamp DEFAULT 0 NOT NULL,
+	`millisecs` smallint(3) UNSIGNED NOT NULL,
+	PRIMARY KEY (`gametype`, `bot_id`, `vs_id`, `timestamp`, `millisecs`),
+	KEY `scoring` (`gametype`, `bot_id`, `state`),
+	KEY `versus` (`gametype`, `vs_id`, `state`),
+	KEY `updates` (`state`, `created`),
+	KEY `uploads` (`gametype`, `user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `game_pairings`;

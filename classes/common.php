@@ -19,6 +19,7 @@ require_once 'classes/GameType.php';
 require_once 'classes/Participants.php';
 require_once 'classes/RankingsUpdate.php';
 require_once 'classes/ServerProperties.php';
+require_once 'classes/UploadUsers.php';
 //require_once 'classes/PostRequest.php';	// not needed by all scripts
 
 

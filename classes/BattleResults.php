@@ -7,6 +7,7 @@ class BattleResults {
 	// battle data
 	private $version    = '';
 	private $user       = '';
+	private $userid     = '';
 	private $timestamp  = '';
 	private $gametype   = '';
 	private $bot1       = '';
@@ -17,7 +18,6 @@ class BattleResults {
 	private $score2     = '';
 	private $bulletdmg2 = '';
 	private $survival2  = '';
-	
 	
 	function __construct($db) {
 		$this->db = $db;
@@ -61,12 +61,20 @@ class BattleResults {
 		$this->id2 = $ids[ $this->bot2 ];
 		
 		/* lock tables for faster inserts */
-		$this->db->query('LOCK TABLES battle_results WRITE,
-									game_pairings WRITE');
-									
+		$this->db->query('LOCK TABLES
+									battle_results WRITE,
+									game_pairings WRITE,
+									upload_users WRITE');
+		
+		/* get user upload id */
+		$users = new UploadUsers($this->db);
+		$this->userid = $users->getID($this->user, $_SERVER['REMOTE_ADDR'], $this->version);
+		
 		/* save battle data */
-		if (!$this->insertBattle($db, true) || !$this->insertBattle($db, false))
-			trigger_error('Failed to add battle result to database.', E_USER_ERROR);
+		$this->insertBattle();
+		
+		/* update upload stats - +1 new battle*/
+		$users->updateUser($this->userid, 1);
 		
 		/* update pairings */
 		$pairing = new GamePairings($this->db, $this->gametype, $this->id1, $this->id2);
@@ -99,11 +107,9 @@ class BattleResults {
 		return array('missing' => $missing, 'battles' => $battles);
 	}
 		
-	function insertBattle($db, $winner) {
+	function insertBattle($winner=true) {
 		$qry = 	"INSERT INTO battle_results
-					SET version   = '" . mysql_escape_string($this->version) . "',
-					user          = '" . mysql_escape_string($this->user) . "',
-					ip_addr       = '" . mysql_escape_string($_SERVER['REMOTE_ADDR']) . "',
+					SET user_id   = '" . mysql_escape_string($this->userid) . "',
 					timestamp     = FROM_UNIXTIME('" . mysql_escape_string(substr($this->timestamp, 0, -3)) . "'),
 					millisecs     = '" . mysql_escape_string(substr($this->timestamp, -3)) . "',
 					gametype      = '" . mysql_escape_string($this->gametype) . "',
@@ -116,7 +122,9 @@ class BattleResults {
 					vs_bulletdmg  = '" . mysql_escape_string(($winner) ? $this->bulletdmg2 : $this->bulletdmg1) . "',
 					vs_survival   = '" . mysql_escape_string(($winner) ? $this->survival2 : $this->survival1) . "',
 					state = '" . STATE_OK . "' ";
-		return ($this->db->query($qry) > 0);
+		if ($this->db->query($qry) < 1)
+			trigger_error('Failed to add battle result to database.', E_USER_ERROR);
+		return true;
 	}
 	
 	function updateState($gametype, $bot_id, $newstate, $oldstate='') {
@@ -130,7 +138,7 @@ class BattleResults {
 	}
 	
 	function getNewBattles($limit=100, $state=STATE_OK) {
-		$qry = "SELECT version, user, ip_addr, timestamp, millisecs, gametype, state,
+		$qry = "SELECT user_id, timestamp, millisecs, gametype, state,
 					   bot_id, bot_score, bot_bulletdmg, bot_survival,
 					   vs_id,  vs_score,  vs_bulletdmg,  vs_survival
 				FROM   battle_results
@@ -161,6 +169,7 @@ class BattleResults {
 	}
 	
 	
+/* unused - update to new schema if re-enabled
 	function getPairingSummary($gametype, $id, $vs) {
 		$qry = "SELECT bot_id, vs_id,
 					AVG(bot_score / (bot_score+vs_score)),
@@ -179,21 +188,36 @@ class BattleResults {
 		else
 			return null;
 	}
-	
-	function getPairingDetails($gametype, $id, $vs) {
-		$qry = "SELECT version, user, ip_addr, timestamp, millisecs, gametype, state,
-					   bot_id, bot_score, bot_bulletdmg, bot_survival,
-					   vs_id,  vs_score,  vs_bulletdmg,  vs_survival
-				FROM   battle_results
+*/
+	function getBattleDetails($gametype, $id, $vs) {
+		$botcombo = "'" .  mysql_escape_string($id) . "', '" . mysql_escape_string($vs) . "'";
+		$qry = "SELECT u.username AS user, u.ip_addr, u.version,
+				       r.timestamp, r.millisecs, r.gametype, r.state, r.created,
+					   r.bot_id, r.bot_score, r.bot_bulletdmg, r.bot_survival,
+					   r.vs_id,  r.vs_score,  r.vs_bulletdmg,  r.vs_survival
+				FROM   battle_results AS r INNER JOIN upload_users AS u ON r.user_id = u.user_id
 				WHERE gametype = '" . mysql_escape_string($gametype) . "'
-				  AND bot_id = '" . mysql_escape_string($id) . "'
-				  AND vs_id  = '" . mysql_escape_string($vs) . "'				
+				  AND bot_id IN ($botcombo)
+				  AND vs_id IN ($botcombo)
 				  AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "', '" . STATE_RATED . "')
-				ORDER BY timestamp, millisecs DESC";
-		if ($this->db->query($qry)>0)
-			return $this->db->all();
-		else
-			return null;
+				ORDER BY created DESC";
+		if ($this->db->query($qry)>0) {
+			$results = array();
+			$fields  = array('id', 'score', 'bulletdmg', 'survival');
+			foreach($this->db->all() as $rs) {
+				$row = $rs;
+				if($row['vs_id']==$id) {	// flip results if necessary
+					foreach($fields as $f) {
+						$row['bot_' . $f] = $rs['vs_' . $f];
+						$row['vs_' . $f] = $rs['bot_' . $f];
+					}
+					$row['bot_id'] = $rs['vs_id'];
+				}	
+				$results[] = $row;
+			}
+			return $results;
+		}
+		return null;
 	}
 	
 }

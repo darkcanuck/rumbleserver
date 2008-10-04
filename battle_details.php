@@ -18,7 +18,7 @@ $vs  = $party->getByName($vs_name);
 
 // get battle results for pairing
 $battles = new BattleResults($db);
-$allrows = $battles->getPairingDetails($gametype->getCode(), $bot['bot_id'], $vs['bot_id']);
+$allrows = $battles->getBattleDetails($gametype->getCode(), $bot['bot_id'], $vs['bot_id']);
 
 
 //output header

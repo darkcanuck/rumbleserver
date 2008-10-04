@@ -25,7 +25,7 @@ class RankingsUpdate {
 		set_time_limit(5 * $updatesize);
 		
 		// keep other processes out!
-		$this->db->query('LOCK TABLES battle_results WRITE,
+		$this->db->query('LOCK TABLES battle_results WRITE, upload_users READ,
 									game_pairings READ,
 									participants WRITE, participants AS p WRITE,
 									bot_data READ, bot_data AS b READ');

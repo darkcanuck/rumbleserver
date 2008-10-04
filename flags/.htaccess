@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f [NC]
+RewriteRule ^(.*)  blank.gif [L]

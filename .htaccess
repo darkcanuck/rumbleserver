@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteRule UploadedResults upload_results.php [QSA,L]
+RewriteRule RemoveOldParticipant remove_bot.php [QSA,L]
+RewriteRule RatingsFile ratings_text.php [QSA,L]
+RewriteRule Rankings rankings.php [QSA,L]
+RewriteRule RatingsDetails ratings_details.php [QSA,L]
+RewriteRule BattleDetails battle_details.php [QSA,L]
+RewriteRule Contributors contributors.php [QSA,L]
+

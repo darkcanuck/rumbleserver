@@ -95,7 +95,7 @@ class UploadUsers {
 						MIN(created) AS created, MAX(updated) AS updated
 				FROM {$this->table}
 				GROUP BY username
-				ORDER BY battles";
+				ORDER BY battles DESC";
 		if ($this->db->query($qry)>0)
 			return $this->db->all();
 		else

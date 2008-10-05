@@ -25,29 +25,55 @@ $allrows = $battles->getBattleDetails($gametype->getCode(), $bot['bot_id'], $vs[
 echo "<h2>BATTLE DETAILS FOR $name VS $vs_name IN GAME roborumble</h2>
 <table border=1>
 <tr>
-	<td rowspan='2'><b>% Score</b></td>
-	<td rowspan='2'><b>% Survival</b></td>
+	<td rowspan='2'><b><a href='BattleDetails?game=$game&name=$name&vs=$vs_name&sort=score_pct' title='Sort by % Score'>% Score</a></b></td>
+	<td rowspan='2'><b><a href='BattleDetails?game=$game&name=$name&vs=$vs_name&sort=score_survival' title='Sort by % Survival'>% Survival</a></b></td>
 	<td colspan='3'><b>$name</b></td>
 	<td colspan='3'><b>$vs_name</b></td>
-	<td rowspan='2'><b>Battle Time</b></td>
-	<td rowspan='2'><b>Submitted by</b></td>
+	<td rowspan='2'><b><a href='BattleDetails?game=$game&name=$name&vs=$vs_name&sort=timestamp' title='Sort by Time'>Battle Time</a></b></td>
+	<td rowspan='2'><b><a href='BattleDetails?game=$game&name=$name&vs=$vs_name&sort=user' title='Sort by User'>Submitted by</a></b></td>
 </tr>
 <tr>
-	<td>score</td><td>bullet dmg.</td><td>survival</td>
-	<td>score</td><td>bullet dmg.</td><td>survival</td>
+	<td><a href='BattleDetails?game=$game&name=$name&vs=$vs_name&sort=bot_score' title='Sort by Score'>score</a></td>
+	<td><a href='BattleDetails?game=$game&name=$name&vs=$vs_name&sort=bot_bulletdmg' title='Sort by Bullet Damage'>bullet dmg.</a></td>
+	<td><a href='BattleDetails?game=$game&name=$name&vs=$vs_name&sort=bot_survival' title='Sort by Survival'>survival</a></td>
+	<td><a href='BattleDetails?game=$game&name=$name&vs=$vs_name&sort=vs_score' title='Sort by Score'>score</a></td>
+	<td><a href='BattleDetails?game=$game&name=$name&vs=$vs_name&sort=vs_bulletdmg' title='Sort by Bullet Damage'>bullet dmg.</a></td>
+	<td><a href='BattleDetails?game=$game&name=$name&vs=$vs_name&sort=vs_survival' title='Sort by Survival'>survival</a></td>
 </tr>";
+
+// calculate & sort
+$fields = null;
+$sort = trim(isset($_GET['sort']) ? $_GET['sort'] : '');
+$sortcol = array();
+$sorttime = array();
+foreach ($allrows as $k=>$rs) {
+	$allrows[$k]['score_pct'] = $rs['bot_score'] / ($rs['bot_score'] + $rs['vs_score']) * 100;
+	$allrows[$k]['score_survival'] = $rs['bot_survival'] / ($rs['bot_survival'] + $rs['vs_survival']) * 100;
+	
+	if ($fields==null) {
+		// initialize sorting
+		$fields = array_keys($allrows[$k]);
+		if (($sort=='') || !in_array($sort, $fields))
+			$sort = null;
+	}
+	if ($sort!=null) {
+		$sortcol[$k] = $allrows[$k][ $sort ];
+		$sorttime[$k] = $allrows[$k]['timestamp'];
+	}
+}
+if ($sort!=null)
+	array_multisort($sortcol, SORT_DESC, $sorttime, SORT_DESC, $allrows);
 
 // output data
 foreach ($allrows as $rs) {
-	$score_pct = $rs['bot_score'] / ($rs['bot_score'] + $rs['vs_score']) * 100;
-	$cell_colour = ($score_pct>60) ? ' bgcolor="#99CC00"' : 
-				 ( ($score_pct<40) ? ' bgcolor="#FF6600"' :  '');
-	$survival = $rs['bot_survival'] / ($rs['bot_survival'] + $rs['vs_survival']) * 100;
-	$surv_colour = ($survival>60) ? ' bgcolor="#99CC00"' : 
-				 ( ($survival<40) ? ' bgcolor="#FF6600"' :  '');
+	$rs['score_pct'] = $rs['bot_score'] / ($rs['bot_score'] + $rs['vs_score']) * 100;
+	$cell_colour = ($rs['score_pct']>60) ? ' bgcolor="#99CC00"' : 
+				 ( ($rs['score_pct']<40) ? ' bgcolor="#FF6600"' :  '');
+	$surv_colour = ($rs['score_survival']>60) ? ' bgcolor="#99CC00"' : 
+				 ( ($rs['score_survival']<40) ? ' bgcolor="#FF6600"' :  '');
 	echo "<tr>";
-	echo "<td" . $cell_colour . ">" . number_format($score_pct, 3)  . "</td>";
-	echo "<td" . $surv_colour . ">" . number_format($survival, 1)  . "</td>";
+	echo "<td" . $cell_colour . ">" . number_format($rs['score_pct'], 3)  . "</td>";
+	echo "<td" . $surv_colour . ">" . number_format($rs['score_survival'], 1)  . "</td>";
 	echo "<td>{$rs['bot_score']}</td>";
 	echo "<td>{$rs['bot_bulletdmg']}</td>";
 	echo "<td>{$rs['bot_survival']}</td>";

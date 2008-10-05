@@ -2,10 +2,9 @@
 
 require_once 'classes/common.php';
 
-
 $err->setClient(true);
+ignore_user_abort(true);	// don't stop if client disconnects!
 
-//trigger_error("Function currently disabled!", E_USER_ERROR);
 
 /* check RoboRumble client version */
 if (isset($_POST['version'])) {

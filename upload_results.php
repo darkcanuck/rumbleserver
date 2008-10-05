@@ -4,6 +4,8 @@ require_once 'classes/common.php';
 require_once 'classes/PostRequest.php';
 
 $err->setClient(true);
+ignore_user_abort(true);	// don't stop if client disconnects!
+
 
 /* other servers to relay results to */
 $rumbleURLS = array('http://abchome.aclsi.pt:8080/rumble/UploadedResults');

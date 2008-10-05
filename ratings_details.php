@@ -14,7 +14,7 @@ $name = trim(isset($_GET['name']) ? $_GET['name'] : '');
 $bot = $party->getByName($name);
 
 // get pairings for bot
-$pairings = new GamePairings($db);
+$pairings = new GamePairings($db, $gametype->getCode());
 $allrows = $pairings->getBotPairings($gametype->getCode(), $bot['bot_id']);
 
 // ratings calc

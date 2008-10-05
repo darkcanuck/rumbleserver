@@ -27,6 +27,7 @@ echo "<h2>CURRENT RANKINGS FOR GAME $game</h2>
 	<td><b><a href='Rankings?version=$version&game=$game&sort=score_pct' title='Sort by APS'>APS</a></b></td>
 	<td><b><a href='Rankings?version=$version&game=$game&sort=rating_classic' title='Sort by Rating'>ELO Rating</a></b></td>
 	<td><b><a href='Rankings?version=$version&game=$game&sort=rating_glicko' title='Sort by Rating'>G-Rating (RD)</a></b></td>
+	<td><b><a href='Rankings?version=$version&game=$game&sort=rating_glicko2' title='Sort by Rating'>Glicko-2 (RD)</a></b></td>
 	<td><b>Details</b></td>
 	<td><b><a href='Rankings?version=$version&game=$game&sort=battles' title='Sort by Battles'>Battles</a></b></td>
 	<td><b><a href='Rankings?version=$version&game=$game&sort=pairings' title='Sort by Pairings'>Pairings</a></b></td>
@@ -72,6 +73,8 @@ foreach ($allrows as $rs) {
 	echo "<td>" . number_format($rs['rating_classic']/1000, 1, '.', '') . "</td>";
 	echo "<td>" . number_format($rs['rating_glicko']/1000, 1, '.', '')  . 
 			" (" . number_format($rs['rd_glicko']/1000, 0)  . ")</td>";
+	echo "<td>" . number_format($rs['rating_glicko2']/1000, 1, '.', '')  . 
+			" (" . number_format($rs['rd_glicko2']/1000, 0)  . ")</td>";
 	//echo "<td>" . number_format($rs['ideal'], 0, '.', '')  . "</td>";
 	echo "<td><a href='RatingsDetails?game=" . htmlspecialchars($game) 
 				. "&name=" . htmlspecialchars($rs['name']) . "'>details</a></td>";		//details link

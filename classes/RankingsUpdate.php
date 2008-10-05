@@ -1,7 +1,8 @@
 <?php
 
-require_once 'GlickoRating.php';
 require_once 'EloRating.php';
+require_once 'GlickoRating.php';
+require_once 'Glicko2Rating.php';
 
 class RankingsUpdate {
 	
@@ -42,7 +43,7 @@ class RankingsUpdate {
 		$scores = array();
 		$elo    = new EloRating();
 		$glicko = new GlickoRating();
-		
+		$glicko2 = new Glicko2Rating();
 		foreach($updatelist as $game => $botlist) {
 			$party[$game] = new Participants($this->db, $game);
 			$partylist = $party[$game]->getList();
@@ -64,6 +65,8 @@ class RankingsUpdate {
 								'elo'    => $elo->validRating($partylist[$vs]['rating_classic'], $battles, $partylist[$vs]['score_pct']),
 								'glicko' => $glicko->validRating($partylist[$vs]['rating_glicko'], $partylist[$vs]['battles']),
 								'RD'     => $glicko->validDeviation($partylist[$vs]['rd_glicko'], $partylist[$vs]['battles']),
+								'glicko2' => $glicko2->validRating($partylist[$vs]['rating_glicko2'], $battles, $partylist[$vs]['rating_glicko']),
+								'RD2'     => $glicko2->validDeviation($partylist[$vs]['rd_glicko2'], $battles),
 								'score'  => $b['bot_score'] / ($b['bot_score'] + $b['vs_score'])
 								);
 						}
@@ -80,6 +83,13 @@ class RankingsUpdate {
 											);
 				$score['rating_glicko'] = (int)($newrating['glicko'] * 1000.0);
 				$score['rd_glicko'] = (int)($newrating['RD'] * 1000.0);
+				
+				// update Glicko-2 rating
+				$newrating = $glicko2->calcRating($score['rating_glicko2'], $score['rd_glicko2'], $score['rd_glicko2'],
+												$score['battles'], $score['rating_glicko'], $ratingdata);
+				$score['rating_glicko2'] = $newrating['glicko2'];
+				$score['rd_glicko2'] = $newrating['RD2'];
+				$score['vol_glicko2'] = $newrating['vol2'];
 				
 				// update pairing scores if needed
 				$nextupdate = strtotime($score['timestamp']) + $pairingdelay;	//speeds up ranking rebuilding
@@ -140,8 +150,9 @@ class RankingsUpdate {
 		
 		// update scores
 		$scores = array();
-		$elo    = new EloRating();
-		$glicko = new GlickoRating();
+		$elo     = new EloRating();
+		$glicko  = new GlickoRating();
+		$glicko2 = new Glicko2Rating();
 		foreach($pairings as $id => $data) {
 			// get bot's current scores
 			$scores[$id] = $party->getBot($id);
@@ -161,6 +172,8 @@ class RankingsUpdate {
 							'elo'    => $elo->validRating($partylist[$vs]['rating_classic'], $battles, $partylist[$vs]['score_pct']),
 							'glicko' => $glicko->validRating($partylist[$vs]['rating_glicko'], $battles),
 							'RD'     => $glicko->validDeviation($partylist[$vs]['rd_glicko'], $battles),
+							'glicko2' => $glicko2->validRating($partylist[$vs]['rating_glicko2'], $battles, $partylist[$vs]['rating_glicko']),
+							'RD2'     => $glicko2->validDeviation($partylist[$vs]['rd_glicko2'], $battles),
 							'score'  => $pair['score_pct'] / 1000.0 / 100.0
 							);
 				}
@@ -175,6 +188,13 @@ class RankingsUpdate {
 											$ratingdata);
 			$score['rating_glicko'] = (int)($newrating['glicko'] * 1000.0);
 			$score['rd_glicko'] = (int)($newrating['RD'] * 1000.0);
+			
+			// update Glicko-2 rating
+			$newrating = $glicko2->calcRating($score['rating_glicko2'], $score['rd_glicko2'], $score['rd_glicko2'],
+											$score['battles'], $score['rating_glicko'], $ratingdata);
+			$score['rating_glicko2'] = $newrating['glicko2'];
+			$score['rd_glicko2'] = $newrating['RD2'];
+			$score['vol_glicko2'] = $newrating['vol2'];
 		}
 		return $scores;
 	}

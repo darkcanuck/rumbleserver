@@ -5,10 +5,12 @@ error_reporting(E_ALL);		// applies for errors not caught by error handler
 require_once 'classes/ErrorHandler.php';
 $err = new ErrorHandler();
 
+//$err->setDebugMode(true);
 
 // config includes
 require_once 'config/config.php';
 
+date_default_timezone_set( isset($default_TZ) ? $default_TZ : 'UTC' );
 
 // class includes
 require_once 'classes/MySQL.php';
@@ -21,7 +23,6 @@ require_once 'classes/RankingsUpdate.php';
 require_once 'classes/ServerProperties.php';
 require_once 'classes/UploadUsers.php';
 //require_once 'classes/PostRequest.php';	// not needed by all scripts
-
 
 // database 'state' field values
 define('STATE_NEW',		'0');	// battle result needs to be processed

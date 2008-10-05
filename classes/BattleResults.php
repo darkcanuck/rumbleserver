@@ -54,18 +54,19 @@ class BattleResults {
 			trigger_error('Invalid data received: ' . print_r($this, true), E_USER_ERROR);
 		}
 		
-		/* update participants list & get bot id's*/
-		$party = new Participants($this->db, $this->gametype);
-		$ids = $party->checkNames(array($this->bot1, $this->bot2));
-		$this->id1 = $ids[ $this->bot1 ];
-		$this->id2 = $ids[ $this->bot2 ];
-		
 		/* lock tables for faster inserts */
 		$this->db->query('LOCK TABLES
 									battle_results WRITE,
 									game_pairings WRITE, game_pairings AS g WRITE,
-									participants WRITE,
+									participants WRITE, participants AS p WRITE,
+									bot_data WRITE, bot_data AS b WRITE,
 									upload_users WRITE');
+
+		/* update participants list & get bot id's*/
+		$party = new Participants($this->db, $this->gametype);
+		$ids = $party->checkNames(array($this->bot1, $this->bot2));
+		$this->id1 = $ids[ $this->bot1 ];
+		$this->id2 = $ids[ $this->bot2 ];		
 		
 		/* get user upload id */
 		$users = new UploadUsers($this->db);
@@ -92,7 +93,7 @@ class BattleResults {
 		
 		/* update ratings */
 		$rankings = new RankingsUpdate($this->db);
-		$updates = $rankings->updatePair($this->gametype, $scores, $party, $allpairings);
+		$updates = $rankings->updatePair($this->gametype, $this->id1, $this->id2, $party, $allpairings);
 		$party->updateScores($this->id1, $updates[$this->id1]);
 		$party->updateScores($this->id2, $updates[$this->id2]);
 		

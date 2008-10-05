@@ -29,7 +29,7 @@ class GamePairings {
 		$gametype = mysql_escape_string($this->gametype);
 		$id1 = mysql_escape_string($this->id1);
 		$id2 = mysql_escape_string($this->id2);
-		$qry = "SELECT gametype, bot_id, vs_id, battles, score_pct, score_elo, score_dmg,
+		$qry = "SELECT gametype, bot_id, vs_id, battles, score_pct, score_dmg,
 						score_survival, count_wins, timestamp
 				FROM   game_pairings
 				WHERE  gametype = '$gametype'
@@ -50,7 +50,6 @@ class GamePairings {
 											'vs_id' => ($id==$this->id1) ? $this->id2 : $this->id1,
 											'battles' => 0,
 											'score_pct' => 0,
-											'score_elo' => 0,
 											'score_dmg' => 0,
 											'score_survival' => 0,
 											'count_wins' => 0,
@@ -76,7 +75,6 @@ class GamePairings {
 			}
 			$qry .=			   "battles   = '" . mysql_escape_string($pair['battles']) . "',
 								score_pct = '" . mysql_escape_string($pair['score_pct']) . "',
-								score_elo = '" . mysql_escape_string($pair['score_elo']) . "',
 								score_dmg = '" . mysql_escape_string($pair['score_dmg']) . "',
 								score_survival = '" . mysql_escape_string($pair['score_survival']) . "',
 								count_wins     = '" . mysql_escape_string($pair['count_wins']) . "',
@@ -109,7 +107,6 @@ class GamePairings {
 			$bot1 =& $scores[$id];
 			$bot2 =& $scores[$vs];
 			$pair['score_pct'] = $this->calcScorePercent($bot1['score'], $bot2['score'], $pair['score_pct'], $pair['battles']);
-			$pair['score_elo'] = $this->calcScoreELO($bot1['score'], $bot2['score'], $pair['score_elo'], $pair['battles']);
 			$pair['score_dmg'] = $this->calcScorePercent($bot1['bulletdmg'], $bot2['bulletdmg'], $pair['score_dmg'], $pair['battles']);
 			$pair['score_survival'] = $this->calcScorePercent($bot1['survival'], $bot2['survival'], $pair['score_survival'], $pair['battles']);
 			$pair['count_wins'] = ($pair['score_pct'] > 50000) ? 1 : 0;
@@ -122,12 +119,8 @@ class GamePairings {
 		return (int) ( (($score1 / ($score1+$score2) * 100 * 1000) + ($lastscore * $battles)) / ($battles+1) );
 	}
 	
-	function calcScoreELO($score1, $score2, $lastscore, $battles) {
-		return (int) $lastscore;
-	}
-	
 	function getAllPairings($allbots=false) {
-		$qry = "SELECT gametype, bot_id, vs_id, battles, score_pct, score_elo, score_dmg,
+		$qry = "SELECT gametype, bot_id, vs_id, battles, score_pct, score_dmg,
 						score_survival, count_wins, timestamp
 				FROM  game_pairings
 				WHERE gametype = '" . mysql_escape_string($this->gametype) . "' ";
@@ -152,7 +145,7 @@ class GamePairings {
 		
 	function getNewPairings($limit=50, $state=STATE_NEW) {
 		$qry = "SELECT gametype, bot_id, vs_id, battles,
-						score_pct, score_elo, score_dmg, score_survival,
+						score_pct, score_dmg, score_survival,
 						count_wins, timestamp, state
 				FROM   game_pairings
 				WHERE  state='" . mysql_escape_string($state) . "'
@@ -191,7 +184,6 @@ class GamePairings {
 						COUNT(bot_id) AS pairings,
 						SUM(battles) AS battles,
 						AVG(score_pct) AS score_pct,
-						AVG(score_elo) AS score_elo,
 						AVG(score_dmg) AS score_dmg,
 						AVG(score_survival) AS score_survival,
 						SUM(count_wins) AS count_wins,
@@ -209,11 +201,11 @@ class GamePairings {
 		/*
 		$summary = array('gametype' => $gametype, 'bot_id' => $id);
 		$sumfields = array('battles', 'count_wins');
-		$avgfields = array('score_pct', 'score_elo', 'score_dmg', 'score_survival');
+		$avgfields = array('score_pct', 'score_dmg', 'score_survival');
 		$lasttime = 0;
 		
 		$qry = "SELECT gametype, bot_id, vs_id, battles,
-						score_pct, score_elo, score_dmg, score_survival,
+						score_pct, score_dmg, score_survival,
 						count_wins, timestamp, state
 				FROM  game_pairings
 				WHERE gametype = '$gametype'
@@ -246,9 +238,9 @@ class GamePairings {
 		$qry = "SELECT g.gametype AS gametype, g.bot_id AS bot_id,
 						g.vs_id AS vs_id, b.full_name AS vs_name,
 						g.battles AS battles, g.score_pct AS score_pct,
-						g.score_elo AS score_elo, g.score_dmg AS score_dmg,
-						g.score_survival AS score_survival, g.count_wins AS count_wins,
-						g.timestamp AS timestamp, g.state AS state
+						g.score_dmg AS score_dmg, g.score_survival AS score_survival,
+						g.count_wins AS count_wins, g.timestamp AS timestamp,
+						g.state AS state
 				FROM game_pairings AS g
 				INNER JOIN bot_data AS b ON g.vs_id = b.bot_id
 				WHERE g.gametype = '$gametype'

@@ -80,7 +80,7 @@ if (isset($_POST['version'])) {
 		echo("\n<{$botdata['battles'][0]} {$botdata['battles'][1]}>");
 	
 	// relay to other rumble hosts
-	if (in_array($params['gametype'], $relayGames)) {
+	if (in_array($params['gametype'], $relayGames) && ($_SERVER['REMOTE_ADDR']!='127.0.0.1')) {
 		foreach ($rumbleURLS as $url) {
 			echo "\n    Relaying results to $url - ";
 			list($header, $content) = PostRequest($url, 'http://darkcanuck.net/rumble', $_POST, true);

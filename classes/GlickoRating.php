@@ -4,6 +4,9 @@
 
 class GlickoRating {
 
+	private $init_rating = 1500.0;
+	private $init_rd     =  350.0;
+
 	private $q      = 0.0057565;
 	private $q2     = 0.0;
 	private $q2plus = 0.0;
@@ -33,7 +36,7 @@ class GlickoRating {
 		// do summations
 		foreach($updates as $u) {
 			$gRD = $this->g($u['RD']);
-			$Ej  = $this->E($rating, $u['rating'], $u['RD']);
+			$Ej  = $this->E($rating, $u['glicko'], $u['RD']);
 			
 			$d2  += $gRD*$gRD * $Ej * (1.0 - $Ej);
 			$dev += $gRD * ($u['score'] - $Ej);
@@ -43,13 +46,21 @@ class GlickoRating {
 		// update rating, RD
 		$RD2inv = 1.0 / ($RD*$RD);
 		$new = array('rating' => 0.0, 'RD' => 0.0);
-		$new['rating'] = $rating + ($this->q / ($RD2inv + $d2)) * $dev;
+		$new['glicko'] = $rating + ($this->q / ($RD2inv + $d2)) * $dev;
 		$new['RD']     = sqrt(1.0 / ($RD2inv + $d2));
 		
 		return $new;
 	}
 	
 	// wrappers to handle our integer *1000 values
+	function validRating($rating, $battles) {
+		return (($rating==0) || ($battles==0)) ? $this->init_rating : (float)$rating / 1000.0;
+	}
+	
+	function validDeviation($deviation, $battles) {
+		return (($deviation==0) || ($battles==0)) ? $this->init_rd : (float)$deviation / 1000.0;
+	}
+	
 	function calcExpected($rating, $rj, $RDj) {
 		return $this->E( (float)($rating/1000.0), (float)($rj/1000.0), (float)($RDj/1000.0) ) * 100.0;
 	}

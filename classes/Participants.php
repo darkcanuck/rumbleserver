@@ -17,8 +17,10 @@ class Participants {
 	}
 	
 	function queryList() {
-		$qry = "SELECT p.bot_id, p.battles, p.score_pct, p.score_elo, p.score_dmg,
-				        p.score_survival, p.deviation, p.pairings, p.count_wins, p.timestamp,
+		$qry = "SELECT p.bot_id, p.battles, p.score_pct, p.score_dmg, p.score_survival,
+						p.rating_classic, p.rating_glicko, p.rd_glicko,
+						p.rating_glicko2, p.rd_glicko2, p.vol_glicko2,
+						p.pairings, p.count_wins, p.timestamp,
 						b.full_name AS name, b.timestamp AS created
 				FROM  participants AS p INNER JOIN bot_data AS b ON p.bot_id = b.bot_id
 				WHERE p.gametype='" . mysql_escape_string($this->game) . "'
@@ -104,6 +106,10 @@ class Participants {
 					state='" . STATE_OK . "',
 					timestamp=NOW()";
 		$this->db->query($qry);
+		
+		// update cached list
+		if ($this->plist!=null)
+			$this->queryList();
 		return true;
 	}
 	
@@ -112,7 +118,12 @@ class Participants {
 				SET    state='" . mysql_escape_string($state) . "'
 				WHERE  gametype = '" . mysql_escape_string($this->game) . "'
 				  AND  bot_id = '" . mysql_escape_string($id) . "'";
-		return($this->db->query($qry) > 0);
+		$this->db->query($qry);
+		
+		// update cached list
+		if ($this->plist!=null)
+			$this->queryList();
+		return true;
 	}
 	
 	function retireParticipant($name) {
@@ -141,8 +152,10 @@ class Participants {
 			return false;
 		
 		$p =& $this->plist[$id];
-		$fields = array('battles', 'score_pct', 'score_elo', 'score_dmg', 'score_survival',
-		 				'deviation', 'pairings', 'count_wins');
+		$fields = array('battles', 'score_pct', 'score_dmg', 'score_survival',
+		 				'rating_classic', 'rating_glicko', 'rd_glicko',
+						'rating_glicko2', 'rd_glicko2', 'vol_glicko2',
+						'pairings', 'count_wins');
 		foreach($fields as $f) {
 			if (isset($newscores[$f]))
 				$p[$f] = $newscores[$f];
@@ -150,10 +163,14 @@ class Participants {
 		$qry = "UPDATE participants
 				SET battles='" . mysql_escape_string($p['battles']) . "',
 					score_pct='" . mysql_escape_string($p['score_pct']) . "',
-					score_elo='" . mysql_escape_string($p['score_elo']) . "',
 					score_dmg='" . mysql_escape_string($p['score_dmg']) . "',
 					score_survival='" . mysql_escape_string($p['score_survival']) . "',
-					deviation='" . mysql_escape_string($p['deviation']) . "',
+					rating_classic='" . mysql_escape_string($p['rating_classic']) . "',
+					rating_glicko='" . mysql_escape_string($p['rating_glicko']) . "',
+					rd_glicko='" . mysql_escape_string($p['rd_glicko']) . "',
+					rating_glicko2='" . mysql_escape_string($p['rating_glicko2']) . "',
+					rd_glicko2='" . mysql_escape_string($p['rd_glicko2']) . "',
+					vol_glicko2='" . mysql_escape_string($p['vol_glicko2']) . "',
 					pairings='" . mysql_escape_string($p['pairings']) . "',
 					count_wins='" . mysql_escape_string($p['count_wins']) . "',
 					timestamp=NOW(), state='" . STATE_OK . "'

@@ -43,24 +43,24 @@ echo "<h2>RATING DETAILS FOR $name IN GAME roborumble</h2>
 foreach ($allrows as $rs) {
 	$cell_colour = ($rs['score_pct']>60000) ? ' bgcolor="#99CC00"' : 
 				 ( ($rs['score_pct']<40000) ? ' bgcolor="#FF6600"' :  '');
-	$expected = $glicko->calcExpected($bot['score_elo'],
-									$partylist[ $rs['vs_id'] ]['score_elo'],
-									$partylist[ $rs['vs_id'] ]['deviation']
+	$expected = $glicko->calcExpected($bot['rating_glicko'],
+									$partylist[ $rs['vs_id'] ]['rating_glicko'],
+									$partylist[ $rs['vs_id'] ]['rd_glicko']
 									);
 	$pbindex = $rs['score_pct']/1000.0 - $expected;
 	
 	echo "<tr>";
 	echo "<td>{$rs['vs_name']}</td>";
 	echo "<td" . $cell_colour . ">" . number_format($rs['score_pct']/1000, 3)  . "</td>";
-	echo "<td>" . number_format($partylist[ $rs['vs_id'] ]['score_elo']/1000, 1, '.', '')  . 
-			" (" . number_format($partylist[ $rs['vs_id'] ]['deviation']/1000, 0)  . ")</td>";	//ELO rank
+	echo "<td>" . number_format($partylist[ $rs['vs_id'] ]['rating_glicko']/1000, 1, '.', '')  . 
+			" (" . number_format($partylist[ $rs['vs_id'] ]['rd_glicko']/1000, 0)  . ")</td>";
 	echo "<td>{$rs['battles']}</td>";
 	echo "<td>{$rs['timestamp']}</td>";
 	echo "<td><a href='BattleDetails?game=" . htmlspecialchars($game) 
 				. "&name=" . htmlspecialchars($name)
-				. "&vs="   . htmlspecialchars($rs['vs_name']) . "'>battles</a></td>";		//details link
-	echo "<td>" . number_format($expected, 3) . "</td>";	//expected score
-	echo "<td>" . number_format($pbindex, 3) . "</td>";	//PBI
+				. "&vs="   . htmlspecialchars($rs['vs_name']) . "'>battles</a></td>";
+	echo "<td>" . number_format($expected, 3) . "</td>";
+	echo "<td>" . number_format($pbindex, 3) . "</td>";
 	echo "</tr>\n";
 }
 

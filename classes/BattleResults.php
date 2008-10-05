@@ -97,6 +97,9 @@ class BattleResults {
 		$party->updateScores($this->id1, $updates[$this->id1]);
 		$party->updateScores($this->id2, $updates[$this->id2]);
 		
+		/* all updates done - unlock tables */
+		$this->db->query('UNLOCK TABLES');
+		
 		/* determine missing pairings */
 		$complete = array($this->id1 => array($this->id1 => 1), $this->id2 => array($this->id2 => 1));
 		foreach($allpairings as $pair)

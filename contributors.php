@@ -13,8 +13,7 @@ $db->query($qry);
 $allrows = $db->all();
 */
 $users = new UploadUsers($db);
-$allrows = $users->getList();
-
+$userlist = $users->getContributors();
 
 //output header
 echo "<h2>CONTRIBUTORS</h2>
@@ -28,7 +27,7 @@ echo "<h2>CONTRIBUTORS</h2>
 
 // output data
 $total = 0;
-foreach ($allrows as $rs) {
+foreach ($userlist as $rs) {
 	echo "<tr>";
 	echo "<td>{$rs['username']}</td>";
 	echo "<td>" . $rs['battles'] . "</td>";

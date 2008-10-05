@@ -23,7 +23,7 @@ $glicko = new GlickoRating();
 
 
 //output header
-echo "<h2>RATING DETAILS FOR $name IN GAME roborumble</h2>
+echo "<h2>RATING DETAILS FOR $name IN GAME $game</h2>
 <h3>CURRENT SCORE = " . number_format($bot['score_pct']/1000, 3) . "</h3>
 <p>Participated in {$bot['battles']} battles since {$bot['created']}  Last battle held {$bot['timestamp']}.</p>
 <table border=1>

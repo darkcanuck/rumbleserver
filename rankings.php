@@ -31,6 +31,7 @@ echo "<h2>CURRENT RANKINGS FOR GAME $game</h2>
 	<td><b>Details</b></td>
 	<td><b><a href='Rankings?version=$version&game=$game&sort=battles' title='Sort by Battles'>Battles</a></b></td>
 	<td><b><a href='Rankings?version=$version&game=$game&sort=pairings' title='Sort by Pairings'>Pairings</a></b></td>
+	<td><b><a href='Rankings?version=$version&game=$game&sort=score_pl' title='Sort by PL Score'>PL Score</a></b></td>
 	<td><b>Last Update</b></td>
 </tr>";
 
@@ -45,6 +46,11 @@ foreach ($allrows as $k=>$rs) {
 	$chunks = explode('.', $rs['name']);
 	$allrows[$k]['package'] = $chunks[0];
 	//$allrows[$k]['ideal'] = $glicko->calcIdealRating($rs['score_pct'], 1500.0 *1000, 350.0 * 1000);
+	$allrows[$k]['score_pl'] = $rs['count_wins'] * 2;
+
+	$allrows[$k]['rank'] = $rank;
+	$rank++;
+
 	$total += $rs['battles'];
 
 	if ($fields==null) {
@@ -54,11 +60,9 @@ foreach ($allrows as $k=>$rs) {
 			$sort = null;
 	}
 	if ($sort!=null) {
-		$sortcol[$k] = $rs[ $sort ];
-		$sortaps[$k] = $rs['score_pct'];
+		$sortcol[$k] = $allrows[$k][ $sort ];
+		$sortaps[$k] = $allrows[$k]['score_pct'];
 	}
-	$allrows[$k]['rank'] = $rank;
-	$rank++;
 }
 $total /= 2;	// because each bot counted twice
 if ($sort!=null)
@@ -80,6 +84,7 @@ foreach ($allrows as $rs) {
 				. "&name=" . htmlspecialchars($rs['name']) . "'>details</a></td>";		//details link
 	echo "<td>{$rs['battles']}</td>";
 	echo "<td>{$rs['pairings']}</td>";
+	echo "<td>{$rs['score_pl']}</td>";
 	echo "<td>{$rs['timestamp']}</td>";
 	echo "</tr>\n";
 }

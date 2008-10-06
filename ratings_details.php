@@ -39,7 +39,8 @@ echo "<h2>RATING DETAILS FOR $name IN GAME $game</h2>
 </tr>";
 
 // calculate & sort
-$momentum = 0;
+$momentum = 0.0;
+$specialization = 0.0;
 $fields = null;
 $sort = trim(isset($_GET['sort']) ? $_GET['sort'] : '');
 $sortcol = array();
@@ -52,7 +53,8 @@ foreach ($allrows as $k=>$rs) {
 									$partylist[ $rs['vs_id'] ]['rd_glicko']
 									);
 	$allrows[$k]['pbindex'] = $rs['score_pct']/1000.0 - $allrows[$k]['expected'];
-	$momentum += $allrows[$k]['pbindex'];
+	$momentum += 3.0 * $allrows[$k]['pbindex'];
+	$specialization += pow($allrows[$k]['pbindex']/100.0, 2.0);
 	
 	if ($fields==null) {
 		// initialize sorting
@@ -82,12 +84,13 @@ foreach ($allrows as $rs) {
 	echo "<td><a href='BattleDetails?game=" . htmlspecialchars($game) 
 				. "&name=" . htmlspecialchars($name)
 				. "&vs="   . htmlspecialchars($rs['vs_name']) . "'>battles</a></td>";
-	echo "<td>" . number_format($rs['expected'], 3) . "</td>";
-	echo "<td>" . number_format($rs['pbindex'], 3) . "</td>";
+	echo "<td>" . number_format($rs['expected'], 1) . "</td>";
+	echo "<td>" . number_format($rs['pbindex'], 1) . "</td>";
 	echo "</tr>\n";
 }
 
 //output footer
 echo "</table>\n";
 echo "<p><b>Momentum = " . number_format($momentum, 3) . "</b></p>\n";
+echo "<p><b>Specialization = " . number_format($specialization*100.0, 3) . "</b></p>\n";
 ?>

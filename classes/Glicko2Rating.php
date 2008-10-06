@@ -56,21 +56,30 @@ class Glicko2Rating {
 		
 		// iteratively determine new volatility
 		$a = log($vol*$vol);
-		$x0 = $a;
+		$x0 = $a; $x1 = 0.0;
 		$phi2v = $phi*$phi + $v;
 		$delta2 = $delta*$delta;
 		$d = 0.0; $d2 = 0.0; $d3 = 0.0;
 		$h1 = 0.0; $h2 = 0.0;
-		for ($i=1; $i<=10; $i++) {
+		for ($i=1; $i<=20; $i++) {
 			$expx0 = exp($x0);
 			$d = $phi2v + $expx0;
 			$d2 = $d*$d;
 			$d3 = $d2*$d;
 			$h1 = (-1.0 * ($x0 - $a) / $this->tau2) - (0.5 * $expx0 / $d) + (0.5 * $expx0 * $delta2 / $d2);
 			$h2 = (-1.0 / $this->tau2) - (0.5 * $expx0 * $phi2v / $d2) + (0.5 * $delta2 * $expx0 * ($phi2v - $expx0) / $d3);
-			$x0 -= $h1/$h2;
+			$x1 = $x0 - $h1/$h2;
+			if (abs($x1-$x0)<0.000001)
+				break;
+			$x0 = $x1;
 		}
-		$newvol = exp($x0/2.0);
+		$newvol = exp($x1/2.0);
+		
+		// limit volatility (some weird results in database?)
+		if ($newvol>1000.0)
+			$newvol = 1000.0;
+		else if ($newvol<0.0)
+			$newvol = 0.0;
 		
 		// update rating, RD
 		$newphi = 1.0 / sqrt(1.0/($phi*$phi + $newvol*$newvol) + 1.0/$v);
@@ -97,7 +106,7 @@ class Glicko2Rating {
 	}
 	
 	function validVolatility($volatility, $battles) {
-		return (($volatility==0) || ($battles==0)) ? $this->init_vol : (float)$volatility / 1000.0;
+		return (($volatility==0) || ($battles==0)) ? $this->init_vol : (float)$volatility / 1000000.0;
 	}
 	
 	function calcExpected($rating, $rj, $RDj) {
@@ -109,6 +118,7 @@ class Glicko2Rating {
 									$this->validDeviation($deviation, $battles), 
 									$this->validVolatility($volatility, $battles), 
 									$updates);
+		$newrating['vol2'] *= 1000.0;	// this is a really small number!
 		foreach($newrating as $k=>$v)
 			$newrating[$k] = (int)($v*1000.0);
 		return $newrating;

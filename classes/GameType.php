@@ -74,8 +74,8 @@ class GameType {
 			case 'X':
 			case 'Y':
 			case 'Z':
-				if (($data['survival1'] + $data['survival2']) < 35)
-					trigger_error('Survival count should total 35 for roborumble -- check your client configuration!', E_USER_ERROR);
+				if (($data['survival1'] + $data['survival2']) < 34)
+					trigger_error('Survival count should total at least 34 for roborumble -- check your client configuration!', E_USER_ERROR);
 				if (($data['score1']>10000) || ($data['score2']>10000))
 					trigger_error('Score are too high for roborumble -- check your client configuration!', E_USER_ERROR);
 				break;

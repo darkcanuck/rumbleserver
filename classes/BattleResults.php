@@ -7,6 +7,7 @@ class BattleResults {
 	// battle data
 	private $version    = '';
 	private $user       = '';
+	private $ip_addr    = '';
 	private $userid     = '';
 	private $timestamp  = '';
 	private $gametype   = '';
@@ -31,6 +32,7 @@ class BattleResults {
 		$ok = true;	
 		$ok &= !empty($this->version);
 		$ok &= !empty($this->user);
+		$ok &= !empty($this->ip_addr);
 		$ok &= !empty($this->timestamp);		// TODO: sanity check!
 		$ok &= !empty($this->gametype) && (strlen($this->gametype)==1);
 		$ok &= !empty($this->bot1);
@@ -70,7 +72,7 @@ class BattleResults {
 		
 		/* get user upload id */
 		$users = new UploadUsers($this->db);
-		$this->userid = $users->getID($this->user, $_SERVER['REMOTE_ADDR'], $this->version);
+		$this->userid = $users->getID($this->user, $this->ip_addr, $this->version);
 		
 		/* save battle data */
 		$this->insertBattle();

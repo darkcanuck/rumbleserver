@@ -42,15 +42,19 @@ class UploadUsers {
 		return $this->ulist[ $id ];
 	}
 	
-	function getID($name, $ip, $version) {
+	function getID($name, $ip, $version, $addifmissing=true) {
 		if ( (empty($name) && $name[0]!='0') || (empty($ip) && $ip[0]!='0')
 				|| (empty($version) && $version[0]!='0') )
 			trigger_error('Invalid user data', E_USER_ERROR);
 		
 		if ($this->udata==null)
 			$this->queryList();
-		if (!isset($this->udata[ $name ][ $ip ][ $version ]))
-			trigger_error('Invalid user name "' . substr($name, 0, 50) . '"', E_USER_ERROR);
+		if (!isset($this->udata[ $name ][ $ip ][ $version ])) {
+            if ($addifmissing)
+		        return $this->createUser($name, $ip, $version);
+		    else
+			    trigger_error('Invalid user name "' . substr($name, 0, 50) . '"', E_USER_ERROR);
+		}
 		return $this->udata[ $name ][ $ip ][ $version ]['user_id'];
 	}
 	
@@ -60,15 +64,13 @@ class UploadUsers {
 							mysql_escape_string($name), mysql_escape_string($ip),
 							mysql_escape_string($version));
 		if ($this->db->query($qry) > 0) {
-			$id = $db->getID();
+			$id = $this->db->getID();
+			if ($id<1)
+			    trigger_error('Error creating new user id!', E_USER_ERROR);
+			
 			// update local copy
-			$rs = array('user_id' => $id, 'username' => $name, 'ip_addr' => $ip_addr,
-										'version' => $version, 'battles' => 0,
-										'created' => strftime('%Y-%m-%d %T'),
-										'updated' => strftime('%Y-%m-%d %T')
-										);
-			$this->ulist[ $id ] = $rs;
-			$this->udata[ $rs['username'] ][ $rs['ip_addr'] ][ $rs['version'] ] = $rs;
+			if ($this->ulist!=null)
+			    $this->queryList();
 			return $id;
 		}
 		// failed

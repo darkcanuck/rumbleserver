@@ -11,15 +11,9 @@ ignore_user_abort(true);	// don't stop if client disconnects!
 $rumbleURLS = array('http://abchome.aclsi.pt:8080/rumble/UploadedResults');
 $relayGames = array('R', 'X', 'Y', 'Z');
 
-/* initialize data array */
-$params = array('version', 'user', 'timestamp', 'gametype',
-				'bot1', 'score1', 'bulletdmg1', 'survival1',
-				'bot2', 'score2', 'bulletdmg2', 'survival2');
-foreach ($params as $p)
-	$data[$p] = '';
-
 
 /* check RoboRumble client version */
+$params = array();
 if (isset($_POST['version'])) {
 	$params['version'] = trim($_POST['version']);
 
@@ -38,6 +32,7 @@ if (isset($_POST['version'])) {
 			
 			// set results data
 			$params['user']       = $_POST['user'];
+			$params['ip_addr']    = (isset($_POST['import']) ? 'import' : $_SERVER['REMOTE_ADDR']);
 			$params['timestamp']  = $_POST['time'];
 			$params['gametype']   = $gametype->getCode();
 			$params['bot1']       = $_POST['fname'];
@@ -82,7 +77,7 @@ if (isset($_POST['version'])) {
 		echo("\n<{$botdata['battles'][0]} {$botdata['battles'][1]}>");
 	
 	// relay to other rumble hosts
-	if (in_array($params['gametype'], $relayGames) && ($_SERVER['REMOTE_ADDR']!='127.0.0.1')) {
+	if (in_array($params['gametype'], $relayGames) && ($_SERVER['REMOTE_ADDR']!='127.0.0.1') && !isset($_POST['import'])) {
 		foreach ($rumbleURLS as $url) {
 			echo "\n    Relaying results to $url - ";
 			list($header, $content) = PostRequest($url, 'http://darkcanuck.net/rumble', $_POST, true);

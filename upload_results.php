@@ -61,7 +61,10 @@ if (isset($_POST['version'])) {
 	echo('OK.  ' . $params['bot1'] . ' vs. ' . $params['bot2'] . ' received');
 	//echo("\n" . print_r($db->queries, true));
 	
-	// return list of missing bots
+	if(isset($_POST['import']) && ($_POST['import'] > 0))
+	    exit(0);
+	
+	// return list of missing pairings
 	$countmissing = 0;
 	if (isset($botdata['missing'])) {
 		foreach($botdata['missing'] as $botpair) {

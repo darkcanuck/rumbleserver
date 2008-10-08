@@ -86,6 +86,8 @@ class Participants {
 				  AND  bot_id='" . mysql_escape_string($id) . "'";
 		if ($this->db->query($qry) > 0) {
 			// bring out of retirement
+			set_time_limit(300);
+			
 			$battles = new BattleResults($this->db);
 			$battles->updateState($this->game, $id, STATE_RATED, STATE_RETIRED);
 			
@@ -130,7 +132,9 @@ class Participants {
 		// find bot id (but don't add to database)
 		$bot = new BotData($name);
 		$id = $bot->getID($this->db, false);
-		
+        
+		set_time_limit(300);
+        
 		$battles = new BattleResults($this->db);
 		$battles->updateState($this->game, $id, STATE_RETIRED, STATE_NEW);		// could do all, but want to exclude 'X' state
 		$battles->updateState($this->game, $id, STATE_RETIRED, STATE_OK);

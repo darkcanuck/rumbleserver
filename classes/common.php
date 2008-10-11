@@ -42,13 +42,17 @@ $properties = new ServerProperties($db);
 if ($properties->get('maintenance'))
 	trigger_error('Sorry, the server is down for maintenance. Please try again later.', E_USER_ERROR);
 
-// check if scoring update needed
-/*$update_interval = $properties->getInt('update_interval', 60);
+// check if periodic update needed
+$update_interval = $properties->getInt('update_interval', 60);
 $update_time = strtotime($properties->get('update_last')) + $update_interval;
 if ( isset($_GET['forceupdate']) || (($update_interval>0) && ($update_time < time())) ) {
 	$properties->set('update_last', strftime("%Y-%m-%d %T"));	// update time now so other processes don't try to update
-	$rankings = new RankingsUpdate($db);
-	$rankings->updateScores($properties->getInt('update_size', 100), $properties->getInt('update_pairingdelay', -1));
-}*/
+	
+//	$rankings = new RankingsUpdate($db);
+//	$rankings->updateScores($properties->getInt('update_size', 100), $properties->getInt('update_pairingdelay', -1));
+    
+    $db->query('OPTIMIZE TABLE game_pairings');
+//    $db->query('OPTIMIZE TABLE participants');
+}
 
 ?>

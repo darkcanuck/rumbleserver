@@ -61,8 +61,10 @@ if (isset($_POST['version'])) {
 	echo('OK.  ' . $params['bot1'] . ' vs. ' . $params['bot2'] . ' received');
 	//echo("\n" . print_r($db->queries, true));
 	
-	if(isset($_POST['import']) && ($_POST['import'] > 0))
-	    exit(0);
+	if(isset($_POST['import']) && ($_POST['import'] > 0)) {
+    	//echo $db->debug();
+    	exit(0);
+    }
 	
 	// return list of missing pairings
 	$countmissing = 0;

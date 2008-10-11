@@ -22,10 +22,10 @@ CREATE TABLE `participants` (
 	`score_pct` int(5) UNSIGNED NOT NULL DEFAULT '0',
 	`score_dmg` int(5) UNSIGNED NOT NULL DEFAULT '0',
 	`score_survival` int(5) UNSIGNED NOT NULL DEFAULT '0',
-	`rating_classic` int(5) UNSIGNED NOT NULL DEFAULT '0',
-	`rating_glicko` int(5) UNSIGNED NOT NULL DEFAULT '0',
+	`rating_classic` int(5) NOT NULL DEFAULT '0',
+	`rating_glicko` int(5) NOT NULL DEFAULT '0',
 	`rd_glicko` int(5) UNSIGNED NOT NULL DEFAULT '0',
-	`rating_glicko2` int(5) UNSIGNED NOT NULL DEFAULT '0',
+	`rating_glicko2` int(5) NOT NULL DEFAULT '0',
 	`rd_glicko2` int(5) UNSIGNED NOT NULL DEFAULT '0',
 	`vol_glicko2` int(5) UNSIGNED NOT NULL DEFAULT '0',
 	`count_wins` smallint(4) UNSIGNED NOT NULL DEFAULT '0',
@@ -42,6 +42,11 @@ ADD COLUMN `rating_classic` int(5) UNSIGNED NOT NULL DEFAULT '0',
 ADD COLUMN `rating_glicko2` int(5) UNSIGNED NOT NULL DEFAULT '0',
 ADD COLUMN `rd_glicko2` int(5) UNSIGNED NOT NULL DEFAULT '0',
 ADD COLUMN `vol_glicko2` int(5) UNSIGNED NOT NULL DEFAULT '0';
+
+ALTER TABLE `participants`
+MODIFY COLUMN `rating_classic` int(5) NOT NULL DEFAULT '0',
+MODIFY COLUMN `rating_glicko` int(5) NOT NULL DEFAULT '0',
+MODIFY COLUMN `rating_glicko2` int(5) NOT NULL DEFAULT '0';
 
 DROP TABLE IF EXISTS `battles_old`;
 CREATE TABLE `battles_old` (

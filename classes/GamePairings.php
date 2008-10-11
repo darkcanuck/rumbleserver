@@ -120,13 +120,14 @@ class GamePairings {
 	}
 	
 	function getAllPairings($allbots=false) {
-		$qry = "SELECT gametype, bot_id, vs_id, battles, score_pct, score_dmg,
-						score_survival, count_wins, timestamp
+		$qry = "SELECT bot_id, vs_id, battles, score_pct, score_dmg,
+						score_survival, count_wins
 				FROM  game_pairings
 				WHERE gametype = '" . mysql_escape_string($this->gametype) . "' ";
 		if(!$allbots)
 			$qry .= " AND bot_id IN ('" . mysql_escape_string($this->id1) . "',
-			 						 '" . mysql_escape_string($this->id2) . "')";
+			 						 '" . mysql_escape_string($this->id2) . "') ";
+	    $qry .= " AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "')";
 		if ($this->db->query($qry)>0)
 			return $this->db->all();
 		else

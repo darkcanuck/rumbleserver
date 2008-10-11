@@ -5,6 +5,12 @@ require_once 'classes/common.php';
 $err->setClient(true);
 ignore_user_abort(true);	// don't stop if client disconnects!
 
+$removelist = array('darkcanuck.Gaff_1.28a',
+                    'mz.Movement_1.8'
+                    );
+if (($_POST['game']=='roborumble') && !in_array($_POST['name'], $removelist))
+    die('Function temporarily disabled!  ' . substr($_POST['name'], 0, 70));
+
 
 /* check RoboRumble client version */
 if (isset($_POST['version'])) {

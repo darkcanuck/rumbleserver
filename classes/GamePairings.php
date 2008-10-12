@@ -26,14 +26,14 @@ class GamePairings {
 	function getPairing() {
 		$this->pairing = null;
 		
-		$gametype = mysql_escape_string($this->gametype);
-		$id1 = mysql_escape_string($this->id1);
-		$id2 = mysql_escape_string($this->id2);
+		$gametype = $this->gametype[0];
+		$id1 = (int) $this->id1;
+		$id2 = (int) $this->id2;
 		$qry = "SELECT gametype, bot_id, vs_id, battles, score_pct, score_dmg,
 						score_survival, count_wins, timestamp
 				FROM   game_pairings
 				WHERE  gametype = '$gametype'
-				  AND ((bot_id='$id1' AND vs_id='$id2') OR (bot_id='$id2' AND vs_id='$id1'))";
+				  AND ((bot_id=$id1 AND vs_id=$id2) OR (bot_id=$id2 AND vs_id=$id1))";
 		
 		if ($this->db->query($qry) > 0) {
 			$this->newpair = false;
@@ -65,9 +65,9 @@ class GamePairings {
 			$qry = '';
 			if ($this->newpair) {
 				$qry = "INSERT INTO game_pairings
-							SET gametype = '" . mysql_escape_string($pair['gametype']) . "',
-								bot_id        = '" . mysql_escape_string($pair['bot_id']) . "',
-								vs_id         = '" . mysql_escape_string($pair['vs_id']) . "',
+							SET gametype = '" . $pair['gametype'][0] . "',
+								bot_id   = " . ((int)$pair['bot_id']) . ",
+								vs_id    = " . ((int)$pair['vs_id']) . ",
 								";
 			} else {
 				$qry = "UPDATE game_pairings
@@ -81,9 +81,9 @@ class GamePairings {
 								timestamp = NOW(),
 								state = '" . STATE_OK . "' ";
 			if (!$this->newpair) {
-				$qry .= " WHERE gametype = '" . mysql_escape_string($pair['gametype']) . "'
-							AND bot_id   = '" . mysql_escape_string($pair['bot_id']) . "'
-							AND vs_id    = '" . mysql_escape_string($pair['vs_id']) . "'";
+				$qry .= " WHERE gametype = '" . $pair['gametype'][0] . "'
+							AND bot_id   = " . ((int)$pair['bot_id']) . "
+							AND vs_id    = " . ((int)$pair['vs_id']);
 			}
 			$rows += $this->db->query($qry);
 		}
@@ -123,10 +123,10 @@ class GamePairings {
 		$qry = "SELECT bot_id, vs_id, battles, score_pct, score_dmg,
 						score_survival, count_wins
 				FROM  game_pairings
-				WHERE gametype = '" . mysql_escape_string($this->gametype) . "' ";
+				WHERE gametype = '" . $this->gametype[0] . "' ";
 		if(!$allbots)
-			$qry .= " AND bot_id IN ('" . mysql_escape_string($this->id1) . "',
-			 						 '" . mysql_escape_string($this->id2) . "') ";
+			$qry .= " AND bot_id IN (" . ((int)$this->id1) . ",
+			 						 " . ((int)$this->id2) . ") ";
 	    $qry .= " AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "')";
 		if ($this->db->query($qry)>0)
 			return $this->db->all();
@@ -135,52 +135,18 @@ class GamePairings {
 	}
 	
 	function updateState($bot_id, $newstate, $oldstate='') {
-		$id = mysql_escape_string($bot_id);
+		$id = (int)$bot_id;
 		$qry = "UPDATE game_pairings SET state='" . mysql_escape_string($newstate) . "'
-				WHERE  gametype = '" . mysql_escape_string($this->gametype) . "'
-				  AND  (bot_id='$id' OR vs_id='$id') ";
+				WHERE  gametype = '" . $this->gametype[0] . "'
+				  AND  (bot_id=$id OR vs_id=$id) ";
 		if ($oldstate!='')
 			$qry .= " AND state='" . mysql_escape_string($oldstate) . "'";
 		return ($this->db->query($qry) > 0);
 	}
-		
-	function getNewPairings($limit=50, $state=STATE_NEW) {
-		$qry = "SELECT gametype, bot_id, vs_id, battles,
-						score_pct, score_dmg, score_survival,
-						count_wins, timestamp, state
-				FROM   game_pairings
-				WHERE  state='" . mysql_escape_string($state) . "'
-				ORDER BY timestamp ASC ";
-		if ($limit>0)
-			$qry .= " LIMIT " . ((int)$limit);
-		if ($this->db->query($qry)>0)
-			return $this->db->all();
-		else
-			return null;
-	}
-	
-	function lockNewPairings($limit=50) {
-		$qry = "UPDATE game_pairings
-				SET   state='" . STATE_LOCKED . "'
-				WHERE state IN ('" . STATE_NEW . "', '" . STATE_LOCKED . "')
-				ORDER BY timestamp ASC
-				LIMIT " . ((int)$limit);
-		if ($this->db->query($qry)<1)
-			return null;
-		else
-			return $this->getNewPairings($limit, STATE_LOCKED);
-	}
-	
-	function releasePairings($oldstate=STATE_LOCKED, $newstate=STATE_OK) {
-		$qry = "UPDATE game_pairings
-				SET   state='" . mysql_escape_string($newstate) . "'
-				WHERE state='" . mysql_escape_string($oldstate) . "'";
-		return ($this->db->query($qry)>0);
-	}
 	
 	function getBotSummary($game='', $id='') {
-		$gametype = mysql_escape_string( ($game!='') ? $game : $this->gametype);
-		$id1 = mysql_escape_string( ($id!='') ? $id : $this->id1);
+		$gametype = ($game!='') ? $game[0] : $this->gametype[0];
+		$id1 = (int)(($id!='') ? $id : $this->id1);
 		$qry = "SELECT gametype, bot_id,
 						COUNT(bot_id) AS pairings,
 						SUM(battles) AS battles,
@@ -234,9 +200,9 @@ class GamePairings {
 	}
 	
 	function getBotPairings($game='', $id='', $order='vs_name') {
-		$gametype = mysql_escape_string( ($game!='') ? $game : $this->gametype);
-		$id1 = mysql_escape_string( ($id!='') ? $id : $this->id1);
-		$qry = "SELECT g.gametype AS gametype, g.bot_id AS bot_id,
+		$gametype = ($game!='') ? $game[0] : $this->gametype[0];
+		$id1 = (int)(($id!='') ? $id : $this->id1);
+        $qry = "SELECT g.gametype AS gametype, g.bot_id AS bot_id,
 						g.vs_id AS vs_id, b.full_name AS vs_name,
 						g.battles AS battles, g.score_pct AS score_pct,
 						g.score_dmg AS score_dmg, g.score_survival AS score_survival,

@@ -8,8 +8,8 @@ ignore_user_abort(true);	// don't stop if client disconnects!
 
 
 /* other servers to relay results to */
-$rumbleURLS = array('http://abchome.aclsi.pt:8080/rumble/UploadedResults');
-$relayGames = array('R', 'X', 'Y', 'Z');
+//$rumbleURLS = array('http://abchome.aclsi.pt:8080/rumble/UploadedResults');
+//$relayGames = array('R', 'X', 'Y', 'Z');
 
 
 /* check RoboRumble client version */
@@ -82,13 +82,13 @@ if (isset($_POST['version'])) {
 		echo("\n<{$botdata['battles'][0]} {$botdata['battles'][1]}>");
 	
 	// relay to other rumble hosts
-	if (in_array($params['gametype'], $relayGames) && ($_SERVER['REMOTE_ADDR']!='127.0.0.1') && !isset($_POST['import'])) {
-		foreach ($rumbleURLS as $url) {
-			echo "\n    Relaying results to $url - ";
-			list($header, $content) = PostRequest($url, 'http://darkcanuck.net/rumble', $_POST, true);
-			echo ((substr($content, 0, 2)=='OK') ? 'OK.' : $content);
-		}
-	}
+	//if (in_array($params['gametype'], $relayGames) && ($_SERVER['REMOTE_ADDR']!='127.0.0.1') && !isset($_POST['import'])) {
+	//	foreach ($rumbleURLS as $url) {
+	//		echo "\n    Relaying results to $url - ";
+	//		list($header, $content) = PostRequest($url, 'http://darkcanuck.net/rumble', $_POST, true);
+	//		echo ((substr($content, 0, 2)=='OK') ? 'OK.' : $content);
+	//	}
+	//}
 } else {
 	//missing version parameter
 	trigger_error('Missing client version number!', E_USER_ERROR);

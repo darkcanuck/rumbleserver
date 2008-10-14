@@ -81,7 +81,9 @@ foreach ($allrows as $rs) {
 			" (" . number_format($rs['rd_glicko2']/1000, 0)  . ")</td>";
 	//echo "<td>" . number_format($rs['ideal'], 0, '.', '')  . "</td>";
 	echo "<td><a href='RatingsDetails?game=" . htmlspecialchars($game) 
-				. "&name=" . htmlspecialchars($rs['name']) . "'>details</a></td>";		//details link
+				. "&name=" . htmlspecialchars($rs['name']) . "'>details</a> / "
+				. "<a href='RatingsLRP?game=" . htmlspecialchars($game) 
+            				. "&name=" . htmlspecialchars($rs['name']) . "'>LRP</a></td>";		//details link
 	echo "<td>{$rs['battles']}</td>";
 	echo "<td>{$rs['pairings']}</td>";
 	echo "<td>{$rs['score_pl']}</td>";

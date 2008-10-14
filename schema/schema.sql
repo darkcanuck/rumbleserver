@@ -122,7 +122,8 @@ CREATE TABLE `game_pairings` (
 	`timestamp` datetime NOT NULL,
 	`state` char(1) NOT NULL DEFAULT '1',
 	PRIMARY KEY (`gametype`, `bot_id`, `vs_id`),
-	KEY `scoring` (`gametype`, `bot_id`, `state`)
+	KEY `scoring` (`gametype`, `bot_id`, `state`),
+	KEY `versus` (`gametype`, `vs_id`, `state`),
 	KEY `updates` (`state`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 

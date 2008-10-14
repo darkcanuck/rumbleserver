@@ -56,10 +56,47 @@ $standarddev = sqrt($standarddev / $bot['pairings']) * 100.0;
 if ($sort!=null)
 	array_multisort($sortcol, ($sort=='vs_name') ? SORT_ASC : SORT_DESC, $sortname, SORT_ASC, $allrows);
 
+// JSON output for LRP graphs
+if (isset($_REQUEST['json']) && (isset($_REQUEST['json'])>0)) {
+    $json_rating = number_format($bot['rating_glicko']/1000, 1, '.', '');
+    $json_battles = $bot['battles'];
+    $json_lastbattle = strtotime($bot['timestamp']);
+    echo <<<EOT
+{
+"name": "$name",
+"game": "$game",
+"rating": $json_rating,
+"numBattles": $json_battles,
+"lastBattle" : $json_lastbattle,
+"pairings": [    
+EOT;
+    foreach ($allrows as $rs) {
+    	echo '{"name": "' . $rs['vs_name'] . '", ';
+    	echo '"ranking": ' . $rs['rating_glicko'] . ', ';
+    	echo '"score": ' . number_format($rs['score_pct']/1000, 3) . ', ';
+    	echo '"numBattles": ' . $rs['battles'] . ', ';
+    	echo '"lastBattle": ' . strtotime($rs['timestamp']) . ', ';
+    	echo '"expectedScore": ' . number_format($rs['expected'], 1) . ', ';
+    	echo '"PBI": ' . number_format($rs['pbindex'], 1) . "},\n";
+    }
+    $json_specialization = number_format($specialization*100.0, 3);
+    $json_momentum = number_format($momentum, 3);
+    $json_aps = number_format($bot['score_pct']/1000/100, 6);
+    echo <<<EOT
+], 
+"specializationIndex": $json_specialization,
+"momentum": $json_momentum,
+"APS": $json_aps
+}    
+EOT;
+    exit(0);
+}
+
+
 //output header
 echo "<h2>RATING DETAILS FOR $name IN GAME $game</h2>
 <table border='1'>
-	<tr><th colspan='2'>Stats for $name</th></tr>
+	<tr><th colspan='2'>Stats for $name (<a href='RatingsLRP?game=$game&name=$name' title='LRP Graph'>LRP</a>)</th></tr>
 	<tr><td>\"Classic\" Elo Rating</td><td>" . number_format($bot['rating_classic']/1000, 1, '.', '') . "</td></tr>
 	<tr><td>Glicko Rating (RD)</td><td>" . number_format($bot['rating_glicko']/1000, 1, '.', '') .
 	 									" (" . number_format($bot['rd_glicko']/1000, 0)  . ")</td></tr>

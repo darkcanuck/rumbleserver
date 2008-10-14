@@ -1,0 +1,36 @@
+body {
+  font-family: arial, sans-serif;
+/*  font-size: 11pt;*/
+}
+
+table {
+	border: 1px solid lightgray;
+	border-collapse: collapse;
+}
+
+table th, table td{
+	border: 1px solid lightgray;
+	border-collapse: collapse;
+}
+
+table td {
+	/*font-size: 95%;*/
+	padding: 2px;
+}
+
+table th {
+	font-weight: bold;
+	background-color: #eee;
+}
+
+table tr.even td {
+      background-color: #fbfbfb;
+}
+
+tr.even td.highScore, tr.even td.highPBI, td.highScore, td.highPBI {
+	background-color: #99CC00;
+}
+
+tr.even td.lowScore, tr.even td.lowPBI, td.lowScore, td.lowPBI{
+	background-color: #FF6600;
+}

@@ -58,9 +58,9 @@ if ($sort!=null)
 
 // JSON output for LRP graphs
 if (isset($_REQUEST['json']) && (isset($_REQUEST['json'])>0)) {
-    $json_rating = number_format($bot['rating_glicko']/1000, 1, '.', '');
+    $json_rating = number_format($bot['rating_glicko']/1000.0, 1, '.', '');
     $json_battles = $bot['battles'];
-    $json_lastbattle = strtotime($bot['timestamp']);
+    $json_lastbattle = strtotime($bot['timestamp'])*1000;
     echo <<<EOT
 {
 "name": "$name",
@@ -72,10 +72,10 @@ if (isset($_REQUEST['json']) && (isset($_REQUEST['json'])>0)) {
 EOT;
     foreach ($allrows as $rs) {
     	echo '{"name": "' . $rs['vs_name'] . '", ';
-    	echo '"ranking": ' . $rs['rating_glicko'] . ', ';
+    	echo '"ranking": ' . $rs['rating_glicko']/1000.0 . ', ';
     	echo '"score": ' . number_format($rs['score_pct']/1000, 3) . ', ';
     	echo '"numBattles": ' . $rs['battles'] . ', ';
-    	echo '"lastBattle": ' . strtotime($rs['timestamp']) . ', ';
+    	echo '"lastBattle": ' . strtotime($rs['timestamp'])*1000 . ', ';
     	echo '"expectedScore": ' . number_format($rs['expected'], 1) . ', ';
     	echo '"PBI": ' . number_format($rs['pbindex'], 1) . "},\n";
     }

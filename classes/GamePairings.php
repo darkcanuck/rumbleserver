@@ -124,14 +124,24 @@ class GamePairings {
 						score_survival, count_wins
 				FROM  game_pairings
 				WHERE gametype = '" . $this->gametype[0] . "' ";
-		if(!$allbots)
-			$qry .= " AND bot_id IN (" . ((int)$this->id1) . ",
-			 						 " . ((int)$this->id2) . ") ";
+		if (!$allbots) {
+			$qry2 = $qry . " AND bot_id=" . ((int)$this->id2) . " ";
+			$qry .= " AND bot_id=" . ((int)$this->id1) . " ";
+		}
 	    $qry .= " AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "')";
-		if ($this->db->query($qry)>0)
-			return $this->db->all();
-		else
-			return array();
+	    if (!$allbots)
+            $qry2 .= " AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "')";
+        
+		if ($allbots) {
+		    return (($this->db->query($qry)>0) ? $this->db->all() : array());
+		} else {
+		    $results = ($this->db->query($qry)>0) ? $this->db->all() : array();
+		    if ($this->db->query($qry2)>0) {
+		        foreach ($this->db->all() as $rs)
+		            $results[] = $rs;
+		    }
+		    return $results;   
+		}
 	}
 	
 	function updateState($bot_id, $newstate, $oldstate='') {

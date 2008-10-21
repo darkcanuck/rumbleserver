@@ -5,7 +5,8 @@ error_reporting(E_ALL);		// applies for errors not caught by error handler
 require_once 'classes/ErrorHandler.php';
 $err = new ErrorHandler();
 
-//$err->setDebugMode(true);
+if ($_SERVER['REMOTE_ADDR']=='127.0.0.1')
+    $err->setDebugMode(true);
 
 // config includes
 require_once 'config/config.php';
@@ -51,7 +52,7 @@ if ( isset($_GET['forceupdate']) || (($update_interval>0) && ($update_time < tim
 //	$rankings = new RankingsUpdate($db);
 //	$rankings->updateScores($properties->getInt('update_size', 100), $properties->getInt('update_pairingdelay', -1));
     
-    $db->query('OPTIMIZE TABLE game_pairings');
+//    $db->query('OPTIMIZE TABLE game_pairings');
 //    $db->query('OPTIMIZE TABLE participants');
 }
 

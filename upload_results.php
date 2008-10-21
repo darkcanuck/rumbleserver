@@ -54,6 +54,7 @@ if (isset($_POST['version'])) {
 	}
 	
 	// save results to database
+	set_time_limit(600);
 	$results = new BattleResults($db);
 	$botdata = $results->saveBattle($params);
 	
@@ -62,7 +63,6 @@ if (isset($_POST['version'])) {
 	//echo("\n" . print_r($db->queries, true));
 	
 	if(isset($_POST['import']) && ($_POST['import'] > 0)) {
-    	//echo $db->debug();
     	exit(0);
     }
 	
@@ -89,6 +89,11 @@ if (isset($_POST['version'])) {
 	//		echo ((substr($content, 0, 2)=='OK') ? 'OK.' : $content);
 	//	}
 	//}
+	
+	// debugging
+	if ($_SERVER['REMOTE_ADDR']=='127.0.0.1')
+    	echo str_replace(array('[',']','<','>'), '|', $db->debug());
+    
 } else {
 	//missing version parameter
 	trigger_error('Missing client version number!', E_USER_ERROR);

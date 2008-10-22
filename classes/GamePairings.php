@@ -26,22 +26,19 @@ class GamePairings {
 	function getPairing() {
 		$this->pairing = null;
 		
-		$gametype = $this->gametype[0];
-		$id1 = (int) $this->id1;
-		$id2 = (int) $this->id2;
-		$qry = "SELECT gametype, bot_id, vs_id, battles, score_pct, score_dmg,
-						score_survival, count_wins, timestamp
-				FROM   game_pairings
-				WHERE  gametype = '$gametype'
-				  AND ((bot_id=$id1 AND vs_id=$id2) OR (bot_id=$id2 AND vs_id=$id1))";
+		$qrystring = "SELECT gametype, bot_id, vs_id, battles, score_pct, score_dmg, " .
+						" score_survival, count_wins, timestamp " .
+				        " FROM   game_pairings " .
+				        " WHERE  gametype = '%s' AND bot_id=%u AND vs_id=%u ";
+		$qry1 = sprintf($qrystring, $this->gametype[0], (int)$this->id1, (int)$this->id2);
+		$qry2 = sprintf($qrystring, $this->gametype[0], (int)$this->id2, (int)$this->id1);
 		
-		if ($this->db->query($qry) > 0) {
-			$this->newpair = false;
-			foreach($this->db->all() as $rs)
-				$this->pairing[ $rs['bot_id'] ] = $rs;
-			return true;
+		if ($this->db->query($qry1) > 0)
+		    $this->pairing[ $this->id1 ] = $this->db->next();
+        if ($this->db->query($qry2) > 0)
+		    $this->pairing[ $this->id2 ] = $this->db->next();
 		
-		} else {
+		if (($this->pairing==null) || (count($this->pairing)<2)) {
 			$this->newpair = true;
 			foreach(array($this->id1, $this->id2) as $id)
 				$this->pairing[ $id ] = array(
@@ -55,8 +52,8 @@ class GamePairings {
 											'count_wins' => 0,
 											'timestamp' => strftime('%Y-%m-%d %T')
 											);
-			return true;			
 		}
+		return true;
 	}
 	
 	function savePairing() {
@@ -119,29 +116,23 @@ class GamePairings {
 		return (int) ( (($score1 / ($score1+$score2) * 100 * 1000) + ($lastscore * $battles)) / ($battles+1) );
 	}
 	
-	function getAllPairings($allbots=false) {
-		$qry = "SELECT bot_id, vs_id, battles, score_pct, score_dmg,
-						score_survival, count_wins
-				FROM  game_pairings
-				WHERE gametype = '" . $this->gametype[0] . "' ";
-		if (!$allbots) {
-			$qry2 = $qry . " AND bot_id=" . ((int)$this->id2) . " ";
-			$qry .= " AND bot_id=" . ((int)$this->id1) . " ";
-		}
-	    $qry .= " AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "')";
-	    if (!$allbots)
-            $qry2 .= " AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "')";
-        
-		if ($allbots) {
-		    return (($this->db->query($qry)>0) ? $this->db->all() : array());
-		} else {
-		    $results = ($this->db->query($qry)>0) ? $this->db->all() : array();
-		    if ($this->db->query($qry2)>0) {
-		        foreach ($this->db->all() as $rs)
-		            $results[] = $rs;
-		    }
-		    return $results;   
-		}
+	function getAllPairings() {
+	    $qrystring = "SELECT bot_id, vs_id, battles, score_pct, score_dmg, " .
+						" score_survival, count_wins " .
+				        " FROM   game_pairings " .
+				        " WHERE  gametype = '%s' AND bot_id=%u " .
+				        " AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "')";
+		$qry1 = sprintf($qrystring, $this->gametype[0], (int)$this->id1);
+		$qry2 = sprintf($qrystring, $this->gametype[0], (int)$this->id2);
+		
+		$results = array();
+		if ($this->db->query($qry1) > 0)
+		    $results = $this->db->all();
+        if ($this->db->query($qry2) > 0) {
+            foreach ($this->db->all() as $rs)
+		        $results[] = $rs;
+        }
+	    return $results;
 	}
 	
 	function updateState($bot_id, $newstate, $oldstate='') {

@@ -57,13 +57,15 @@ class BattleResults {
 		}
 		
 		/* lock tables for faster inserts */
+		set_time_limit(5);  // don't wait forever for locks
 		$this->db->query('LOCK TABLES
 									battle_results WRITE,
 									game_pairings WRITE, game_pairings AS g WRITE,
 									participants WRITE, participants AS p WRITE,
 									bot_data WRITE, bot_data AS b WRITE,
 									upload_users WRITE');
-
+        set_time_limit(600);    // allow time to finish once we have locks
+        
 		/* update participants list & get bot id's*/
 		$party = new Participants($this->db, $this->gametype);
 		$ids = $party->checkNames(array($this->bot1, $this->bot2));

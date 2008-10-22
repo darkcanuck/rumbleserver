@@ -54,7 +54,7 @@ if (isset($_POST['version'])) {
 	}
 	
 	// save results to database
-	set_time_limit(600);
+	//set_time_limit(600);
 	$results = new BattleResults($db);
 	$botdata = $results->saveBattle($params);
 	

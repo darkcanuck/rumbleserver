@@ -6,6 +6,11 @@ require_once 'classes/PostRequest.php';
 $err->setClient(true);
 ignore_user_abort(true);	// don't stop if client disconnects!
 
+$debug_user = false;
+if (isset($_POST['user'])) {
+    $debug_user = (strpos($_POST['user'], '-debug')!==false);
+    $_POST['user'] = str_replace('-debug', '', $_POST['user']);
+}
 
 /* other servers to relay results to */
 //$rumbleURLS = array('http://abchome.aclsi.pt:8080/rumble/UploadedResults');
@@ -91,8 +96,8 @@ if (isset($_POST['version'])) {
 	//}
 	
 	// debugging
-	if ($_SERVER['REMOTE_ADDR']=='127.0.0.1')
-    	echo str_replace(array('[',']','<','>'), '|', $db->debug());
+	if (($_SERVER['REMOTE_ADDR']=='127.0.0.1') || $debug_user)
+		echo str_replace(array('[',']','<','>'), '|', $db->debug());
     
 } else {
 	//missing version parameter

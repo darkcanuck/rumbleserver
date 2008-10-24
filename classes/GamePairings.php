@@ -121,7 +121,7 @@ class GamePairings {
 						" score_survival, count_wins " .
 				        " FROM   game_pairings " .
 				        " WHERE  gametype = '%s' AND bot_id=%u " .
-				        " AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "')";
+				        " AND state = '" . STATE_OK . "' ";
 		$qry1 = sprintf($qrystring, $this->gametype[0], (int)$this->id1);
 		$qry2 = sprintf($qrystring, $this->gametype[0], (int)$this->id2);
 		
@@ -159,7 +159,7 @@ class GamePairings {
 				FROM  game_pairings
 				WHERE gametype = '$gametype'
 				  AND bot_id='$id1'
-				  AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "')
+				  AND state='" . STATE_OK . "'
 				GROUP BY bot_id
 				ORDER BY NULL";		// optimization!
 		if ($this->db->query($qry)>0)
@@ -213,7 +213,7 @@ class GamePairings {
 				INNER JOIN bot_data AS b ON g.vs_id = b.bot_id
 				WHERE g.gametype = '$gametype'
 				  AND g.bot_id = '$id1'
-				  AND g.state IN ('" . STATE_NEW . "', '" . STATE_OK . "')
+				  AND g.state = '" . STATE_OK . "'
 				ORDER BY `" . mysql_escape_string($order) . "` ASC";
 		if ($this->db->query($qry)>0)
 			return $this->db->all();

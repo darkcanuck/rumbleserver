@@ -2,7 +2,7 @@
 
 require_once 'classes/common.php';
 
-require_once 'smarty/Smarty.class.php';
+require_once 'Smarty/Smarty.class.php';
 $template = new Smarty();
 
 // determine game type

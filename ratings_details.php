@@ -5,7 +5,7 @@ require_once 'classes/EloRating.php';
 require_once 'classes/GlickoRating.php';
 require_once 'classes/Glicko2Rating.php';
 
-require_once 'smarty/Smarty.class.php';
+require_once 'Smarty/Smarty.class.php';
 $template = new Smarty();
 
 // determine game type

@@ -40,6 +40,8 @@ $details['vol_glicko2'] /= 1000.0;
 $details['percent_wins'] = $details['count_wins']/($details['pairings']>0 ? $details['pairings'] : 1) * 100.0;
 $details['percent_score'] = $details['score_pct']/100.0;
 $details['unixtimestamp'] = strtotime($bot['timestamp'])*1000;
+$chunks = explode('.', $name);
+$details['package'] = $chunks[0];
 
 $fields = null;
 $sort = trim(isset($_GET['sort']) ? $_GET['sort'] : '');

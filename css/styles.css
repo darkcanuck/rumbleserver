@@ -2,6 +2,11 @@ body {
     font-family: helvetica, arial, sans-serif;
 }
 
+h1 {
+    font-size: 150%;
+    font-style: bold;
+}
+
 table {
 	border: 1px solid lightgray;
 	border-collapse: collapse;

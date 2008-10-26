@@ -2,7 +2,7 @@
 {include file="header.tpl" title="darkcanuck.net - RoboRumble Rankings"}
 
 
-<h1>Current rankings for game {$game}</h1>
+<h1>Current rankings for game "{$game}"</h1>
 <p>Results from Darkcanuck's experimental new RoboRumble server.  Stable results can be found from the RoboCode wiki.</p>
 <p>Generation time: {$gentime}</p>
 

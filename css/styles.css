@@ -5,9 +5,11 @@ body {
 table {
 	border: 1px solid lightgray;
 	border-collapse: collapse;
+	margin-bottom: 1em;
 }
 
-table th, table td{
+table th,
+table td {
 	border: 1px solid lightgray;
 	border-collapse: collapse;
 }

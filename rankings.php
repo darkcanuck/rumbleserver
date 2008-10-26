@@ -35,7 +35,7 @@ foreach ($allrows as $k=>$rs) {
 	$allrows[$k]['rd_glicko'] /= 1000;
 	$allrows[$k]['rating_glicko2'] /= 1000;
 	$allrows[$k]['rd_glicko2'] /= 1000;
-	$allrows[$k]['vol_glicko2'] /= 1000;
+	$allrows[$k]['vol_glicko2'] /= 1000000;
 	
 	$allrows[$k]['score_pl'] = $rs['count_wins'] * 2;
 	$allrows[$k]['rank'] = $rank;

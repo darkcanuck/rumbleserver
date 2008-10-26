@@ -1,0 +1,62 @@
+body {
+    font-family: helvetica, arial, sans-serif;
+}
+
+table {
+	border: 1px solid lightgray;
+	border-collapse: collapse;
+}
+
+table th, table td{
+	border: 1px solid lightgray;
+	border-collapse: collapse;
+}
+
+table td {
+	/*font-size: 95%;*/
+	padding: 2px;
+}
+
+table th {
+	font-weight: bold;
+	background-color: #eee;
+	padding-right: 21px;
+}
+
+table tr.even td {
+      background-color: #fbfbfb;
+}
+
+tr.even td.highScore,
+tr.even td.highPBI,
+td.highScore,
+td.highPBI {
+	background-color: #99CC00;
+}
+
+tr.even td.lowScore,
+tr.even td.lowPBI,
+td.lowScore,
+td.lowPBI{
+	background-color: #FF6600;
+}
+
+
+/* tablesorter */
+table.rankings thead tr .header {
+	background-image: url(bg.gif);
+	background-repeat: no-repeat;
+	background-position: center right;
+	cursor: pointer;
+}
+
+table.rankings thead tr .headerSortUp {
+	background-image: url(asc.gif);
+}
+table.rankings thead tr .headerSortDown {
+	background-image: url(desc.gif);
+}
+table.rankings thead tr .headerSortDown,
+table.rankings thead tr .headerSortUp {
+    background-color: #8dbdd8;
+}

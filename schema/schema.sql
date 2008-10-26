@@ -35,18 +35,30 @@ CREATE TABLE `participants` (
 	KEY `active` (`gametype`, `state`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-ALTER TABLE `participants`
-CHANGE COLUMN `score_elo` `rating_glicko` int(5) UNSIGNED NOT NULL DEFAULT '0',
-CHANGE COLUMN `deviation` `rd_glicko` int(5) UNSIGNED NOT NULL DEFAULT '0',
-ADD COLUMN `rating_classic` int(5) UNSIGNED NOT NULL DEFAULT '0',
-ADD COLUMN `rating_glicko2` int(5) UNSIGNED NOT NULL DEFAULT '0',
-ADD COLUMN `rd_glicko2` int(5) UNSIGNED NOT NULL DEFAULT '0',
-ADD COLUMN `vol_glicko2` int(5) UNSIGNED NOT NULL DEFAULT '0';
+DROP TABLE IF EXISTS `participants_archive`;
+CREATE TABLE `participants_archive` (
+	`gametype` char(1) NOT NULL,
+	`state` char(1) NOT NULL DEFAULT '1',
+	`bot_id` int(5) UNSIGNED NOT NULL,
+	`battles` smallint(4) UNSIGNED NOT NULL DEFAULT '0',
+	`score_pct` int(5) UNSIGNED NOT NULL DEFAULT '0',
+	`score_dmg` int(5) UNSIGNED NOT NULL DEFAULT '0',
+	`score_survival` int(5) UNSIGNED NOT NULL DEFAULT '0',
+	`rating_classic` int(5) NOT NULL DEFAULT '0',
+	`rating_glicko` int(5) NOT NULL DEFAULT '0',
+	`rd_glicko` int(5) UNSIGNED NOT NULL DEFAULT '0',
+	`rating_glicko2` int(5) NOT NULL DEFAULT '0',
+	`rd_glicko2` int(5) UNSIGNED NOT NULL DEFAULT '0',
+	`vol_glicko2` int(5) UNSIGNED NOT NULL DEFAULT '0',
+	`count_wins` smallint(4) UNSIGNED NOT NULL DEFAULT '0',
+	`pairings` smallint(4) UNSIGNED NOT NULL DEFAULT '0',
+	`timestamp` datetime NOT NULL,
+	`archived` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (`gametype`, `bot_id`, `timestamp`),
+	KEY `active` (`gametype`, `state`),
+	KEY `archive` (`gametype`, `archived`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-ALTER TABLE `participants`
-MODIFY COLUMN `rating_classic` int(5) NOT NULL DEFAULT '0',
-MODIFY COLUMN `rating_glicko` int(5) NOT NULL DEFAULT '0',
-MODIFY COLUMN `rating_glicko2` int(5) NOT NULL DEFAULT '0';
 
 DROP TABLE IF EXISTS `battles_old`;
 CREATE TABLE `battles_old` (

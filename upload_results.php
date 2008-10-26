@@ -49,6 +49,10 @@ if (isset($_POST['version'])) {
 			$params['bulletdmg2'] = $_POST['sbulletd'];
 			$params['survival2']  = $_POST['ssurvival'];
 			
+			// filter out funny data
+			if (($params['bot1']=='jk.mega.DrussGT 1.2.7') || ($params['bot2']=='jk.mega.DrussGT 1.2.7'))
+			    trigger_error('Stop uploading results for DrussGT 1.2.7!  Check your client configuration.', E_USER_ERROR);
+			
 			$gametype->checkScores($params);
 			break;
 			

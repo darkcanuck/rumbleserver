@@ -8,7 +8,7 @@
   <thead>
     <tr>
       <th rowspan="2">% Score</th>
-      <th rowspan="2">% Survival
+      <th rowspan="2">% Survival</th>
       <th>score</th>
       <th>bullet dmg.</th>
       <th>survival</th>
@@ -19,8 +19,8 @@
       <th rowspan="2">Submitted by</th>
     </tr>
     <tr>
-      <th colspan='3'><img src="flags/{$package}.gif" title="Flag for {$package}" /> {$name}</th>
-      <th colspan='3'><img src="flags/{$vs_package}.gif" title="Flag for {$vs_package}" /> {$vs_name}</th>
+      <th colspan='3'><img src="flags/{$package}.gif" alt="Flag for {$package}" /> {$name}</th>
+      <th colspan='3'><img src="flags/{$vs_package}.gif" alt="Flag for {$vs_package}" /> {$vs_name}</th>
     </tr>
   </thead>
   <tbody>

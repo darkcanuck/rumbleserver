@@ -25,14 +25,14 @@
   {foreach from=$rankings key=id item=bot}
   <tr>
     <td>{$bot.rank}</td>
-    <td><img src="flags/{$bot.package}.gif" title="Flag for {$bot.package}" />
+    <td><img src="flags/{$bot.package}.gif" alt="Flag for {$bot.package}" />
         {$bot.name}</td>
     <td>{$bot.score_pct|string_format:"%.2f"}</td>
     <td>{$bot.rating_classic|string_format:"%.1f"}</td>
     <td>{$bot.rating_glicko|string_format:"%.1f"} ({$bot.rd_glicko|string_format:"%.0f"})</td>
     <td>{$bot.rating_glicko2|string_format:"%.1f"} ({$bot.rd_glicko2|string_format:"%.0f"})</td>
-    <td><a href="RatingsDetails?game={$game}&name={$bot.name|escape}">details</a> / 
-        <a href="RatingsLRP?game={$game}&name={$bot.name|escape}">LRP</a></td>
+    <td><a href="RatingsDetails?game={$game}&amp;name={$bot.name|escape}">details</a> / 
+        <a href="RatingsLRP?game={$game}&amp;name={$bot.name|escape}">LRP</a></td>
     <td>{$bot.battles}</td>
     <td>{$bot.pairings}</td>
     <td>{$bot.score_pl}</td>

@@ -6,9 +6,9 @@
 
 <table id="ratingdetails" class="rankings">
   <thead>
-    <tr><th colspan="2"><img src="flags/{$details.package}.gif" title="Flag for {$details.package}" />
-        {$name} (<a href="RatingsLRP?game={$game}&name={$name}" title="LRP Graph">LRP</a>)</th></tr>
-  <thead>
+    <tr><th colspan="2"><img src="flags/{$details.package}.gif" alt="Flag for {$details.package}" />
+        {$name} (<a href="RatingsLRP?game={$game}&amp;name={$name}" title="LRP Graph">LRP</a>)</th></tr>
+  </thead>
   <tbody>
 	<tr><td>"Classic" Elo Rating</td>
 	    <td>{$details.rating_classic|string_format:"%.1f"}</td></tr>
@@ -56,13 +56,13 @@
   <tbody>
   {foreach from=$pairings key=id item=bot}
   <tr>
-    <td><img src="flags/{$bot.package}.gif" title="Flag for {$bot.package}" />
+    <td><img src="flags/{$bot.package}.gif" alt="Flag for {$bot.package}" />
         {$bot.vs_name}</td>
     <td{if $bot.score_pct gt 60} class="highScore"{elseif $bot.score_pct lt 40} class="lowScore"{/if}>{$bot.score_pct|string_format:"%.2f"}</td>
     <td>{$bot.rating_classic|string_format:"%.1f"}</td>
     <td>{$bot.battles}</td>
     <td>{$bot.timestamp}</td>
-    <td><a href="BattleDetails?game={$game}&name={$name|escape}&vs={$bot.vs_name|escape}">battles</a></td>
+    <td><a href="BattleDetails?game={$game}&amp;name={$name|escape}&amp;vs={$bot.vs_name|escape}">battles</a></td>
     <td>{$bot.expected|string_format:"%.1f"}</td>
     <td{if $bot.pbindex gt 10} class="highPBI"{elseif $bot.pbindex lt -10} class="lowPBI"{/if}>{$bot.pbindex|string_format:"%.1f"}</td>
   </tr>

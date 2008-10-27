@@ -109,7 +109,7 @@ if (isset($_REQUEST['json']) && (isset($_REQUEST['json'])>0)) {
     $template->right_delimiter = '}}';
     $template->display('ratings_details_json.tpl');
 } else {
-    $template->display('ratings_details.tpl');
+    $template->display('ratings_details_lrp.tpl');
 }
 
 ?>

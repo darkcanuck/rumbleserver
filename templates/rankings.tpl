@@ -14,7 +14,7 @@
     <th>ELO Rating</th>
     <th>G-Rating (RD)</th>
     <th>Glicko-2 (RD)</th>
-    <th>Details</th>
+    <!-- <th>Details</th> -->
     <th>Battles</th>
     <th>Pairings</th>
     <th>PL Score</th>
@@ -31,8 +31,8 @@
     <td>{$bot.rating_classic|string_format:"%.1f"}</td>
     <td>{$bot.rating_glicko|string_format:"%.1f"} ({$bot.rd_glicko|string_format:"%.0f"})</td>
     <td>{$bot.rating_glicko2|string_format:"%.1f"} ({$bot.rd_glicko2|string_format:"%.0f"})</td>
-    <td><a href="RatingsDetails?game={$game}&amp;name={$bot.name|escape}">details</a> / 
-        <a href="RatingsLRP?game={$game}&amp;name={$bot.name|escape}">LRP</a></td>
+    <!-- <td><a href="RatingsDetails?game={$game}&amp;name={$bot.name|escape}">details</a> / 
+        <a href="RatingsLRP?game={$game}&amp;name={$bot.name|escape}">LRP</a></td> -->
     <td>{$bot.battles}</td>
     <td>{$bot.pairings}</td>
     <td>{$bot.score_pl}</td>

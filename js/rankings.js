@@ -1,7 +1,7 @@
 $(document).ready(function() { 
         $("#rankingdata").tablesorter( {
             widgets: ['zebra'],
-            headers: { 6: {sorter: false} },
+            //headers: { 6: {sorter: false} },
             sortList: [ [0, 0] ]
             });
          $("#pairingdata").tablesorter( {

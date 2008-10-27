@@ -67,3 +67,16 @@ table.rankings thead tr .headerSortDown,
 table.rankings thead tr .headerSortUp {
     background-color: #8dbdd8;
 }
+
+/* pairing details */
+table#pairingdata {
+    clear: both;
+}
+div#lrp {
+    margin-left: 45%;
+    margin-bottom: 1.5em;
+}
+table#ratingdetails {
+    width: 40%;
+    float: left;
+}

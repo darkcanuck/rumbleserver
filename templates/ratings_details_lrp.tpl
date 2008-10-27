@@ -1,14 +1,30 @@
 {* Smarty Template *}
-{include file="header.tpl" title="darkcanuck.net - RoboRumble Rankings"}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<title>darkcanuck.net - RoboRumble Rankings</title>
+	
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<link href="css/styles.css" rel="stylesheet" type="text/css" media="all" />
+	
+	<script language="javascript" type="text/javascript" src="js/jquery.js"></script>
+	<script language="javascript" type="text/javascript" src="js/jquery.tablesorter.min.js"></script>
+    <script language="javascript" type="text/javascript" src="js/jquery.flot.js"></script>
+    <script language="javascript" type="text/javascript" src="js/lrp2.js"></script>
+	<script language="javascript" type="text/javascript" src="js/rankings.js"></script>
+</head>
+
+<body>
 
 
 <h1>RATING DETAILS FOR "{$name}" IN GAME "{$game}"</h1>
 
+<h2><img src="flags/{$details.package}.gif" alt="Flag for {$details.package}" />
+    {$name} (<a href="RatingsLRP?game={$game}&amp;name={$name}" title="LRP Graph">LRP</a>)</h2>
 <table id="ratingdetails" class="rankings">
-  <thead>
-    <tr><th colspan="2"><img src="flags/{$details.package}.gif" alt="Flag for {$details.package}" />
-        {$name} (<a href="RatingsLRP?game={$game}&amp;name={$name}" title="LRP Graph">LRP</a>)</th></tr>
-  </thead>
   <tbody>
 	<tr><td>"Classic" Elo Rating</td>
 	    <td>{$details.rating_classic|string_format:"%.1f"}</td></tr>
@@ -40,6 +56,12 @@
   </tbody>
 </table>
 
+<div id="lrp">
+    <div id="info"></div>
+    <div id="graph" style="width:90%;height:300px"></div>
+    <div id="legend"></div>
+    <div id="debug"></div>
+</div>
 
 <table id="pairingdata" class="rankings">
   <thead><tr>

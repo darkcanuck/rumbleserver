@@ -26,7 +26,7 @@
   <tr>
     <td>{$bot.rank}</td>
     <td><img src="flags/{$bot.package}.gif" alt="Flag for {$bot.package}" />
-        {$bot.name}</td>
+        <a href="RatingsDetails?game={$game}&amp;name={$bot.name|escape}" title="Details for {$bot.name}">{$bot.name}</a></td>
     <td>{$bot.score_pct|string_format:"%.2f"}</td>
     <td>{$bot.rating_classic|string_format:"%.1f"}</td>
     <td>{$bot.rating_glicko|string_format:"%.1f"} ({$bot.rd_glicko|string_format:"%.0f"})</td>

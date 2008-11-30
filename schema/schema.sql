@@ -96,6 +96,16 @@ CREATE TABLE `upload_users` (
 	PRIMARY KEY (`user_id`),
 	KEY `user` (`username`, `ip_addr`, `version`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `upload_stats`;
+CREATE TABLE `upload_stats` (
+	`gametype` char(1) NOT NULL,
+    `user_id` smallint(4) UNSIGNED NOT NULL,
+	`date` date NOT NULL,
+	`battles` int(7) UNSIGNED NOT NULL DEFAULT '0',
+	PRIMARY KEY (`gametype`, `date`, `user_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 	
 
 DROP TABLE IF EXISTS `battle_results`;

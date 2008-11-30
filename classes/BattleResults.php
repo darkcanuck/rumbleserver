@@ -63,7 +63,8 @@ class BattleResults {
 									game_pairings WRITE, game_pairings AS g WRITE,
 									participants WRITE, participants AS p WRITE,
 									bot_data WRITE, bot_data AS b WRITE,
-									upload_users WRITE');
+									upload_users WRITE,
+									upload_stats WRITE');
         set_time_limit(600);    // allow time to finish once we have locks
         
 		/* update participants list & get bot id's*/
@@ -81,6 +82,7 @@ class BattleResults {
 		
 		/* update upload stats - +1 new battle*/
 		$users->updateUser($this->userid, 1);
+		$users->updateStats($this->userid, $this->gametype, 1);
 		
 		/* update pairings */
 		$pairing = new GamePairings($this->db, $this->gametype, $this->id1, $this->id2);

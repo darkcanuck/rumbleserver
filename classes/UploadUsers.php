@@ -8,6 +8,8 @@ class UploadUsers {
 	private $table = 'upload_users';
 	private $fields = array('user_id', 'username', 'ip_addr', 'version', 'battles', 'created', 'updated');
 	
+	private $statstable = 'upload_stats';
+	
 	private $ulist = null;
 	private $udata = null;
 	private $order = '';
@@ -116,6 +118,29 @@ class UploadUsers {
 			return $this->db->all();
 		else
 			return null;
+	}
+	
+	function updateStats($id, $gametype, $newbattles) {
+	    $new = (int)$newbattles;
+	    $game = $gametype[0];
+	    $today = strftime('%Y-%m-%d');
+	    $userid = mysql_escape_string($id);
+		$qry = "UPDATE {$this->statstable} SET battles=battles+$new
+				 WHERE gametype = '$game'
+				   AND date = '$today'
+				   AND user_id = '$userid'";
+				   
+		if ($this->db->query($qry) > 0) {
+		    return true;
+	    } else {
+	        // insert new record
+	        $qry = "INSERT INTO {$this->statstable}
+	                SET gametype = '$game',
+	                    date = '$today',
+    				    user_id = '$userid',
+    				    battles = 0";
+		    return ($this->db->query($qry) > 0);
+		}
 	}
 	
 }

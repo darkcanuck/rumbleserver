@@ -155,3 +155,6 @@ CREATE TABLE `properties` (
 	`value` varchar(20) NOT NULL,
 	PRIMARY KEY (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
+SELECT u.username, SUM(s.battles) AS battles, MAX(s.date) AS lastupload FROM upload_stats AS s INNER JOIN upload_users AS u ON s.user_id = u.user_id WHERE s.gametype = 'R' AND s.date >= '2008-11-01' AND s.date <= '2008-11-31' GROUP BY username ORDER BY battles DESC;

@@ -120,6 +120,9 @@ class UploadUsers {
 			return null;
 	}
 	
+	
+	/* UPLOAD STATISTICS */
+	
 	function updateStats($id, $gametype, $newbattles) {
 	    $new = (int)$newbattles;
 	    $game = $gametype[0];
@@ -138,11 +141,32 @@ class UploadUsers {
 	                SET gametype = '$game',
 	                    date = '$today',
     				    user_id = '$userid',
-    				    battles = 0";
+    				    battles = $new";
 		    return ($this->db->query($qry) > 0);
 		}
 	}
 	
+	function statsByMonth($gametype, $year, $month) {
+	    $game = $gametype[0];
+	    $yearnum  = sprintf('%04d', (int)$year);
+	    $monthnum = sprintf('%02d', (int)$month);
+	    $start = "$year-$month-01";
+	    $end = "$year-$month-31";
+		$qry = "SELECT u.username,
+		                SUM(s.battles) AS battles,
+						MAX(s.date) AS lastupload
+				FROM {$this->statstable} AS s
+				INNER JOIN {$this->table} AS u ON s.user_id = u.user_id
+				WHERE s.gametype = '$game' AND s.date >= '$start' AND s.date <= '$end'
+				GROUP BY username
+				ORDER BY battles DESC";
+		if ($this->db->query($qry)>0)
+			return $this->db->all();
+		else
+			return null;
+	}
+	
+	function statsLast30() {}
 }
 
 ?>

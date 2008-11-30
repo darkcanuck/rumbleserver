@@ -2,9 +2,26 @@ body {
     font-family: helvetica, arial, sans-serif;
 }
 
+h1, h2, h3 {
+    font-style: bold;
+    margin: 0.3em 0em 0.3em 0em;
+    padding: 0em;
+}
 h1 {
     font-size: 150%;
-    font-style: bold;
+    
+}
+h2 {
+    font-size: 130%;
+    padding-top: 1em;
+}
+h3 {
+    font-size: 110%;
+    font-style: italic;
+}
+
+hr {
+    clear: both;
 }
 
 table {
@@ -48,6 +65,20 @@ td.lowPBI{
 	background-color: #FF6600;
 }
 
+div {
+    margin: 0px;
+    padding: 0px;
+}
+
+.inline {
+    display: inline;
+    float: left;
+    margin-right: 2em;
+}
+
+.clear {
+    clear: both;
+}
 
 /* tablesorter */
 table.rankings thead tr .header {

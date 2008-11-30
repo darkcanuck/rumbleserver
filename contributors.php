@@ -35,8 +35,8 @@ $last30 = $monthly;
 foreach($gameinfo as $name => $game) {
     $last30[$name]['data'] = $users->statsLast30($game['gametype']);
     if (($name=='melee') && ($monthly[$name]['data']!=null)) {
-        foreach($monthly[$name]['data'] as $key => $data)
-            $monthly[$name]['data'][$key]['battles'] = floor($data['battles'] / 45.0);
+        foreach($last30[$name]['data'] as $key => $data)
+            $last30[$name]['data'][$key]['battles'] = floor($data['battles'] / 45.0);
     }
 }
 

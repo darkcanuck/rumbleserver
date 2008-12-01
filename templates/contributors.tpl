@@ -8,7 +8,7 @@
 {foreach from=$monthly key=id item=game}
 <div class="inline">
     <h3>{$game.title}</h3>
-    <table id="rumblemonthly" class="rankings">
+    <table id="monthly{$id}" class="rankings">
       <thead><tr>
       	<th>User</th><th># Battles</th><th>Last Battle</th>
       </tr></thead>
@@ -29,7 +29,7 @@
 {foreach from=$last30 key=id item=game}
 <div class="inline">
     <h3>{$game.title}</h3>
-    <table id="rumblemonthly" class="rankings">
+    <table id="last30{$id}" class="rankings">
       <thead><tr>
       	<th>User</th><th># Battles</th><th>Last Battle</th>
       </tr></thead>

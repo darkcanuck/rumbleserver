@@ -12,7 +12,6 @@
     <th>Competitor</th>
     <th>APS</th>
     <th>ELO Rating</th>
-    <th>G-Rating (RD)</th>
     <th>Glicko-2 (RD)</th>
     <!-- <th>Details</th> -->
     <th>Battles</th>
@@ -29,7 +28,6 @@
         <a href="RatingsDetails?game={$game}&amp;name={$bot.name|escape}" title="Details for {$bot.name}">{$bot.name}</a></td>
     <td>{$bot.score_pct|string_format:"%.2f"}</td>
     <td>{$bot.rating_classic|string_format:"%.1f"}</td>
-    <td>{$bot.rating_glicko|string_format:"%.1f"} ({$bot.rd_glicko|string_format:"%.0f"})</td>
     <td>{$bot.rating_glicko2|string_format:"%.1f"} ({$bot.rd_glicko2|string_format:"%.0f"})</td>
     <!-- <td><a href="RatingsDetails?game={$game}&amp;name={$bot.name|escape}">details</a> / 
         <a href="RatingsLRP?game={$game}&amp;name={$bot.name|escape}">LRP</a></td> -->
@@ -43,7 +41,5 @@
 </table>
 
 <p><b>Total battles = {$totalbattles}</b></p>
-<p><em>G-Ratings</em> are calculated using the the <a href="http://math.bu.edu/people/mg/glicko/glicko.doc/glicko.html">Glicko rating system</a>
-by Mark E. Glickman.  Default ratings for new competitors are set at 1500 with a ratings deviation (RD) of 350.</p>
 
 {include file="footer.tpl"}

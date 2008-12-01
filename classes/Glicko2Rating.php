@@ -110,7 +110,10 @@ class Glicko2Rating {
 	}
 	
 	function calcExpected($rating, $rj, $RDj) {
-		return $this->E( (float)($rating/1000.0), (float)($rj/1000.0), (float)($RDj/1000.0) ) * 100.0;
+	    $mu    = ( ((float)$rating/1000.0) - $this->init_rating) / $this->convert;
+	    $mu_j  = ( ((float)$rj/1000.0) - $this->init_rating) / $this->convert;
+		$phi_j = ((float)$RDj/1000.0) / $this->convert;
+		return ($this->E($mu, $mu_j, $phi_j) * 100.0);
 	}
 	
 	function calcRating($rating, $deviation, $volatility, $battles, $glicko, $updates) {
@@ -124,6 +127,9 @@ class Glicko2Rating {
 		return $newrating;
 	}
 	
+	function eloScale($rating) {
+	    return (($rating-1500.0) * 1.53 + 1600.0);
+	}
 }
 
 ?>

@@ -36,6 +36,7 @@ $details['special'] = 0.0;
 foreach (array('score_pct', 'score_dmg', 'score_survival', 'rating_classic', 'rating_glicko', 'rd_glicko',
                 'rating_glicko2', 'rd_glicko2', 'vol_glicko2') as $f)
     $details[$f] /= 1000.0;
+$details['rating_glicko2'] = $glicko2->eloScale($details['rating_glicko2']);
 $details['vol_glicko2'] /= 1000.0;
 $details['percent_wins'] = $details['count_wins']/($details['pairings']>0 ? $details['pairings'] : 1) * 100.0;
 $details['percent_score'] = $details['score_pct']/100.0;
@@ -58,7 +59,8 @@ foreach ($allrows as $k=>$rs) {
     $allrows[$k]['rating_classic'] = $partylist[ $rs['vs_id'] ]['rating_classic'] / 1000.0;
     $allrows[$k]['rating_glicko'] = $partylist[ $rs['vs_id'] ]['rating_glicko'] / 1000.0;
 	$allrows[$k]['rd_glicko'] = $partylist[ $rs['vs_id'] ]['rd_glicko'] / 1000.0;
-	$allrows[$k]['rating_glicko2'] = $partylist[ $rs['vs_id'] ]['rating_glicko2'] / 1000.0;
+	//$allrows[$k]['rating_glicko2'] = $partylist[ $rs['vs_id'] ]['rating_glicko2'] / 1000.0;
+	$allrows[$k]['rating_glicko2'] = $glicko2->eloScale((float)$partylist[ $rs['vs_id'] ]['rating_glicko2'] / 1000.0);
 	$allrows[$k]['rd_glicko2'] = $partylist[ $rs['vs_id'] ]['rd_glicko2'] / 1000.0;
 	$allrows[$k]['vol_glicko2'] = $partylist[ $rs['vs_id'] ]['vol_glicko2'] / 1000000.0;
 	
@@ -67,7 +69,7 @@ foreach ($allrows as $k=>$rs) {
 	$allrows[$k]['expected_glicko'] = $glicko->calcExpected($bot['rating_glicko'],
 									$partylist[ $rs['vs_id'] ]['rating_glicko'],
 									$partylist[ $rs['vs_id'] ]['rd_glicko'] );
-	$allrows[$k]['expected_glicko2'] = $elo->calcExpected($bot['rating_glicko2'],
+	$allrows[$k]['expected_glicko2'] = $glicko2->calcExpected($bot['rating_glicko2'],
 									$partylist[ $rs['vs_id'] ]['rating_glicko2'],
 									$partylist[ $rs['vs_id'] ]['rd_glicko2'] );
 									

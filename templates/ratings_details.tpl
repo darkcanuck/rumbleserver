@@ -12,8 +12,6 @@
   <tbody>
 	<tr><td>"Classic" Elo Rating</td>
 	    <td>{$details.rating_classic|string_format:"%.1f"}</td></tr>
-	<tr><td>Glicko Rating (RD)</td>
-	    <td>{$details.rating_glicko|string_format:"%.1f"} ({$details.rd_glicko|string_format:"%.0f"})</td></tr>
 	<tr><td>Glicko-2 (RD, volatility)</td>
 	    <td>{$details.rating_glicko2|string_format:"%.1f"}
 		    ({$details.rd_glicko2|string_format:"%.0f"}, {$details.vol_glicko2|string_format:"%.3f"})</td></tr>

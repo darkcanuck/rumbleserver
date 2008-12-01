@@ -5,6 +5,8 @@ require_once 'classes/common.php';
 require_once 'Smarty/Smarty.class.php';
 $template = new Smarty();
 
+require_once 'classes/Glicko2Rating.php';
+$glicko2 = new Glicko2Rating();
 
 // determine game type
 $version = trim(isset($_GET['version']) ? $_GET['version'] : '');
@@ -33,7 +35,8 @@ foreach ($allrows as $k=>$rs) {
 	$allrows[$k]['rating_classic'] /= 1000;
 	$allrows[$k]['rating_glicko'] /= 1000;
 	$allrows[$k]['rd_glicko'] /= 1000;
-	$allrows[$k]['rating_glicko2'] /= 1000;
+	//$allrows[$k]['rating_glicko2'] /= 1000;
+	$allrows[$k]['rating_glicko2'] = $glicko2->eloScale((float)$allrows[$k]['rating_glicko2']/1000.0);
 	$allrows[$k]['rd_glicko2'] /= 1000;
 	$allrows[$k]['vol_glicko2'] /= 1000000;
 	

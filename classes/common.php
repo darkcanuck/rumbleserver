@@ -8,6 +8,9 @@ $err = new ErrorHandler();
 if ($_SERVER['REMOTE_ADDR']=='127.0.0.1')
     $err->setDebugMode(true);
 
+// check for banned users
+require_once 'classes/banned.php';
+
 // config includes
 require_once 'config/config.php';
 

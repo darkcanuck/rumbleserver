@@ -5,11 +5,12 @@ require_once 'classes/common.php';
 $err->setClient(true);
 ignore_user_abort(true);	// don't stop if client disconnects!
 
-//$removelist = array('darkcanuck.Gaff_1.28a',
-//                    'mz.Movement_1.8',
-//                    'ags.rougedc.RougeDC_Gamma2');
-//if (($_POST['game']=='roborumble') && !in_array($_POST['name'], $removelist))
-//    die('Function temporarily disabled!  ' . substr($_POST['name'], 0, 70));
+if ($properties->get('disable_remove'))
+    trigger_error('Function temporarily disabled.  Please try again later.', E_USER_ERROR);
+
+//if (!isset($_POST['user']) || ($_POST['user']!='darkcanuck'))
+//    trigger_error('Function temporarily disabled!  ' . substr($_POST['name'], 0, 70), E_USER_ERROR);
+//$debug_user = true;
 
 
 /* check RoboRumble client version */
@@ -51,6 +52,10 @@ if (isset($_POST['version'])) {
 			trigger_error('Client version ' . substr($version, 0, 10) . ' is not supported by this server!', E_USER_ERROR);
 			break;
 	}
+	
+	// debugging
+	if (($_SERVER['REMOTE_ADDR']=='127.0.0.1') || $debug_user)
+		echo str_replace(array('[',']','<','>'), '|', $db->debug());
 	
 } else {
 	//missing version parameter

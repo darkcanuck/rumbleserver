@@ -6,6 +6,9 @@ require_once 'classes/PostRequest.php';
 $err->setClient(true);
 ignore_user_abort(true);	// don't stop if client disconnects!
 
+if ($properties->get('disable_upload'))
+    trigger_error('Function temporarily disabled.  Please try again later.', E_USER_ERROR);
+    
 $debug_user = false;
 if (isset($_POST['user'])) {
     $debug_user = (strpos($_POST['user'], '-debug')!==false);

@@ -90,9 +90,11 @@ class Participants {
 			
 			$battles = new BattleResults($this->db);
 			$battles->updateState($this->game, $id, STATE_RATED, STATE_RETIRED);
+			$battles->updateState($this->game, $id, STATE_RETIRED, STATE_RETIRED2);
 			
 			$pairings = new GamePairings($this->db, $this->game);
 			$pairings->updateState($id, STATE_OK, STATE_RETIRED);
+			$pairings->updateState($id, STATE_RETIRED, STATE_RETIRED2);
 			
 			$this->updateParticipant($id);
 		} else {
@@ -142,12 +144,14 @@ class Participants {
 		set_time_limit(600);
         
 		$battles = new BattleResults($this->db);
-		$battles->updateState($this->game, $id, STATE_RETIRED, STATE_NEW);		// could do all, but want to exclude 'X' state
-		$battles->updateState($this->game, $id, STATE_RETIRED, STATE_OK);
+		//$battles->updateState($this->game, $id, STATE_RETIRED, STATE_NEW);		// could do all, but want to exclude 'X' state
+		//$battles->updateState($this->game, $id, STATE_RETIRED, STATE_OK);
+		$battles->updateState($this->game, $id, STATE_RETIRED2, STATE_RETIRED);     // 2nd retire for this pair
 		$battles->updateState($this->game, $id, STATE_RETIRED, STATE_RATED);
 		
 		$pairings = new GamePairings($this->db, $this->game);
-		$pairings->updateState($id, STATE_RETIRED, STATE_NEW);
+		//$pairings->updateState($id, STATE_RETIRED, STATE_NEW);
+		$pairings->updateState($id, STATE_RETIRED2, STATE_RETIRED);     // 2nd retire for this pair
 		$pairings->updateState($id, STATE_RETIRED, STATE_OK);
 		
 		$this->updateParticipant($id, STATE_RETIRED);

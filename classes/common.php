@@ -34,6 +34,7 @@ define('STATE_OK',      '1');	// done pairing processing
 define('STATE_RATED',   '2');	// done ratings processing
 define('STATE_LOCKED',  'L');	// locked for ratings processing
 define('STATE_RETIRED', 'R');	// retired; in results table, requires rebuild if re-activated
+define('STATE_RETIRED2','S');   // both bots in pair retired
 define('STATE_REMOVED', 'X');	// possibly bad result, needs rebuild if re-activated
 
 

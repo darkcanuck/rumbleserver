@@ -149,10 +149,12 @@ class BattleResults {
 		$id = mysql_escape_string($bot_id);
 		$qry = "UPDATE battle_results SET state='" . mysql_escape_string($newstate) . "'
 				WHERE  gametype = '" . mysql_escape_string($gametype) . "'
-				  AND  (bot_id='$id' OR vs_id='$id') ";
+				  AND  %s='$id' ";
 		if ($oldstate!='')
 			$qry .= " AND state='" . mysql_escape_string($oldstate) . "'";
-		return ($this->db->query($qry) > 0);
+		$qry1 = sprintf($qry, 'bot_id');
+		$qry2 = sprintf($qry, 'vs_id');
+		return ( ($this->db->query($qry1) + $this->db->query($qry2)) > 0);
 	}
 	
 	function getNewBattles($limit=100, $state=STATE_OK) {

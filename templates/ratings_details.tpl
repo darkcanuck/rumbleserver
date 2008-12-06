@@ -43,6 +43,7 @@
   <thead><tr>
     <th>Enemy</th>
     <th>% Score</th>
+    <th>Survival</th>
     <th>Elo Rating</th>
     <th>Battles</th>
     <th>Last Battle</th>
@@ -57,6 +58,7 @@
     <td><img src="flags/{$bot.package}.gif" alt="Flag for {$bot.package}" />
         <a href="RatingsDetails?game={$game}&amp;name={$bot.vs_name|escape}" title="Details for {$bot.vs_name}">{$bot.vs_name}</a></td>
     <td{if $bot.score_pct gt 60} class="highScore"{elseif $bot.score_pct lt 40} class="lowScore"{/if}>{$bot.score_pct|string_format:"%.2f"}</td>
+    <td{if $bot.score_survival gt 60} class="highScore"{elseif $bot.score_survival lt 40} class="lowScore"{/if}>{$bot.score_survival|string_format:"%.2f"}</td>
     <td>{$bot.rating_classic|string_format:"%.1f"}</td>
     <td>{$bot.battles}</td>
     <td>{$bot.timestamp}</td>

@@ -29,7 +29,8 @@ class GamePairings {
 		$qrystring = "SELECT gametype, bot_id, vs_id, battles, score_pct, score_dmg, " .
 						" score_survival, count_wins, timestamp " .
 				        " FROM   game_pairings " .
-				        " WHERE  gametype = '%s' AND bot_id=%u AND vs_id=%u ";
+				        " WHERE  gametype = '%s' AND bot_id=%u AND vs_id=%u " .
+				        " FOR UPDATE ";     // write locks rows if inside transaction
 		$qry1 = sprintf($qrystring, $this->gametype[0], (int)$this->id1, (int)$this->id2);
 		$qry2 = sprintf($qrystring, $this->gametype[0], (int)$this->id2, (int)$this->id1);
 		
@@ -37,6 +38,9 @@ class GamePairings {
 		    $this->pairing[ $this->id1 ] = $this->db->next();
         if ($this->db->query($qry2) > 0)
 		    $this->pairing[ $this->id2 ] = $this->db->next();
+		
+		if ( (count($this->pairing) != 0) && (count($this->pairing) != 2) )
+		    trigger_error("Corrupted pairing data!!!", E_USER_ERROR);
 		
 		if (($this->pairing==null) || (count($this->pairing)<2)) {
 			$this->newpair = true;

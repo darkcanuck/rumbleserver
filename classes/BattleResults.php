@@ -57,7 +57,7 @@ class BattleResults {
 		}
 		
 		/* lock tables for faster inserts */
-		set_time_limit(5);  // don't wait forever for locks
+/*      set_time_limit(5);  // don't wait forever for locks
 		$this->db->query('LOCK TABLES
 									battle_results WRITE,
 									game_pairings WRITE, game_pairings AS g WRITE,
@@ -65,7 +65,9 @@ class BattleResults {
 									bot_data WRITE, bot_data AS b WRITE,
 									upload_users WRITE,
 									upload_stats WRITE');
+*/
         set_time_limit(600);    // allow time to finish once we have locks
+        $this->db->query('START TRANSACTION');
         
 		/* update participants list & get bot id's*/
 		$party = new Participants($this->db, $this->gametype);
@@ -95,6 +97,9 @@ class BattleResults {
 											'survival' => $this->survival2)
 						);
 		$pairing->updateScores($scores);
+		
+		$this->db->query('COMMIT');
+		
 		$allpairings = $pairing->getAllPairings();
 		
 		/* update ratings */
@@ -104,7 +109,7 @@ class BattleResults {
 		$party->updateScores($this->id2, $updates[$this->id2]);
 		
 		/* all updates done - unlock tables */
-		$this->db->query('UNLOCK TABLES');
+//		$this->db->query('UNLOCK TABLES');
 		
 		/* determine missing pairings */
 		$complete = array($this->id1 => array($this->id1 => 1), $this->id2 => array($this->id2 => 1));

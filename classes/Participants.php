@@ -135,13 +135,14 @@ class Participants {
 		$bot = new BotData($name);
 		$id = $bot->getID($this->db, false);
         
-		$this->db->query('LOCK TABLES
+/*		$this->db->query('LOCK TABLES
 									battle_results WRITE,
 									game_pairings WRITE, game_pairings AS g WRITE,
 									participants WRITE, participants AS p WRITE'
 									);
-									
+*/									
 		set_time_limit(600);
+        $this->db->query('START TRANSACTION');
         
 		$battles = new BattleResults($this->db);
 		//$battles->updateState($this->game, $id, STATE_RETIRED, STATE_NEW);		// could do all, but want to exclude 'X' state
@@ -156,7 +157,9 @@ class Participants {
 		
 		$this->updateParticipant($id, STATE_RETIRED);
 		
-		$this->db->query('UNLOCK TABLES');
+		$this->db->query('COMMIT');
+		
+//		$this->db->query('UNLOCK TABLES');
 		
 		return true;
 	}

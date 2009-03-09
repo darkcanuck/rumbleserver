@@ -13,6 +13,8 @@ class BotData {
 	
 	function __construct($fullname) {
 		$this->fullname = trim($fullname);
+		if (preg_match('/[^a-zA-Z0-9 \-]/', $fullname))
+			trigger_error('Invalid characters in robot name "' . substr($fullname, 0, 50) . '"', E_USER_ERROR);
 		
 		$parts = explode(' ', $this->fullname, 2);
 		$this->version = $parts[1];
@@ -44,7 +46,7 @@ class BotData {
 		}
 		
 		if (!$addifmissing)
-			return -1;
+			trigger_error('Could not find bot "' . substr($this->fullname, 0, 50) . ' in database!', E_USER_ERROR);
 		
 		// bot missing from database, create record
 		$qry = 	sprintf("INSERT INTO bot_data SET full_name = '%s', package_name = '%s',

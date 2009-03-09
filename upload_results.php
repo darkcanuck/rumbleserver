@@ -97,7 +97,7 @@ if (isset($_POST['version'])) {
 				break;
 		}
 	}
-	sleep(2);
+	sleep(1);
 	// return number of battles
 	if (isset($botdata['battles']))
 		echo("\n<{$botdata['battles'][0]} {$botdata['battles'][1]}>");

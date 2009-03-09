@@ -13,7 +13,7 @@ class BotData {
 	
 	function __construct($fullname) {
 		$this->fullname = trim($fullname);
-		if (preg_match('/[^a-zA-Z0-9 \-]/', $fullname))
+		if (preg_match('/[^a-zA-Z0-9 \.\-]/', $this->fullname))
 			trigger_error('Invalid characters in robot name "' . substr($fullname, 0, 50) . '"', E_USER_ERROR);
 		
 		$parts = explode(' ', $this->fullname, 2);

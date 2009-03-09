@@ -6,14 +6,14 @@ require_once 'classes/PostRequest.php';
 $err->setClient(true);
 ignore_user_abort(true);	// don't stop if client disconnects!
 
-if ($properties->get('disable_upload'))
-    trigger_error('Function temporarily disabled.  Please try again later.', E_USER_ERROR);
-    
 $debug_user = false;
 if (isset($_POST['user'])) {
     $debug_user = (strpos($_POST['user'], '-debug')!==false);
     $_POST['user'] = str_replace('-debug', '', $_POST['user']);
 }
+
+if (!$debug_user && $properties->get('disable_upload'))
+    trigger_error('Function temporarily disabled.  Please try again later.', E_USER_ERROR);
 
 /* other servers to relay results to */
 //$rumbleURLS = array('http://abchome.aclsi.pt:8080/rumble/UploadedResults');
@@ -52,10 +52,19 @@ if (isset($_POST['version'])) {
 			$params['bulletdmg2'] = $_POST['sbulletd'];
 			$params['survival2']  = $_POST['ssurvival'];
 			
-			// filter out funny data
-			if (($params['bot1']=='jk.mega.DrussGT 1.2.7') || ($params['bot2']=='jk.mega.DrussGT 1.2.7'))
-			    trigger_error('Stop uploading results for DrussGT 1.2.7!  Check your client configuration.', E_USER_ERROR);
-			
+			// filter out bad data
+			$bad_bots = array('jk.mega.DrussGT 1.2.7',
+			                  'nat.nano.OcnirpSNG 1.1 4', 'nat.nano.OcnirpSNG_1.1 4', 'nat.nano.OcnirpSNG 1.1_4',
+			                  'nat.nano.OcnirpSNG 1.1 3', 'nat.nano.OcnirpSNG_1.1 3', 'nat.nano.OcnirpSNG 1.1_3',
+			                  'nat.nano.OcnirpSNG 1.1 2', 'nat.nano.OcnirpSNG_1.1 2', 'nat.nano.OcnirpSNG 1.1_2',
+			                  'nat.Carola 0.3',
+			                  'nat.kitty.NanoKitty 0.5',
+			                  'elvbot.ElverionBot 0.2'
+			                  );
+			foreach($bad_bots as $bb) {
+			  if (($params['bot1']==$bb) || ($params['bot2']==$bb))
+			    trigger_error('Stop uploading results for ' . $bb . '!  Check your client configuration. (Duplicate)', E_USER_ERROR);
+			}
 			$gametype->checkScores($params);
 			break;
 			
@@ -88,7 +97,7 @@ if (isset($_POST['version'])) {
 				break;
 		}
 	}
-	
+	sleep(2);
 	// return number of battles
 	if (isset($botdata['battles']))
 		echo("\n<{$botdata['battles'][0]} {$botdata['battles'][1]}>");
@@ -103,8 +112,8 @@ if (isset($_POST['version'])) {
 	//}
 	
 	// debugging
-	if (($_SERVER['REMOTE_ADDR']=='127.0.0.1') || $debug_user)
-		echo str_replace(array('[',']','<','>'), '|', $db->debug());
+	//if (($_SERVER['REMOTE_ADDR']=='127.0.0.1') || $debug_user)
+	//	echo str_replace(array('[',']','<','>'), '|', $db->debug());
     
 } else {
 	//missing version parameter

@@ -6,7 +6,7 @@ $(document).ready(function() {
             });
          $("#pairingdata").tablesorter( {
             widgets: ['zebra'],
-            headers: { 5: {sorter: false} },
+            headers: { 6: {sorter: false} },
             sortList: [ [0, 0] ]
         });
         $("#battledata").tablesorter( {

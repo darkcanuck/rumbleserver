@@ -127,7 +127,6 @@ CREATE TABLE `battle_results` (
 	PRIMARY KEY (`gametype`, `bot_id`, `vs_id`, `timestamp`, `millisecs`),
 	KEY `scoring` (`gametype`, `bot_id`, `state`),
 	KEY `versus` (`gametype`, `vs_id`, `state`),
-	KEY `updates` (`state`, `created`),
 	KEY `uploads` (`gametype`, `user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 

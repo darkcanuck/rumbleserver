@@ -12,6 +12,8 @@
  *
  * Modified for use in the RoboRumble PHP Server project by:
  *				Jerome Lavigne <jerome@vapourtrails.ca>
+ *
+ * $Id$
  ******************************************************************************/
 
 class DBlite_MySQL {

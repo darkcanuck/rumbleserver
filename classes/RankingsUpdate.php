@@ -1,4 +1,18 @@
 <?php
+/******************************************************************************
+ * RankingsUpdate class  --  Darkcanuck's Roborumble Server
+ *
+ * TODO:  this class needs to be cleaned up!
+ *          The updateScores method is obsolete
+ *
+ * $HeadURL$
+ * $Date$
+ * $Revision$
+ * $Author$
+ *
+ * Copyright 2008-2009 Jerome Lavigne (jerome@darkcanuck.net)
+ * Released under GPL version 3.0 http://www.gnu.org/licenses/gpl-3.0.html
+ *****************************************************************************/
 
 require_once 'EloRating.php';
 require_once 'GlickoRating.php';

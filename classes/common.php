@@ -1,4 +1,15 @@
 <?php
+/******************************************************************************
+ * Common startup/init script  --  Darkcanuck's Roborumble Server
+ *
+ * $HeadURL$
+ * $Date$
+ * $Revision$
+ * $Author$
+ *
+ * Copyright 2008-2009 Jerome Lavigne (jerome@darkcanuck.net)
+ * Released under GPL version 3.0 http://www.gnu.org/licenses/gpl-3.0.html
+ *****************************************************************************/
 
 // error handling
 error_reporting(E_ALL);		// applies for errors not caught by error handler

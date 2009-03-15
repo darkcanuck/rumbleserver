@@ -1,6 +1,19 @@
 <?php
-
-/* Glicko Rating System */
+/******************************************************************************
+ * Glicko2Rating class  --  Darkcanuck's Roborumble Server
+ *
+ * $HeadURL$
+ * $Date$
+ * $Revision$
+ * $Author$
+ *
+ * Copyright 2008-2009 Jerome Lavigne (jerome@darkcanuck.net)
+ * Released under GPL version 3.0 http://www.gnu.org/licenses/gpl-3.0.html
+ *
+ * Credits:
+ *  Based on the Glicko-2 rating system created by Mark E. Glickman
+ *      see http://math.bu.edu/people/mg/glicko/glicko2.doc/example.html
+ *****************************************************************************/
 
 class Glicko2Rating {
 

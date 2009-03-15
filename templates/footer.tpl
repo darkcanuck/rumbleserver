@@ -1,4 +1,4 @@
-{* Smarty Template *}
+{* $Id$ *}
 
 	<div class="footer">
 	</div>

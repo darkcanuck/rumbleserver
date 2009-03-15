@@ -1,7 +1,20 @@
 <?php
+/******************************************************************************
+ * Ranking List client request  --  Darkcanuck's Roborumble Server
+ *
+ * Text-based version needed by rumble client.
+ *
+ * $HeadURL$
+ * $Date$
+ * $Revision$
+ * $Author$
+ *
+ * Copyright 2008-2009 Jerome Lavigne (jerome@darkcanuck.net)
+ * Released under GPL version 3.0 http://www.gnu.org/licenses/gpl-3.0.html
+ *****************************************************************************/
+
 
 require_once 'classes/common.php';
-
 
 $err->setClient(true);
 $err->setNoOutput(true);

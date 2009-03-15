@@ -1,4 +1,4 @@
-{{* Smarty Template *}}
+{{* $Id$ *}}
 {
 "name": "{{$name}}",
 "game": "{{$game}}",

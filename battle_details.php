@@ -45,7 +45,8 @@ $sortcol = array();
 $sorttime = array();
 foreach ($allrows as $k=>$rs) {
 	$allrows[$k]['score_pct'] = $rs['bot_score'] / ($rs['bot_score'] + $rs['vs_score']) * 100;
-	$allrows[$k]['score_survival'] = $rs['bot_survival'] / ($rs['bot_survival'] + $rs['vs_survival']) * 100;
+	$allrows[$k]['score_survival'] = ($rs['bot_survival']+$rs['vs_survival'] > 0) ?
+                                    $rs['bot_survival'] / ($rs['bot_survival'] + $rs['vs_survival']) * 100 : 0.0;
 	
 	if ($fields==null) {
 		// initialize sorting

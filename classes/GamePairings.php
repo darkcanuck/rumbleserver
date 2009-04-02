@@ -127,7 +127,8 @@ class GamePairings {
 	}
 	
 	function calcScorePercent($score1, $score2, $lastscore, $battles) {
-		return (int) ( (($score1 / ($score1+$score2) * 100 * 1000) + ($lastscore * $battles)) / ($battles+1) );
+	    $pctscore = (($score1+$score2)>0) ? $score1 / ($score1+$score2) : 0.0 ;
+		return (int) ( (($pctscore * 100 * 1000) + ($lastscore * $battles)) / ($battles+1) );
 	}
 	
 	function getAllPairings() {

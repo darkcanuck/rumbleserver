@@ -93,7 +93,7 @@ class ErrorHandler {
 			// special handling for clients - reduced error messages
 			if (in_array($errno, $this->fatal_errors)) {
 				// fail and exit
-				die("FAIL.  $errclean\n");
+				die( ((substr($errclean,0,2)=='OK') ? '' : 'FAIL. ') . $errclean . "\n");
 			}
 			// ignore non-fatal errors
 		

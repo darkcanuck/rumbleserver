@@ -30,6 +30,9 @@ if (!$debug_user && $properties->get('disable_upload'))
 //$rumbleURLS = array('http://abchome.aclsi.pt:8080/rumble/UploadedResults');
 //$relayGames = array('R', 'X', 'Y', 'Z');
 
+//if ($debug_user) {
+//    echo str_replace(array('<', '>', '[', ']'), '|', print_r($_POST, true));
+//}
 
 /* check RoboRumble client version */
 $params = array();
@@ -38,22 +41,46 @@ if (isset($_POST['version'])) {
 
 	switch ($params['version']) {
 		
-		case "1":
-			/* "classic" client, can't determine exact version
+		case '1':
+			/* "classic" client, can't always determine exact version for older clients
 			 *
 			 *  Supplies the following values:
 			 *  	version, game, rounds, field, user time, fname, fscore, fbulletd, fsurvival, sname, sscore, sbulletd, ssurvival
+			 *
+			 *  1.6.2 and later clients also provide: client, melee, teams
 			 */
 			
-			// determine game type
-			$gametype = new GameType($params['version'], $_POST['game'], $_POST['field'], $_POST['rounds']);
-			$gametype->isValid();
+			// set game data
+			$params['game']       = $_POST['game'];
+			$params['field']      = $_POST['field'];
+			$params['rounds']     = $_POST['rounds'];
+			
+			// client detection for newer versions
+            if (isset($_POST['client'])) {
+			    $params['client'] = trim($_POST['client']);
+                $params['melee']  = strtoupper($_POST['melee']);
+                $params['teams']  = strtoupper($_POST['teams']);
+			    
+			    // version check
+			    $version_allowed = array('1.5.4', '1.6.0');
+			    $version_ok = false;
+			    foreach($version_allowed as $ver) {
+			        if($params['client']==$ver)
+			            $version_ok = true;
+			    }
+			    if (!$version_ok)
+			        trigger_error('OK. Client version ' . substr($params['client'], 0, 10) . ' is not supported by this server! ' .
+			                    'Please use one of these: ' . implode(', ', $version_allowed), E_USER_ERROR);
+			} else {
+			    $params['client'] = '1.x.x';    // older than 1.6.2
+                $params['melee']  = (stristr($params['game'], 'melee')===false) ? 'NOT' : 'YES';
+                $params['teams']  = (stristr($params['game'], 'team')===false) ? 'NOT' : 'YES';
+			}
 			
 			// set results data
 			$params['user']       = $_POST['user'];
 			$params['ip_addr']    = (isset($_POST['import']) ? 'import' : $_SERVER['REMOTE_ADDR']);
 			$params['timestamp']  = $_POST['time'];
-			$params['gametype']   = $gametype->getCode();
 			$params['bot1']       = $_POST['fname'];
 			$params['score1']     = $_POST['fscore'];
 			$params['bulletdmg1'] = $_POST['fbulletd'];
@@ -63,15 +90,15 @@ if (isset($_POST['version'])) {
 			$params['bulletdmg2'] = $_POST['sbulletd'];
 			$params['survival2']  = $_POST['ssurvival'];
 			
+			// determine game type
+			$gametype = new GameType($params);
+			$gametype->isValid();
+            $params['gametype']   = $gametype->getCode();
+            
 			// filter out bad data
-			$bad_bots = array('jk.mega.DrussGT 1.2.7',
-			                  'nat.nano.OcnirpSNG 1.1 4', 'nat.nano.OcnirpSNG_1.1 4', 'nat.nano.OcnirpSNG 1.1_4',
+			$bad_bots = array('nat.nano.OcnirpSNG 1.1 4', 'nat.nano.OcnirpSNG_1.1 4', 'nat.nano.OcnirpSNG 1.1_4',
 			                  'nat.nano.OcnirpSNG 1.1 3', 'nat.nano.OcnirpSNG_1.1 3', 'nat.nano.OcnirpSNG 1.1_3',
-			                  'nat.nano.OcnirpSNG 1.1 2', 'nat.nano.OcnirpSNG_1.1 2', 'nat.nano.OcnirpSNG 1.1_2',
-			                  'nat.Carola 0.3',
-			                  'nat.kitty.NanoKitty 0.5',
-			                  'elvbot.ElverionBot 0.2'
-			                  );
+			                  'nat.nano.OcnirpSNG 1.1 2', 'nat.nano.OcnirpSNG_1.1 2', 'nat.nano.OcnirpSNG 1.1_2');
 			foreach($bad_bots as $bb) {
 			  if (($params['bot1']==$bb) || ($params['bot2']==$bb))
 			    trigger_error('Stop uploading results for ' . $bb . '!  Check your client configuration. (Duplicate)', E_USER_ERROR);
@@ -81,7 +108,7 @@ if (isset($_POST['version'])) {
 			
 		default:
 			// unsupported client
-			trigger_error('Client version ' . substr($version, 0, 10) . ' is not supported by this server!', E_USER_ERROR);
+			trigger_error('Client version ' . substr($params['version'], 0, 10) . ' is not supported by this server!', E_USER_ERROR);
 			break;
 	}
 	

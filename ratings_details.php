@@ -22,7 +22,7 @@ $template = new Smarty();
 // determine game type
 $version = 1;
 $game    = trim(isset($_GET['game']) ? $_GET['game'] : '');
-$gametype = new GameType($version, $game, '', '');
+$gametype = new GameType($version, $game);
 
 // check bot name
 $party = new Participants($db, $gametype->getCode());

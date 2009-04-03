@@ -16,7 +16,22 @@ class GameType {
 	private $code  = '';
 	private $valid = false;
 	
-	function __construct($version, $game, $field, $rounds) {
+	function __construct($data, $gamedata=null) {
+		
+		if (is_array($data)) {
+		    $version = $data['version'];
+		    $game    = $data['game'];
+		    $field   = $data['field'];
+		    $rounds  = $data['rounds'];
+		    $melee   = ($data['melee'] != 'NOT');
+		    $teams   = ($data['teams'] != 'NOT');
+	    } else {
+	        $version = $data;
+	        $game    = $gamedata;
+	        $field   = '';
+	        $melee   = '';
+	        $teams   = '';
+	    }
 		
 		switch ($version) {
 		
@@ -24,41 +39,41 @@ class GameType {
 				switch($game) {
 					case 'roborumble':
 						$this->code  = 'R';
-						$this->valid = ($field=='800x600') && ($rounds=='35');
+						$this->valid = ($field=='800x600') && ($rounds=='35') && !$melee && !$teams;
 						break;
 					case 'minirumble':
 						$this->code  = 'X';
-						$this->valid = ($field=='800x600') && ($rounds=='35');
+						$this->valid = ($field=='800x600') && ($rounds=='35') && !$melee && !$teams;
 						break;
 					case 'microrumble':
 						$this->code  = 'Y';
-						$this->valid = ($field=='800x600') && ($rounds=='35');
+						$this->valid = ($field=='800x600') && ($rounds=='35') && !$melee && !$teams;
 						break;
 					case 'nanorumble':
 						$this->code  = 'Z';
-						$this->valid = ($field=='800x600') && ($rounds=='35');
+						$this->valid = ($field=='800x600') && ($rounds=='35') && !$melee && !$teams;
 						break;
 					
 					case 'meleerumble':
 						$this->code  = 'M';
-						$this->valid = ($field=='1000x1000') && ($rounds=='35');
+						$this->valid = ($field=='1000x1000') && ($rounds=='35') && $melee && !$teams;
 						break;
 					case 'minimeleerumble':
 						$this->code  = 'N';
-						$this->valid = ($field=='1000x1000') && ($rounds=='35');
+						$this->valid = ($field=='1000x1000') && ($rounds=='35') && $melee && !$teams;
 						break;
 					case 'micromeleerumble':
 						$this->code  = 'O';
-						$this->valid = ($field=='1000x1000') && ($rounds=='35');
+						$this->valid = ($field=='1000x1000') && ($rounds=='35') && $melee && !$teams;
 						break;
 					case 'nanomeleerumble':
 						$this->code  = 'P';
-						$this->valid = ($field=='1000x1000') && ($rounds=='35');
+						$this->valid = ($field=='1000x1000') && ($rounds=='35') && $melee && !$teams;
 						break;
 						
 					case 'teamrumble':
 						$this->code  = 'T';
-						$this->valid = ($field=='1200x1200') && ($rounds=='10');
+						$this->valid = ($field=='1200x1200') && ($rounds=='10') && !$melee && $teams;
 						break;
 				}
 				break;

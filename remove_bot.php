@@ -40,7 +40,7 @@ if (isset($_POST['version'])) {
 			 */
 			
 			// determine game type
-			$gametype = new GameType($version, trim($_POST['game']), '', '');
+			$gametype = new GameType($version, trim($_POST['game']));
 			
 			// check bot name
 			if (!isset($_POST['name']) || empty($_POST['name']))

@@ -33,7 +33,7 @@ if (isset($_GET['version'])) {
 			 */
 			
 			// determine game type
-			$gametype = new GameType($version, trim(isset($_GET['game']) ? $_GET['game'] : ''), '', '');
+			$gametype = new GameType($version, trim(isset($_GET['game']) ? $_GET['game'] : ''));
 			$party = new Participants($db, $gametype->getCode());
 			foreach($party->getList() as $bot)
 				echo str_replace(' ', '_', $bot['name']) . '=' . $bot['rating_glicko']/1000 . ',' . $bot['battles'] . ',' . $bot['timestamp'] . "\n";

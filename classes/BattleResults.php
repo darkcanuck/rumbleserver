@@ -17,6 +17,7 @@ class BattleResults {
 	
 	// battle data
 	private $version    = '';
+	private $client     = '';
 	private $user       = '';
 	private $ip_addr    = '';
 	private $userid     = '';
@@ -42,6 +43,7 @@ class BattleResults {
 		// check battle data
 		$ok = true;	
 		$ok &= !empty($this->version);
+		$ok &= !empty($this->client);
 		$ok &= !empty($this->user);
 		$ok &= !empty($this->ip_addr);
 		$ok &= !empty($this->timestamp);		// TODO: sanity check!
@@ -67,16 +69,7 @@ class BattleResults {
 			trigger_error('Invalid data received: ' . print_r($this, true), E_USER_ERROR);
 		}
 		
-		/* lock tables for faster inserts */
-/*      set_time_limit(5);  // don't wait forever for locks
-		$this->db->query('LOCK TABLES
-									battle_results WRITE,
-									game_pairings WRITE, game_pairings AS g WRITE,
-									participants WRITE, participants AS p WRITE,
-									bot_data WRITE, bot_data AS b WRITE,
-									upload_users WRITE,
-									upload_stats WRITE');
-*/
+		/* start database transaction */
         set_time_limit(600);    // allow time to finish once we have locks
         $this->db->query('START TRANSACTION');
         
@@ -88,7 +81,7 @@ class BattleResults {
 		
 		/* get user upload id */
 		$users = new UploadUsers($this->db);
-		$this->userid = $users->getID($this->user, $this->ip_addr, $this->version);
+		$this->userid = $users->getID($this->user, $this->ip_addr, $this->client);
 		
 		/* save battle data */
 		$this->insertBattle();

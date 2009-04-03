@@ -22,7 +22,7 @@ $glicko2 = new Glicko2Rating();
 // determine game type
 $version = trim(isset($_GET['version']) ? $_GET['version'] : '');
 $game    = trim(isset($_GET['game']) ? $_GET['game'] : '');
-$gametype = new GameType($version, $game, '', '');
+$gametype = new GameType($version, $game);
 
 // get game results
 $party = new Participants($db, $gametype->getCode(), 'score_pct');

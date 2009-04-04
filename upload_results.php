@@ -62,7 +62,7 @@ if (isset($_POST['version'])) {
                 $params['teams']  = strtoupper($_POST['teams']);
 			    
 			    // version check
-			    $version_allowed = array('1.5.4', '1.6.0');
+			    $version_allowed = array('1.5.4', '1.6.0', '1.6.1.4');
 			    $version_ok = false;
 			    foreach($version_allowed as $ver) {
 			        if($params['client']==$ver)

@@ -30,9 +30,9 @@ if (!$debug_user && $properties->get('disable_upload'))
 //$rumbleURLS = array('http://abchome.aclsi.pt:8080/rumble/UploadedResults');
 //$relayGames = array('R', 'X', 'Y', 'Z');
 
-//if ($debug_user) {
+//if ($debug_user)
 //    echo str_replace(array('<', '>', '[', ']'), '|', print_r($_POST, true));
-//}
+
 
 /* check RoboRumble client version */
 $params = array();

@@ -15,7 +15,7 @@
       <tbody>
       {foreach from=$game.data key=id item=user}
       <tr>
-        <td>{$user.username}</td>
+        <td>{$user.username} ({$user.version})</td>
       	<td>{$user.battles}</td>
       	<td>{$user.updated}</td>
       </tr>
@@ -36,7 +36,7 @@
       <tbody>
       {foreach from=$game.data key=id item=user}
       <tr>
-        <td>{$user.username}</td>
+        <td>{$user.username} ({$user.version})</td>
       	<td>{$user.battles}</td>
       	<td>{$user.updated}</td>
       </tr>

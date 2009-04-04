@@ -162,13 +162,13 @@ class UploadUsers {
 	    $monthnum = sprintf('%02d', (int)$month);
 	    $start = "$year-$month-01";
 	    $end = "$year-$month-31";
-		$qry = "SELECT u.username AS username,
+		$qry = "SELECT u.username AS username, u.version as version,
 		                SUM(s.battles) AS battles,
 						MAX(s.date) AS updated
 				FROM {$this->statstable} AS s
 				INNER JOIN {$this->table} AS u ON s.user_id = u.user_id
 				WHERE s.gametype = '$game' AND s.date >= '$start' AND s.date <= '$end'
-				GROUP BY username
+				GROUP BY username, version
 				ORDER BY battles DESC";
 		if ($this->db->query($qry)>0)
 			return $this->db->all();
@@ -179,13 +179,13 @@ class UploadUsers {
 	function statsLast30($gametype) {
 	    $game = $gametype[0];
 	    $start = strftime('%Y-%m-%d', time() - (30 * 24 * 60 * 60));
-		$qry = "SELECT u.username AS username,
+		$qry = "SELECT u.username AS username, u.version as version,
 		                SUM(s.battles) AS battles,
 						MAX(s.date) AS updated
 				FROM {$this->statstable} AS s
 				INNER JOIN {$this->table} AS u ON s.user_id = u.user_id
 				WHERE s.gametype = '$game' AND s.date >= '$start'
-				GROUP BY username
+				GROUP BY username, version
 				ORDER BY battles DESC";
 		if ($this->db->query($qry)>0)
 			return $this->db->all();

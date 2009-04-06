@@ -72,7 +72,7 @@ if (isset($_POST['version'])) {
 			        trigger_error('OK. Client version ' . substr($params['client'], 0, 10) . ' is not supported by this server! ' .
 			                    'Please use one of these: ' . implode(', ', $version_allowed), E_USER_ERROR);
 			} else {
-			    $params['client'] = '1.x.x';    // older than 1.6.2
+			    $params['client'] = '1.0';    // older than 1.6.2
                 $params['melee']  = (stristr($params['game'], 'melee')===false) ? 'NOT' : 'YES';
                 $params['teams']  = (stristr($params['game'], 'team')===false) ? 'NOT' : 'YES';
 			}

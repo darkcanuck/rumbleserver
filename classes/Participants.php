@@ -19,7 +19,9 @@ class Participants {
 	private $plist = null;
 	private $pname = null;
 	private $order = '';
-		
+	
+	private $is_retired = false;
+	
 	function __construct($db, $gametype, $order='') {
 		$this->db = $db;
 		$this->game = $gametype;
@@ -43,27 +45,61 @@ class Participants {
 			$this->pname[ $rs['name'] ] =& $this->plist[ $rs['bot_id'] ];
 		}
 	}
-	
-	function getBot($id) {
-		if ($this->plist==null)
-			$this->queryList();
-		if (!isset($this->plist[ $id ]))
-			trigger_error('Invalid robot id "' . ( (int) $id ) . '"', E_USER_ERROR);
-		return $this->plist[ $id ];
-	}
-	
-	function getByName($name) {
-		if ($this->pname==null)
-			$this->queryList();
-		if (!isset($this->pname[ $name ]))
-			trigger_error('Invalid robot name "' . substr($name, 0, 50) . '"', E_USER_ERROR);
-		return $this->pname[ $name ];
-	}
-	
+		
 	function getList() {
 		if ($this->plist==null)
 			$this->queryList();
 		return $this->plist;
+	}
+	
+	function getBot($id, $retired=false) {
+		if ($this->plist==null)
+			$this->queryList();
+        if (isset($this->plist[ $id ]))
+            return $this->plist[ $id ];
+        if ($retired) {
+            $oldbot = $this->getRetired($id);
+            if ($oldbot!=null)
+                return $oldbot;
+        }
+        trigger_error('Invalid robot id "' . ( (int) $id ) . '"', E_USER_ERROR);
+	}
+	
+	function getByName($name, $retired=false) {
+		if ($this->pname==null)
+			$this->queryList();
+        if (isset($this->pname[ $name ]))
+            return $this->pname[ $name ];
+        if ($retired) {
+        	$bot = new BotData($name);
+    		$id = $bot->getID($this->db, false);
+            $oldbot = $this->getRetired($id);
+            if ($oldbot!=null)
+                return $oldbot;
+        }
+		trigger_error('Invalid robot name "' . substr($name, 0, 50) . '"', E_USER_ERROR);
+	}
+	
+	function getRetired($id) {
+		$qry = "SELECT p.bot_id, p.battles, p.score_pct, p.score_dmg, p.score_survival,
+						p.rating_classic, p.rating_glicko, p.rd_glicko,
+						p.rating_glicko2, p.rd_glicko2, p.vol_glicko2,
+						p.pairings, p.count_wins, p.timestamp,
+						b.full_name AS name, b.timestamp AS created
+				FROM  participants AS p INNER JOIN bot_data AS b ON p.bot_id = b.bot_id
+				WHERE p.gametype='" . mysql_escape_string($this->game) . "'
+				  AND p.state='" . STATE_RETIRED . "'
+				  AND p.bot_id='" . mysql_escape_string($id) . "'";
+        if ($this->db->query($qry) > 0) {
+            $this->is_retired = true;
+            return $this->db->next();
+        } else {
+            return null;
+        }
+	}
+	
+	function isRetired() {
+	    return $this->is_retired;
 	}
 	
 	function checkNames($botnames) {

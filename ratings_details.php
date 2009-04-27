@@ -27,11 +27,11 @@ $gametype = new GameType($version, $game);
 // check bot name
 $party = new Participants($db, $gametype->getCode());
 $name = trim(isset($_GET['name']) ? $_GET['name'] : '');
-$bot = $party->getByName($name);
+$bot = $party->getByName($name, true);
 
 // get pairings for bot
 $pairings = new GamePairings($db, $gametype->getCode());
-$allrows = $pairings->getBotPairings($gametype->getCode(), $bot['bot_id']);
+$allrows = $pairings->getBotPairings($gametype->getCode(), $bot['bot_id'], $party->isRetired());
 
 // ratings calc
 $partylist = $party->getList();

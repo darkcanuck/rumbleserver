@@ -215,7 +215,7 @@ class GamePairings {
 		*/
 	}
 	
-	function getBotPairings($game='', $id='', $order='vs_name') {
+	function getBotPairings($game='', $id='', $retired=false, $order='vs_name') {
 		$gametype = ($game!='') ? $game[0] : $this->gametype[0];
 		$id1 = (int)(($id!='') ? $id : $this->id1);
         $qry = "SELECT g.gametype AS gametype, g.bot_id AS bot_id,
@@ -228,7 +228,7 @@ class GamePairings {
 				INNER JOIN bot_data AS b ON g.vs_id = b.bot_id
 				WHERE g.gametype = '$gametype'
 				  AND g.bot_id = '$id1'
-				  AND g.state = '" . STATE_OK . "'
+				  AND g.state = '" . (($retired) ? STATE_RETIRED : STATE_OK) . "'
 				ORDER BY `" . mysql_escape_string($order) . "` ASC";
 		if ($this->db->query($qry)>0)
 			return $this->db->all();

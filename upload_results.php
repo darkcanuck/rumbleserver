@@ -75,6 +75,9 @@ if (isset($_POST['version'])) {
 			    $params['client'] = '1.0';    // older than 1.6.2
                 $params['melee']  = (stristr($params['game'], 'melee')===false) ? 'NOT' : 'YES';
                 $params['teams']  = (stristr($params['game'], 'team')===false) ? 'NOT' : 'YES';
+                
+                echo "  Please consider using the patched roborumble.jar files from the wiki.\n";
+                echo "  Let's make the rumble even better!  -- Darkcanuck\n";
 			}
 			
 			// set results data

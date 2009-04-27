@@ -3,7 +3,8 @@
 
 
 <h1>Current rankings for game "{$game}"</h1>
-<p>Results from Darkcanuck's experimental new RoboRumble server.  Stable results can be found from the RoboCode wiki.</p>
+
+<p>{$pagemessage}</p>
 <p>Generation time: {$gentime}</p>
 
 <table id="rankingdata" class="rankings">

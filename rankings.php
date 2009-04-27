@@ -35,6 +35,8 @@ $sort = trim(isset($_GET['sort']) ? $_GET['sort'] : '');
 $sortcol = array();
 $sortaps = array();
 $rank = 1;
+$maxpair = 0;
+$minpair = 0;
 foreach ($allrows as $k=>$rs) {
 	$chunks = explode('.', $rs['name']);
 	$allrows[$k]['package'] = $chunks[0];
@@ -57,6 +59,12 @@ foreach ($allrows as $k=>$rs) {
     
 	$total += $rs['battles'];
     
+    // check pairing min/max values
+    if (($minpair==0) || ($allrows[$k]['pairings'] > $minpair))
+        $minpair = $allrows[$k]['pairings'];
+    if ($allrows[$k]['pairings'] > $maxpair)
+        $maxpair = $allrows[$k]['pairings'];
+    
 	if ($fields==null) {
 		// initialize sorting
 		$fields = array_keys($allrows[$k]);
@@ -72,6 +80,13 @@ $total /= 2;	// because each bot counted twice
 if ($sort!=null)
 	array_multisort($sortcol, SORT_DESC, $sortaps, SORT_DESC, $allrows);
 
+// generate page message re pairings
+$totalpair = count($allrows) - 1;
+$message = "Pairings Complete";
+if ($minpair < $totalpair)
+    $message = "PAIRINGS INCOMPLETE -- results unstable until all bots have reached $totalpair pairings.";
+else if ($maxpair > $totalpair)
+    $message = "RESULTS UNSTABLE -- one or more bots have recently been removed and all bots need at least one battle before results stabilize.";
 
 // assign data to template & display results
 $template->assign('gentime', strftime('%Y-%m-%d %T %z'));
@@ -79,6 +94,7 @@ $template->assign('version', htmlspecialchars($version));
 $template->assign('game', htmlspecialchars($game));
 $template->assign('gametype', $gametype);
 $template->assign('totalbattles', $total);
+$template->assign('pagemessage', $message);
 $template->assign('rankings', $allrows);
 
 $template->display('rankings.tpl');

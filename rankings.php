@@ -60,10 +60,10 @@ foreach ($allrows as $k=>$rs) {
 	$total += $rs['battles'];
     
     // check pairing min/max values
-    if (($minpair==0) || ($allrows[$k]['pairings'] > $minpair))
-        $minpair = $allrows[$k]['pairings'];
-    if ($allrows[$k]['pairings'] > $maxpair)
-        $maxpair = $allrows[$k]['pairings'];
+    if (($minpair==0) || ($rs['pairings'] < $minpair))
+        $minpair = $rs['pairings'];
+    if ($rs['pairings'] > $maxpair)
+        $maxpair = $rs['pairings'];
     
 	if ($fields==null) {
 		// initialize sorting
@@ -82,11 +82,11 @@ if ($sort!=null)
 
 // generate page message re pairings
 $totalpair = count($allrows) - 1;
-$message = "Pairings Complete";
+$message = "PAIRINGS COMPLETE";
 if ($minpair < $totalpair)
-    $message = "PAIRINGS INCOMPLETE -- results unstable until all bots have reached $totalpair pairings.";
+    $message = "PAIRINGS INCOMPLETE -- results unstable until all competitors have reached $totalpair pairings.";
 else if ($maxpair > $totalpair)
-    $message = "RESULTS UNSTABLE -- one or more bots have recently been removed and all bots need at least one battle before results stabilize.";
+    $message = "RESULTS UNSTABLE -- one or more bots have recently been removed and all competitors need at least one battle before results can stabilize.";
 
 // assign data to template & display results
 $template->assign('gentime', strftime('%Y-%m-%d %T %z'));

@@ -45,7 +45,6 @@ $bot_pairs = $pairings->getBotPairings($gametype->getCode(), $bot['bot_id'], $bo
 $vs_pairs = $pairings->getBotPairings($gametype->getCode(), $vs['bot_id'], $vs['state']!='');
 
 // ratings calc
-//$partylist = $party->getList();
 $elo     = new EloRating();
 $glicko  = new GlickoRating();
 $glicko2 = new Glicko2Rating();
@@ -70,7 +69,6 @@ foreach($bot_pairs as $k=>$v)
 foreach($vs_pairs as $k=>$v)
     $allpairs[ $v['vs_name'] ]['vs_data'] = $v;
 ksort($allpairs, SORT_STRING);
-//die('<pre>'.print_r($bot_pairs, true).'</pre>');
 
 // calculate and sort
 $fields = null;

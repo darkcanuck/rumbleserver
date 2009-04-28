@@ -53,20 +53,24 @@ class Participants {
 	}
 	
 	function getBot($id, $retired=false) {
+		$this->is_retired = false;
 		if ($this->plist==null)
 			$this->queryList();
         if (isset($this->plist[ $id ]))
             return $this->plist[ $id ];
         if ($retired) {
             $oldbot = $this->getRetired($id);
-            if ($oldbot!=null)
+            if ($oldbot!=null) {
+                $this->is_retired = true;
                 return $oldbot;
+            }
         }
         trigger_error('Invalid robot id "' . ( (int) $id ) . '"', E_USER_ERROR);
 	}
 	
 	function getByName($name, $retired=false) {
-		if ($this->pname==null)
+		$this->is_retired = false;
+        if ($this->pname==null)
 			$this->queryList();
         if (isset($this->pname[ $name ]))
             return $this->pname[ $name ];
@@ -74,8 +78,10 @@ class Participants {
         	$bot = new BotData($name);
     		$id = $bot->getID($this->db, false);
             $oldbot = $this->getRetired($id);
-            if ($oldbot!=null)
+            if ($oldbot!=null) {
+                $this->is_retired = true;
                 return $oldbot;
+            }
         }
 		trigger_error('Invalid robot name "' . substr($name, 0, 50) . '"', E_USER_ERROR);
 	}
@@ -90,12 +96,10 @@ class Participants {
 				WHERE p.gametype='" . mysql_escape_string($this->game) . "'
 				  AND p.state='" . STATE_RETIRED . "'
 				  AND p.bot_id='" . mysql_escape_string($id) . "'";
-        if ($this->db->query($qry) > 0) {
-            $this->is_retired = true;
+        if ($this->db->query($qry) > 0)
             return $this->db->next();
-        } else {
+        else
             return null;
-        }
 	}
 	
 	function isRetired() {

@@ -54,6 +54,7 @@ $details['percent_score'] = $details['score_pct']/100.0;
 $details['unixtimestamp'] = strtotime($bot['timestamp'])*1000;
 $chunks = explode('.', $name);
 $details['package'] = $chunks[0];
+$details['state'] = ($party->isRetired()) ? '(RETIRED)' : ''; 
 
 $fields = null;
 $sort = trim(isset($_GET['sort']) ? $_GET['sort'] : '');

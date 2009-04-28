@@ -23,7 +23,7 @@
 <h1>RATING DETAILS FOR "{$name}" IN GAME "{$game}"</h1>
 
 <h2><img src="flags/{$details.package}.gif" alt="Flag for {$details.package}" />
-    {$name} (<a href="RatingsLRP?game={$game}&amp;name={$name}" title="LRP Graph">LRP</a>)</h2>
+    {$name} {$details.state}</h2>
 <table id="ratingdetails" class="rankings">
   <tbody>
 	<tr><td>"Classic" Elo Rating</td>

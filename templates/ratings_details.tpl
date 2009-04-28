@@ -7,7 +7,7 @@
 <table id="ratingdetails" class="rankings">
   <thead>
     <tr><th colspan="2"><img src="flags/{$details.package}.gif" alt="Flag for {$details.package}" />
-        {$name} (<a href="RatingsLRP?game={$game}&amp;name={$name}" title="LRP Graph">LRP</a>)</th></tr>
+        {$name} {$details.state}(<a href="RatingsLRP?game={$game}&amp;name={$name}" title="LRP Graph">LRP</a>)</th></tr>
   </thead>
   <tbody>
 	<tr><td>"Classic" Elo Rating</td>

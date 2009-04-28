@@ -218,7 +218,7 @@ class BattleResults {
 			return null;
 	}
 */
-	function getBattleDetails($gametype, $id, $vs) {
+	function getBattleDetails($gametype, $id, $vs, $retired=false) {
 		$botcombo = "'" .  mysql_escape_string($id) . "', '" . mysql_escape_string($vs) . "'";
 		$qry = "SELECT u.username AS user, u.ip_addr, u.version,
 				       r.timestamp, r.millisecs, r.gametype, r.state, r.created,
@@ -228,7 +228,8 @@ class BattleResults {
 				WHERE gametype = '" . mysql_escape_string($gametype) . "'
 				  AND bot_id IN ($botcombo)
 				  AND vs_id IN ($botcombo)
-				  AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "', '" . STATE_RATED . "')
+				  AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "', '" . STATE_RATED . "'"
+				        . (($retired) ? ", '" . STATE_RETIRED . "'" : "") . ")
 				ORDER BY created DESC";
 		if ($this->db->query($qry)>0) {
 			$results = array();

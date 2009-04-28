@@ -24,19 +24,21 @@ $gametype = new GameType($version, $game);
 // check bot name
 $party = new Participants($db, $gametype->getCode());
 $name = trim(isset($_GET['name']) ? $_GET['name'] : '');
-$bot = $party->getByName($name);
+$bot = $party->getByName($name, true);
+$retired = $party->isRetired();
 $chunks = explode('.', $name);
 $package = $chunks[0];
 
 // check vs name
 $vs_name = trim(isset($_GET['vs']) ? $_GET['vs'] : '');
 $vs  = $party->getByName($vs_name);
+$vs_retired = $party->isRetired();
 $chunks = explode('.', $vs_name);
 $vs_package = $chunks[0];
 
 // get battle results for pairing
 $battles = new BattleResults($db);
-$allrows = $battles->getBattleDetails($gametype->getCode(), $bot['bot_id'], $vs['bot_id']);
+$allrows = $battles->getBattleDetails($gametype->getCode(), $bot['bot_id'], $vs['bot_id'], ($retired || $vs_retired));
 
 // calculate & sort
 $fields = null;

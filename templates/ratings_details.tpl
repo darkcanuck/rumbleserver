@@ -62,7 +62,8 @@
     <td>{$bot.rating_classic|string_format:"%.1f"}</td>
     <td>{$bot.battles}</td>
     <td>{$bot.timestamp}</td>
-    <td><a href="BattleDetails?game={$game}&amp;name={$name|escape}&amp;vs={$bot.vs_name|escape}">battles</a></td>
+    <td><a href="BattleDetails?game={$game}&amp;name={$name|escape}&amp;vs={$bot.vs_name|escape}">battles</a> /
+        <a href="RatingsCompare?game={$game}&amp;name={$name|escape}&amp;vs={$bot.vs_name|escape}">compare</a></td>
     <td>{$bot.expected|string_format:"%.1f"}</td>
     <td{if $bot.pbindex gt 10} class="highPBI"{elseif $bot.pbindex lt -10} class="lowPBI"{/if}>{$bot.pbindex|string_format:"%.1f"}</td>
   </tr>

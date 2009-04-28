@@ -79,6 +79,22 @@ class BotData {
 	function getTimestamp() {
 		return $this->timestamp;
 	}
+	
+	function getVersions($db, $limit=-1) {
+	    $qry = sprintf("SELECT bot_id, full_name, package_name, bot_name, bot_version, timestamp " .
+					   	" FROM bot_data " .
+			 			"WHERE package_name = '%s' AND bot_name = '%s' AND full_name <> '%s'" .
+			 			" ORDER BY timestamp DESC ",
+		 				mysql_escape_string($this->package),
+		 				mysql_escape_string($this->botname),
+		 				mysql_escape_string($this->fullname) );
+        if ($limit > 0)
+            $qry .= " LIMIT " . (int)$limit;
+        if ($db->query($qry) > 0)
+			return $db->all();
+		else
+	        return null;
+	}
 }
 
 ?>

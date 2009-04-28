@@ -121,7 +121,12 @@ div#lrp {
     margin-left: 45%;
     margin-bottom: 1.5em;
 }
-table#ratingdetails {
+table#ratingdetails,
+table#oldversions {
     width: 40%;
     float: left;
+}
+
+table#oldversions {
+    clear: left;
 }

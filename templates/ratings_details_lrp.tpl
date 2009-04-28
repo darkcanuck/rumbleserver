@@ -54,6 +54,22 @@
   </tbody>
 </table>
 
+{if isset($versions)}
+<table id="oldversions" class="rankings">
+  <thead>
+    <tr><th colspan="3">Other versions</th></tr>
+  </thead>
+  <tbody>
+    {foreach from=$versions key=id item=bot}
+    <tr><td>{$bot.timestamp}</td>
+        <td><a href="RatingsDetails?game={$game}&amp;name={$bot.full_name|escape}" title="Details for {$bot.full_name}">{$bot.full_name}</a></td>
+        <td><a href="RatingsCompare?game={$game}&amp;name={$name|escape}&amp;vs={$bot.full_name|escape}" title="Compare with {$bot.full_name}">compare</a></td>
+    </tr>
+    {/foreach}
+  </tbody>
+</table>
+{/if}
+
 <div id="lrp">
     <div id="info"></div>
     <div id="graph" style="width:90%;height:300px"></div>
@@ -84,8 +100,8 @@
     <td>{$bot.rating_classic|string_format:"%.1f"}</td>
     <td>{$bot.battles}</td>
     <td>{$bot.timestamp}</td>
-    <td><a href="BattleDetails?game={$game}&amp;name={$name|escape}&amp;vs={$bot.vs_name|escape}">battles</a> /
-            <a href="RatingsCompare?game={$game}&amp;name={$name|escape}&amp;vs={$bot.vs_name|escape}">compare</a></td>
+    <td><a href="BattleDetails?game={$game}&amp;name={$name|escape}&amp;vs={$bot.vs_name|escape}" title="View battle details">battles</a> /
+            <a href="RatingsCompare?game={$game}&amp;name={$name|escape}&amp;vs={$bot.vs_name|escape}" title="Compare with {$bot.vs_name}">compare</a></td>
     <td>{$bot.expected|string_format:"%.1f"}</td>
     <td{if $bot.pbindex gt 10} class="highPBI"{elseif $bot.pbindex lt -10} class="lowPBI"{/if}>{$bot.pbindex|string_format:"%.1f"}</td>
   </tr>

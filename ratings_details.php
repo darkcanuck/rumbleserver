@@ -39,7 +39,7 @@ $elo     = new EloRating();
 $glicko  = new GlickoRating();
 $glicko2 = new Glicko2Rating();
 
-// calculate & sort
+// bot summary
 $details = $bot;
 $details['stddev'] = 0.0;
 $details['momentum'] = 0.0;
@@ -56,6 +56,11 @@ $chunks = explode('.', $name);
 $details['package'] = $chunks[0];
 $details['state'] = ($party->isRetired()) ? '(RETIRED)' : ''; 
 
+// get older versions (if any)
+$thisbot = new BotData($name);
+$oldversions = $thisbot->getVersions($db, 3);
+    
+// calculate & sort
 $fields = null;
 $sort = trim(isset($_GET['sort']) ? $_GET['sort'] : '');
 $sortcol = array();
@@ -117,6 +122,9 @@ $template->assign('gametype', $gametype);
 $template->assign('name', htmlspecialchars($name));
 $template->assign('details', $details);
 $template->assign('pairings', $allrows);
+
+if (isset($oldversions) && ($oldversions!=null))
+    $template->assign('versions', $oldversions);
 
 if (isset($_REQUEST['json']) && (isset($_REQUEST['json'])>0)) {
     $template->left_delimiter = '{{';

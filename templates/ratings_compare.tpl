@@ -74,10 +74,10 @@
         {if $bot.vs_pct neq '--'}{$bot.vs_pct|string_format:"%.2f"}{/if}</td>
     <td{if $bot.vs_survival gt 60} class="highScore"{elseif $bot.vs_survival lt 40 and $bot.vs_survival neq '--'} class="lowScore"{/if}>
         {if $bot.vs_survival neq '--'}{$bot.vs_survival|string_format:"%.2f"}{/if}</td>
-    <td{if $bot.diff_pct gt 0} class="highScore"{elseif $bot.diff_pct lt 0 and $bot.diff_pct neq '--'} class="lowScore"{/if}>
-        {if $bot.diff_pct neq '--'}{$bot.diff_pct|string_format:"%.2f"}{/if}</td>
-    <td{if $bot.diff_survival gt 0} class="highScore"{elseif $bot.diff_survival lt 0 and $bot.diff_survival neq '--'} class="lowScore"{/if}>
-        {if $bot.diff_survival neq '--'}{$bot.diff_survival|string_format:"%.2f"}{/if}</td>
+    <td{if $bot.diff_pct gt 0} class="highScore"{elseif $bot.diff_pct lt 0} class="lowScore"{/if}>
+        {if is_numeric($bot.diff_pct)}{$bot.diff_pct|string_format:"%.2f"}{/if}</td>
+    <td{if $bot.diff_survival gt 0} class="highScore"{elseif $bot.diff_survival lt 0} class="lowScore"{/if}>
+        {if is_numeric($bot.diff_survival)}{$bot.diff_survival|string_format:"%.2f"}{/if}</td>
   </tr>
   {/foreach}
   </tbody>

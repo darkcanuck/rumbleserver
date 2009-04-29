@@ -41,6 +41,12 @@
 	<tr><td>Last Battle</td>
 	    <td>{$details.timestamp}</td>
 	    <td>{$vs_details.timestamp}</td></tr>
+	<tr><td>Common % Score (APS)</td>
+        <td>{$details.avg_score|string_format:"%.3f"} %</td>
+        <td>{$vs_details.avg_score|string_format:"%.3f"} %</td></tr>
+	<tr><td>Common % Survival</td>
+	    <td>{$details.avg_survival|string_format:"%.3f"} %</td>
+	    <td>{$vs_details.avg_survival|string_format:"%.3f"} %</td></tr>
   </tbody>
 </table>
 

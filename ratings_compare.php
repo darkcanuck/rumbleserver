@@ -60,6 +60,8 @@ foreach ($details as $k=>$v) {
     $details[$k]['percent_wins'] = $details[$k]['count_wins']/($details[$k]['pairings']>0 ? $details[$k]['pairings'] : 1) * 100.0;
     $details[$k]['percent_score'] = $details[$k]['score_pct']/100.0;
     $details[$k]['unixtimestamp'] = strtotime($details[$k]['timestamp'])*1000;
+    $details[$k]['avg_score'] = 0.0;
+    $details[$k]['avg_survival'] = 0.0;
 }
 
 // create superset of pairings
@@ -71,6 +73,7 @@ foreach($vs_pairs as $k=>$v)
 ksort($allpairs, SORT_STRING);
 
 // calculate and sort
+$common_pairs = 0;
 $fields = null;
 $sort = trim(isset($_GET['sort']) ? $_GET['sort'] : '');
 $sortcol = array();
@@ -101,7 +104,13 @@ foreach ($allpairs as $k=>$v) {
         $allpairs[$k]['diff_pct'] = $allpairs[$k]['score_pct'] - $allpairs[$k]['vs_pct'];
 	    $allpairs[$k]['diff_dmg'] = $allpairs[$k]['score_dmg'] - $allpairs[$k]['vs_dmg'];
 	    $allpairs[$k]['diff_survival'] = $allpairs[$k]['score_survival'] - $allpairs[$k]['vs_survival'];
-    }  
+	    
+	    $details[0]['avg_score'] += $allpairs[$k]['score_pct'];
+	    $details[0]['avg_survival'] += $allpairs[$k]['score_survival'];
+	    $details[1]['avg_score'] += $allpairs[$k]['vs_pct'];
+	    $details[1]['avg_survival'] += $allpairs[$k]['vs_survival'];	    
+	    $common_pairs++;
+    }
 	
 	if ($fields==null) {
 		// initialize sorting
@@ -113,6 +122,10 @@ foreach ($allpairs as $k=>$v) {
 		$sortcol[$k] = $allpairs[$k][ $sort ];
 		$sortname[$k] = $allpairs[$k]['vs_name'];
 	}
+}
+foreach ($details as $k=>$v) {
+    $details[$k]['avg_score'] /= (float)$common_pairs;
+    $details[$k]['avg_survival'] /= (float)$common_pairs;
 }
 if ($sort!=null)
 	array_multisort($sortcol, ($sort=='vs_name') ? SORT_ASC : SORT_DESC, $sortname, SORT_ASC, $allpairs);

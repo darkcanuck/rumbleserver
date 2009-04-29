@@ -72,12 +72,14 @@ if (isset($_POST['version'])) {
 			        trigger_error('OK. Client version ' . substr($params['client'], 0, 10) . ' is not supported by this server! ' .
 			                    'Please use one of these: ' . implode(', ', $version_allowed), E_USER_ERROR);
 			} else {
-			    $params['client'] = '1.0';    // older than 1.6.2
+			    /*$params['client'] = '1.0';    // older than 1.6.2
                 $params['melee']  = (stristr($params['game'], 'melee')===false) ? 'NOT' : 'YES';
                 $params['teams']  = (stristr($params['game'], 'team')===false) ? 'NOT' : 'YES';
                 
                 echo "  Please consider using the patched roborumble.jar files from the wiki.\n";
-                echo "  Let's make the rumble even better!  -- Darkcanuck\n";
+                echo "  Let's make the rumble even better!  -- Darkcanuck\n";*/
+                trigger_error("OK. Unversioned clients are no longer supported by this server!\n" .
+                            '  Please consider using the patched roborumble.jar files from the wiki.', E_USER_ERROR);
 			}
 			
 			// set results data
@@ -138,7 +140,7 @@ if (isset($_POST['version'])) {
 				break;
 		}
 	}
-	sleep(1);
+	usleep(500000);
 	// return number of battles
 	if (isset($botdata['battles']))
 		echo("\n<{$botdata['battles'][0]} {$botdata['battles'][1]}>");

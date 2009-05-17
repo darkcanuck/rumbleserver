@@ -1,7 +1,16 @@
 $(document).ready(function() { 
         $("#rankingdata").tablesorter( {
             widgets: ['zebra'],
-            //headers: { 6: {sorter: false} },
+            headers: {  0: {sorter: "digit"},
+                        1: {sorter: "text"},
+                        2: {sorter: "digit"},
+                        3: {sorter: "digit"},
+                        4: {sorter: "digit"},
+                        5: {sorter: "digit"},
+                        6: {sorter: "digit"},
+                        7: {sorter: "digit"},
+                        8: {sorter: "digit"},
+                        9: {sorter: "text"} },
             sortList: [ [0, 0] ]
             });
          $("#pairingdata").tablesorter( {
@@ -11,10 +20,10 @@ $(document).ready(function() {
                         2: {sorter: "digit"},
                         3: {sorter: "digit"},
                         4: {sorter: "digit"},
-                        //5: {sorter: "digit"},
-                        6: {sorter: false} },
+                        5: {sorter: "text"},
+                        6: {sorter: false},
                         7: {sorter: "digit"},
-                        8: {sorter: "digit"},
+                        8: {sorter: "digit"} },
             sortList: [ [0, 0] ]
             });
         $("#comparedata").tablesorter( {

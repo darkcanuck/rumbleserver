@@ -131,16 +131,21 @@ if (isset($_POST['version'])) {
     }
 	
 	// return list of missing pairings
-	$countmissing = 0;
-	if (isset($botdata['missing'])) {
-		foreach($botdata['missing'] as $botpair) {
-			echo("\n[" . str_replace(' ', '_', $botpair[0]) . "," . str_replace(' ', '_', $botpair[1]) . "]");
-			$countmissing++;
-			if ($countmissing > 60)
-				break;
+	$num_missing = 	(isset($botdata['missing'])) ? count($botdata['missing']) : 0;
+	if ($num_missing > 0) {
+        $offset = ($num_missing > 10) ? rand(0, $num_missing-10) : 0;
+		for ($i=$offset; $i<($offset+10); $i++) {
+			if (isset($botdata['missing'][$i])) {
+			    $botpair = $botdata['missing'][$i];
+			    echo("\n[" . str_replace(' ', '_', $botpair[0]) . "," . str_replace(' ', '_', $botpair[1]) . "]");
+		    } else if (isset($_POST['user']) && ($_POST['user']=='darkcanuck')) {
+		        echo("\n missing index $i  offset $offset  total $num_missing");
+            }
 		}
 	}
+	
 	usleep(500000);
+	
 	// return number of battles
 	if (isset($botdata['battles']))
 		echo("\n<{$botdata['battles'][0]} {$botdata['battles'][1]}>");

@@ -54,6 +54,13 @@ if (isset($_POST['version'])) {
 			
 			// remove specified bot
 			$party = new Participants($db, $gametype->getCode());
+			
+			// only remove if no new battles in last 4hrs
+			$bot = $party->getByName($name);
+			$ts_bot = strtotime($bot['timestamp']);
+			if ((time()-$ts_bot) < (4*60*60))
+			    trigger_error('Cannot remove ' . substr($name, 0, 70) . ' until at least 4hrs after last battle', E_USER_ERROR);
+			
 			if ($party->retireParticipant($name))
 				die('OK.  Removed bot ' . substr($name, 0, 70));
 			else

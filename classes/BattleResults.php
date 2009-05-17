@@ -122,9 +122,9 @@ class BattleResults {
 		$missing = array();
 		$botlist = $party->getList();
 		foreach($botlist as $id => $bot) {
-			if (!isset($complete[$this->id1][$id]))
+			if (!isset($complete[$this->id1][$id]) && ($botlist[$this->id1]['battles']>50))
 				$missing[] = array($botlist[$this->id1]['name'], $botlist[$id]['name']);
-			if (!isset($complete[$this->id2][$id]))
+			if (!isset($complete[$this->id2][$id]) && ($botlist[$this->id2]['battles']>50))
 				$missing[] = array($botlist[$this->id2]['name'], $botlist[$id]['name']);
 		}
 		

@@ -16,6 +16,9 @@ require_once 'classes/common.php';
 $err->setClient(true);
 ignore_user_abort(true);	// don't stop if client disconnects!
 
+// check for banned users
+require_once 'classes/banned.php';
+
 $admin_user = (isset($_SERVER['REMOTE_ADDR']) && ($_SERVER['REMOTE_ADDR']=='24.85.45.250')) ? true : false;
 
 if ($properties->get('disable_remove') && !$admin_user)

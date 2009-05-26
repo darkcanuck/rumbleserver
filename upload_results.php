@@ -17,6 +17,9 @@ require_once 'classes/PostRequest.php';
 $err->setClient(true);
 ignore_user_abort(true);	// don't stop if client disconnects!
 
+// check for banned users
+require_once 'classes/banned.php';
+
 $debug_user = false;
 if (isset($_POST['user'])) {
     $debug_user = (strpos($_POST['user'], '-debug')!==false);
@@ -69,7 +72,7 @@ if (isset($_POST['version'])) {
 			            $version_ok = true;
 			    }
 			    if (!$version_ok)
-			        trigger_error('OK. Client version ' . substr($params['client'], 0, 10) . ' is not supported by this server! ' .
+			        trigger_error('OK. Client version ' . substr($params['client'], 0, 15) . ' is not supported by this server! ' .
 			                    'Please use one of these: ' . implode(', ', $version_allowed), E_USER_ERROR);
 			} else {
 			    /*$params['client'] = '1.0';    // older than 1.6.2

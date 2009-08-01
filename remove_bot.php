@@ -19,14 +19,10 @@ ignore_user_abort(true);	// don't stop if client disconnects!
 // check for banned users
 require_once 'classes/banned.php';
 
-$admin_user = (isset($_SERVER['REMOTE_ADDR']) && ($_SERVER['REMOTE_ADDR']=='24.85.45.250')) ? true : false;
+$admin_user = (isset($_SERVER['REMOTE_ADDR']) && ($_SERVER['REMOTE_ADDR']=='24.85.53.202')) ? true : false;
 
 if ($properties->get('disable_remove') && !$admin_user)
     trigger_error('Function temporarily disabled.  Please try again later.', E_USER_ERROR);
-
-//if (!isset($_POST['user']) || ($_POST['user']!='darkcanuck'))
-//    trigger_error('Function temporarily disabled!  ' . substr($_POST['name'], 0, 70), E_USER_ERROR);
-//$debug_user = true;
 
 
 /* check RoboRumble client version */

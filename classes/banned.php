@@ -15,12 +15,13 @@
 
 $check_user = (isset($_REQUEST['user'])) ? $_REQUEST['user'] : '';
 $check_ip   = (isset($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : '';
+$check_game = (isset($_REQUEST['game'])) ? $_REQUEST['game'] : '';
 
+/* sample banned user check */
+//if ( ($check_user=='UserX') || ($check_ip=='123.456.789.0') )
+//    trigger_error("Account '$check_user' has been suspended!
+//    Please check your client configuration and the RoboWiki for current issues.
+//    Post a message on the wiki once you have fixed the problem.", E_USER_ERROR);
 
-/*if ( ($check_user=='username') || ($check_ip=='xx.xx.xx.xx') )
-    trigger_error("Account '$check_user' has been suspended!
-    Please check your client configuration and the RoboWiki for current issues.
-    Post a message on the wiki once you have fixed the problem.", E_USER_ERROR);
-*/
 
 ?>

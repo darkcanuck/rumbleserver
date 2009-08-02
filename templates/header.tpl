@@ -12,7 +12,24 @@
 	
 	<script language="javascript" type="text/javascript" src="js/jquery.js"></script>
 	<script language="javascript" type="text/javascript" src="js/jquery.tablesorter.min.js"></script>
+	<script language="javascript" type="text/javascript" src="js/jquery.flot.js"></script>
 	<script language="javascript" type="text/javascript" src="js/rankings.js"></script>
+	{if isset($jscript)}
+	<script language="javascript" type="text/javascript" src="{$jscript}"></script>
+	{/if}
 </head>
 
 <body>
+
+<div id="header">
+  <ul id="navigation">
+    <li><a href="index.html" title="Home">Home</a></li>
+    <li><a href="Rankings?version=1&game=roborumble" title="Rankings - 1v1 (General)">1v1 Rankings</a></li>
+    <li><a href="Rankings?version=1&game=meleerumble" title="Rankings - Melee (General)">Melee Rankings</a></li>
+    <li><a href="Rankings?version=1&game=teamrumble" title="Rankings - Teams (General)">Team Rankings</a></li>
+    <li><a href="Contributors" title="Contributors">Contributors</a></li>
+  </ul>
+</div>
+
+<div id="content">
+    

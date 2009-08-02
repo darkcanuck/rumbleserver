@@ -13,7 +13,10 @@
  *  Robowiki user "ABC" (abc dot goog at gmail dot com)
  *****************************************************************************/
 body {
+    margin: 0px;
+    padding: 0px;
     font-family: helvetica, arial, sans-serif;
+    
 }
 
 h1, h2, h3 {
@@ -93,6 +96,47 @@ div {
 .clear {
     clear: both;
 }
+
+/* layout */
+#header {
+}
+
+#content {
+    margin: 1%;
+}
+
+#footer {
+}
+
+/* navigation */
+ul#navigation {
+    margin: 0;
+    padding: 0;
+    height: 2.0em;
+    list-style: none;
+    background-color: black;
+    color: white;
+}
+
+ul#navigation li {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+ul#navigation a,
+ul#navigation a:hover {
+    display: block;
+    float: left;
+    margin: 0;
+    padding: 0.5em 2.0em;
+    color: white;
+}
+ul#navigation a:hover {
+    background-color: gray;
+    color: white;
+}
+
 
 /* tablesorter */
 table.rankings thead tr .header {

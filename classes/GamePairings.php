@@ -150,6 +150,16 @@ class GamePairings {
 	    return $results;
 	}
 	
+	function checkState($bot_id, $state=STATE_OK) {
+		$id = (int)$bot_id;
+		$qry = "SELECT vs_id
+		        FROM game_pairings
+		        WHERE gametype = '" . $this->gametype[0] . "'
+				  AND bot_id = $id
+				  AND state='" . mysql_escape_string($state) . "'";
+		return ($this->db->query($qry) > 0);
+	}
+	
 	function updateState($bot_id, $newstate, $oldstate='') {
 		$id = (int)$bot_id;
 		$qry = "UPDATE game_pairings SET state='" . mysql_escape_string($newstate) . "'

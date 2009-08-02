@@ -16,7 +16,7 @@ error_reporting(E_ALL);		// applies for errors not caught by error handler
 require_once 'classes/ErrorHandler.php';
 $err = new ErrorHandler();
 
-if ($_SERVER['REMOTE_ADDR']=='127.0.0.1')
+if (($_SERVER['REMOTE_ADDR']=='127.0.0.1') || isset($_REQUEST['debug']))
     $err->setDebugMode(true);
 
 // config includes

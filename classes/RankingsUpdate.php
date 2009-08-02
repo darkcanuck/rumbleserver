@@ -26,7 +26,7 @@ class RankingsUpdate {
 		$this->db = $db;
 	}
 		
-	
+/* unused function -- kept for reference only	
 	function updateScores($updatesize=100, $pairingdelay=-1) {
 		
 		//echo "\nDOING UPDATE...\n";
@@ -130,7 +130,8 @@ class RankingsUpdate {
 		
 		return true;
 	}
-	
+*/
+
 	function updatePair($gametype, $id1, $id2, $party=null, $allpairings=null) {
 		// create new participants list if needed
 		if ($party==null)

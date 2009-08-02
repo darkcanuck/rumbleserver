@@ -111,10 +111,7 @@ class BattleResults {
 		$updates = $rankings->updatePair($this->gametype, $this->id1, $this->id2, $party, $allpairings);
 		$party->updateScores($this->id1, $updates[$this->id1]);
 		$party->updateScores($this->id2, $updates[$this->id2]);
-		
-		/* all updates done - unlock tables */
-//		$this->db->query('UNLOCK TABLES');
-		
+				
 		/* determine missing pairings */
 		$complete = array($this->id1 => array($this->id1 => 1), $this->id2 => array($this->id2 => 1));
 		foreach($allpairings as $pair)
@@ -165,7 +162,8 @@ class BattleResults {
 		$qry2 = sprintf($qry, 'vs_id');
 		return ( ($this->db->query($qry1) + $this->db->query($qry2)) > 0);
 	}
-	
+
+/* unused functions -- originally used by RankingsUpdate->updateScores()	
 	function getNewBattles($limit=100, $state=STATE_OK) {
 		$qry = "SELECT user_id, timestamp, millisecs, gametype, state,
 					   bot_id, bot_score, bot_bulletdmg, bot_survival,
@@ -196,7 +194,7 @@ class BattleResults {
 				WHERE state='" . STATE_LOCKED . "'";
 		return ($this->db->query($qry)>0);
 	}
-	
+*/	
 	
 /* unused - update to new schema if re-enabled
 	function getPairingSummary($gametype, $id, $vs) {
@@ -228,8 +226,8 @@ class BattleResults {
 				WHERE gametype = '" . mysql_escape_string($gametype) . "'
 				  AND bot_id IN ($botcombo)
 				  AND vs_id IN ($botcombo)
-				  AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "', '" . STATE_RATED . "'"
-				        . (($retired) ? ", '" . STATE_RETIRED . "'" : "") . ")
+				  AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "', '" . STATE_RATED . "', '"
+				                . STATE_RETIRED . "', '" . STATE_RETIRED2 . "')
 				ORDER BY created DESC";
 		if ($this->db->query($qry)>0) {
 			$results = array();

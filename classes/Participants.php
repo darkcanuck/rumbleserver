@@ -138,14 +138,18 @@ class Participants {
 			// bring out of retirement
 			set_time_limit(600);
 			
+			// TODO -- consider removing this now that battles are no longer retired
 			$battles = new BattleResults($this->db);
 			$battles->updateState($this->game, $id, STATE_RATED, STATE_RETIRED);
 			$battles->updateState($this->game, $id, STATE_RETIRED, STATE_RETIRED2);
 			
-			$pairings = new GamePairings($this->db, $this->game);
-			$pairings->updateState($id, STATE_OK, STATE_RETIRED);
-			$pairings->updateState($id, STATE_RETIRED, STATE_RETIRED2);
-			
+			// restore pairings if none have an "OK" state
+			if (!$pairings->checkState($id, STATE_OK)) {
+			    $pairings = new GamePairings($this->db, $this->game);
+    			$pairings->updateState($id, STATE_OK, STATE_RETIRED);
+    			$pairings->updateState($id, STATE_RETIRED, STATE_RETIRED2);
+		    }
+		
 			$this->updateParticipant($id);
 		} else {
 			$this->addParticipant($id);
@@ -185,32 +189,28 @@ class Participants {
 		$bot = new BotData($name);
 		$id = $bot->getID($this->db, false);
         
-/*		$this->db->query('LOCK TABLES
-									battle_results WRITE,
-									game_pairings WRITE, game_pairings AS g WRITE,
-									participants WRITE, participants AS p WRITE'
-									);
-*/									
 		set_time_limit(600);
         $this->db->query('START TRANSACTION');
         
+        /* battles are no longer retired - no real need and it's quite slow
 		$battles = new BattleResults($this->db);
 		//$battles->updateState($this->game, $id, STATE_RETIRED, STATE_NEW);		// could do all, but want to exclude 'X' state
 		//$battles->updateState($this->game, $id, STATE_RETIRED, STATE_OK);
 		$battles->updateState($this->game, $id, STATE_RETIRED2, STATE_RETIRED);     // 2nd retire for this pair
 		$battles->updateState($this->game, $id, STATE_RETIRED, STATE_RATED);
+		*/
 		
+		// retire any remaining pairings with an "OK" state
 		$pairings = new GamePairings($this->db, $this->game);
-		//$pairings->updateState($id, STATE_RETIRED, STATE_NEW);
-		$pairings->updateState($id, STATE_RETIRED2, STATE_RETIRED);     // 2nd retire for this pair
-		$pairings->updateState($id, STATE_RETIRED, STATE_OK);
+		if ($pairings->checkState($id, STATE_OK)) {
+    		//$pairings->updateState($id, STATE_RETIRED, STATE_NEW);
+    		$pairings->updateState($id, STATE_RETIRED2, STATE_RETIRED);     // 2nd retire for this pair
+    		$pairings->updateState($id, STATE_RETIRED, STATE_OK);		    
+		}
 		
 		$this->updateParticipant($id, STATE_RETIRED);
 		
 		$this->db->query('COMMIT');
-		
-//		$this->db->query('UNLOCK TABLES');
-		
 		return true;
 	}
 	

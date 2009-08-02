@@ -19,7 +19,17 @@ ignore_user_abort(true);	// don't stop if client disconnects!
 // check for banned users
 require_once 'classes/banned.php';
 
-$admin_user = (isset($_SERVER['REMOTE_ADDR']) && ($_SERVER['REMOTE_ADDR']=='24.85.53.202')) ? true : false;
+$admin_user = false;
+if (isset($_SERVER['REMOTE_ADDR']) &&
+    (($_SERVER['REMOTE_ADDR']=='127.0.0.1') || ($_SERVER['REMOTE_ADDR']=='24.85.53.202')) ) {
+    $admin_user = true;
+    if (isset($_GET['version']))
+        $_POST['version'] = $_GET['version'];
+    if (isset($_GET['game']))
+        $_POST['game'] = $_GET['game'];
+    if (isset($_GET['name']))
+        $_POST['name'] = $_GET['name'];
+}
 
 if ($properties->get('disable_remove') && !$admin_user)
     trigger_error('Function temporarily disabled.  Please try again later.', E_USER_ERROR);

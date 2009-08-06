@@ -144,6 +144,7 @@ class Participants {
 			$battles->updateState($this->game, $id, STATE_RETIRED, STATE_RETIRED2);
 			
 			// restore pairings if none have an "OK" state
+			$pairings = new GamePairings($this->db, $this->game);
 			if (!$pairings->checkState($id, STATE_OK)) {
 			    $pairings = new GamePairings($this->db, $this->game);
     			$pairings->updateState($id, STATE_OK, STATE_RETIRED);

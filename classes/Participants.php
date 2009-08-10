@@ -191,7 +191,11 @@ class Participants {
 		$id = $bot->getID($this->db, false);
         
 		set_time_limit(600);
-        $this->db->query('START TRANSACTION');
+        //$this->db->query('START TRANSACTION');
+        $this->db->query('SET autocommit=0');
+        $this->db->query('LOCK TABLES participants WRITE, participants AS p WRITE,
+                                    bot_data WRITE, bot_data AS b WRITE,
+                                    game_pairings WRITE, game_pairings AS g WRITE');
         
         /* battles are no longer retired - no real need and it's quite slow
 		$battles = new BattleResults($this->db);
@@ -212,6 +216,7 @@ class Participants {
 		$this->updateParticipant($id, STATE_RETIRED);
 		
 		$this->db->query('COMMIT');
+		$this->db->query('UNLOCK TABLES');
 		return true;
 	}
 	

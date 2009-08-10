@@ -53,7 +53,7 @@ CREATE TABLE `bot_data` (
   `bot_version` varchar(20) NOT NULL,
   `timestamp` datetime NOT NULL,
   PRIMARY KEY  (`bot_id`),
-  KEY `name` (`full_name`(10)),
+  UNIQUE KEY `full_name` (`full_name`),
   KEY `family` (`package_name`,`bot_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;

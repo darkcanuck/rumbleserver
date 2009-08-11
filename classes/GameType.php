@@ -13,6 +13,18 @@
 
 class GameType {
 	
+	private $codelist = array(
+	                        'roborumble'    => 'R',
+	                        'minirumble'    => 'X',
+	                        'microrumble'   => 'Y',
+	                        'nanorumble'    => 'Z',
+	                        'meleerumble'       => 'M',
+	                        'minimeleerumble'   => 'N',
+	                        'micromeleerumble'  => 'O',
+	                        'nanomeleerumble'   => 'P',
+	                        'teamrumble'    => 'T'
+	                        );
+	
 	private $code  = '';
 	private $valid = false;
 	
@@ -36,43 +48,23 @@ class GameType {
 		switch ($version) {
 		
 			case '1':
-				switch($game) {
-					case 'roborumble':
-						$this->code  = 'R';
-						$this->valid = ($field=='800x600') && ($rounds=='35') && !$melee && !$teams;
-						break;
-					case 'minirumble':
-						$this->code  = 'X';
-						$this->valid = ($field=='800x600') && ($rounds=='35') && !$melee && !$teams;
-						break;
-					case 'microrumble':
-						$this->code  = 'Y';
-						$this->valid = ($field=='800x600') && ($rounds=='35') && !$melee && !$teams;
-						break;
-					case 'nanorumble':
-						$this->code  = 'Z';
+			    $this->code = $this->nameToCode($game);
+				switch($this->code) {
+					case 'R':
+					case 'X':
+					case 'Y':
+					case 'Z':
 						$this->valid = ($field=='800x600') && ($rounds=='35') && !$melee && !$teams;
 						break;
 					
-					case 'meleerumble':
-						$this->code  = 'M';
-						$this->valid = ($field=='1000x1000') && ($rounds=='35') && $melee && !$teams;
-						break;
-					case 'minimeleerumble':
-						$this->code  = 'N';
-						$this->valid = ($field=='1000x1000') && ($rounds=='35') && $melee && !$teams;
-						break;
-					case 'micromeleerumble':
-						$this->code  = 'O';
-						$this->valid = ($field=='1000x1000') && ($rounds=='35') && $melee && !$teams;
-						break;
-					case 'nanomeleerumble':
-						$this->code  = 'P';
+					case 'M':
+					case 'N':
+					case 'O':
+					case 'P':
 						$this->valid = ($field=='1000x1000') && ($rounds=='35') && $melee && !$teams;
 						break;
 						
-					case 'teamrumble':
-						$this->code  = 'T';
+					case 'T':
 						$this->valid = ($field=='1200x1200') && ($rounds=='10') && !$melee && $teams;
 						break;
 				}
@@ -91,6 +83,14 @@ class GameType {
 	
 	function getCode() {
 		return $this->code;
+	}
+	
+	function nameToCode($name) {
+	    if (isset($this->codelist[$name]))
+	        return $this->codelist[$name];  // return code for this game type
+        if (in_array($name, $this->codelist))
+            return $name;                   // already a game code
+        return '';
 	}
 	
 	function checkScores($data) {

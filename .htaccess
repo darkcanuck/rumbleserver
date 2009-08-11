@@ -9,4 +9,8 @@ RewriteRule RatingDetailsJson ratings_details.php?json=1 [QSA,L]
 RewriteRule RatingsCompare ratings_compare.php [QSA,L]
 RewriteRule BattleDetails battle_details.php [QSA,L]
 RewriteRule Contributors contributors.php [QSA,L]
+RewriteRule ViewPairing view_pairing.php [QSA,L]
+RewriteRule ViewFlagged view_flagged.php [QSA,L]
+RewriteRule RemoveFlagged update_flagged.php [QSA,L]
+
 

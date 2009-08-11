@@ -101,7 +101,21 @@ class GamePairings {
 		return ($rows > 1);
 	}
 	
-	function updateScores($scores) {
+	function deletePairing() {
+		if ($this->newpair)
+		    return true;    // nothing to delete
+		$rows = 0;
+		foreach($this->pairing as $id => $pair) {
+			$qry = "DELETE FROM game_pairings
+					WHERE gametype = '" . $pair['gametype'][0] . "'
+					  AND bot_id   = '" . ((int)$pair['bot_id']) . "'
+					  AND vs_id    = '" . ((int)$pair['vs_id']) . "'";
+			$rows += $this->db->query($qry);
+		}
+		return ($rows > 1);
+	}
+	
+	function updateScores($scores, $do_save=true) {
 		// $scores should be an assoc. array with winner & loser ids as array keys
 		// data must contain score, bullet dmg. and survival for each bot
 		if (!is_array($scores) || (count($scores)<2))
@@ -123,12 +137,57 @@ class GamePairings {
 			$pair['count_wins'] = ($pair['score_pct'] > 50000) ? 1 : 0;
 			$pair['battles'] += 1;
 		}
-		return $this->savePairing();
+		if ($do_save)
+		    return $this->savePairing();
+		else
+		    return true;
 	}
 	
 	function calcScorePercent($score1, $score2, $lastscore, $battles) {
 	    $pctscore = (($score1+$score2)>0) ? $score1 / ($score1+$score2) : 0.5;
 		return (int) ( (($pctscore * 100 * 1000) + ($lastscore * $battles)) / ($battles+1) );
+	}
+	
+	function recalcScores($id1, $id2) {
+		// $battles must be an array of battle data for this pairing (similar to data returned by getBattleDetails)
+		// each array element should be an assoc. array with at least bot_id, bot_score, bot_bulletdmg, bot_survival,
+		//      vs_id, vs_score, vs_bulletdmg, and vs_survival
+		
+		// load pairing data
+        $this->id1 = $id1;
+        $this->id2 = $id2;
+        if (!$this->newpair && ($this->pairing==null))
+			$this->getPairing();
+        
+        // load battle data
+		$results = new BattleResults($this->db);
+		$battles = $results->getBattleDetails($this->gametype, $this->id1, $this->id2);
+		if ($battles==null)
+		    return $this->deletePairing();  // delete pair & exit if no other battles left
+		if (!is_array($battles) || (count($battles)<1))
+			trigger_error("Invalid battle data!", E_USER_ERROR);
+        
+        // reset pairing scores & battle count
+        foreach(array($this->id1, $this->id2) as $id) {
+			$this->pairing[$id]['battles'] = 0;
+			$this->pairing[$id]['score_pct'] = 0;
+			$this->pairing[$id]['score_dmg'] = 0;
+			$this->pairing[$id]['score_survival'] = 0;
+		}
+		
+        // recalculate scores incrementally (to reuse scoring routine)
+        foreach($battles as $b) {
+            $scores = array(
+    						$b['bot_id'] => array('score' => $b['bot_score'],
+    						 					'bulletdmg' => $b['bot_bulletdmg'],
+    											'survival' => $b['bot_survival']),
+    						$b['vs_id']  => array('score' => $b['vs_score'],
+    						 					'bulletdmg' => $b['vs_bulletdmg'],
+    											'survival' => $b['vs_survival'])
+						    );
+		    $this->updateScores($scores, false);
+        }
+		return $this->savePairing();
 	}
 	
 	function getAllPairings() {
@@ -245,6 +304,30 @@ class GamePairings {
 		else
 			return null;
 	}
+	
+	function getSinglePairing($game='', $id='', $vs='') {
+		$gametype = ($game!='') ? $game[0] : $this->gametype[0];
+		$id1 = (int)(($id!='') ? $id : $this->id1);
+		$id2 = (int)(($vs!='') ? $vs : $this->id2);
+        $qry = "SELECT g.gametype AS gametype,
+                        g.bot_id AS bot_id, b.full_name AS bot_name,
+						g.vs_id AS vs_id, v.full_name AS vs_name,
+						g.battles AS battles, g.score_pct AS score_pct,
+						g.score_dmg AS score_dmg, g.score_survival AS score_survival,
+						g.count_wins AS count_wins, g.timestamp AS timestamp,
+						g.state AS state
+				FROM game_pairings AS g
+				INNER JOIN bot_data AS b ON g.bot_id = b.bot_id
+				INNER JOIN bot_data AS v ON g.vs_id = v.bot_id
+				WHERE g.gametype = '$gametype'
+				  AND g.bot_id = '$id1'
+				  AND g.vs_id = '$id2'";
+		if ($this->db->query($qry)>0)
+			return $this->db->all();
+		else
+			return null;
+	}
+	
 }
 
 ?>

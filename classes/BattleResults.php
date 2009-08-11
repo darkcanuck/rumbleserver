@@ -162,6 +162,16 @@ class BattleResults {
 		$qry2 = sprintf($qry, 'vs_id');
 		return ( ($this->db->query($qry1) + $this->db->query($qry2)) > 0);
 	}
+	
+	function updateBattle($gametype, $bot_id, $vs_id, $timestamp, $millisecs, $newstate=STATE_RATED) {
+		$qry = "UPDATE battle_results SET state='" . mysql_escape_string($newstate) . "'
+				WHERE gametype = '" . mysql_escape_string($gametype) . "'
+				  AND bot_id = '" . mysql_escape_string($bot_id) . "'
+				  AND vs_id  = '" . mysql_escape_string($vs_id) . "'
+                  AND timestamp = '" . mysql_escape_string($timestamp) . "'
+				  AND millisecs = '" . mysql_escape_string($millisecs) . "'";
+		return ($this->db->query($qry) > 0);
+	}
 
 /* unused functions -- originally used by RankingsUpdate->updateScores()	
 	function getNewBattles($limit=100, $state=STATE_OK) {
@@ -244,6 +254,27 @@ class BattleResults {
 				$results[] = $row;
 			}
 			return $results;
+		}
+		return null;
+	}
+	
+	function getBattlesByState($state=STATE_RATED, $gametype="", $limit=100) {
+		$qry = "SELECT u.username AS user, u.ip_addr, u.version,
+		               b.full_name AS bot_name, r.bot_id,
+		               v.full_name AS vs_name, r.vs_id,
+				       r.timestamp, r.millisecs, r.gametype, r.state, r.created,
+					   r.bot_score, r.bot_bulletdmg, r.bot_survival,
+					   r.vs_score,  r.vs_bulletdmg,  r.vs_survival
+				FROM   battle_results AS r
+				INNER JOIN upload_users AS u ON r.user_id = u.user_id
+				INNER JOIN bot_data AS b ON r.bot_id = b.bot_id
+				INNER JOIN bot_data AS v ON r.vs_id = v.bot_id
+				WHERE state = '" . mysql_escape_string($state) . "' " .
+				(($gametype!="") ? " AND gametype = '" . mysql_escape_string($gametype) . "' " : "") . "
+				ORDER BY created DESC
+				LIMIT " . (int)$limit;
+		if ($this->db->query($qry)>0) {
+			return $this->db->all();
 		}
 		return null;
 	}

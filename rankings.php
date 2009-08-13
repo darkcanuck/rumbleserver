@@ -20,8 +20,8 @@ require_once 'classes/Glicko2Rating.php';
 $glicko2 = new Glicko2Rating();
 
 // determine game type
-$version = trim(isset($_GET['version']) ? $_GET['version'] : '');
-$game    = trim(isset($_GET['game']) ? $_GET['game'] : '');
+$version = trim(isset($_GET['version']) ? $_GET['version'] : '1');
+$game    = trim(isset($_GET['game']) ? $_GET['game'] : 'roborumble');
 $gametype = new GameType($version, $game);
 
 // get game results

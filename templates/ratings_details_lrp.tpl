@@ -62,8 +62,13 @@
 <table id="pairingdata" class="rankings">
   <thead><tr>
     <th>Enemy</th>
+    {if $survival}
+    <th>Survival</th>
+    <th>% Score</th>
+    {else}
     <th>% Score</th>
     <th>Survival</th>
+    {/if}
     <th title="ELO Rating">Rating</th>
     <th>Battles</th>
     <th>Last Battle</th>

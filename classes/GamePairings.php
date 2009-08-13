@@ -14,6 +14,7 @@
 class GamePairings {
 	
 	private $db = null;
+	private $gamedef = null;
 	
 	private $pairing = null;
 	private $newpair = false;
@@ -25,6 +26,7 @@ class GamePairings {
 	
 	function __construct($db, $gametype, $id1=1, $id2=1) {
 		$this->db = $db;
+		$this->gamedef = new GameType('1', $gametype);
 		$this->gametype = $gametype;
 
 		if (($id1 < 1) || ($id2 < 1))
@@ -131,10 +133,15 @@ class GamePairings {
 			$pair =& $this->pairing[$id];
 			$bot1 =& $scores[$id];
 			$bot2 =& $scores[$vs];
-			$pair['score_pct'] = $this->calcScorePercent($bot1['score'], $bot2['score'], $pair['score_pct'], $pair['battles']);
+			if (!$this->gamedef->useSurvival()) {
+			    $pair['score_pct'] = $this->calcScorePercent($bot1['score'], $bot2['score'], $pair['score_pct'], $pair['battles']);
+			    $pair['score_survival'] = $this->calcScorePercent($bot1['survival'], $bot2['survival'], $pair['score_survival'], $pair['battles']);
+		    } else {    // survival scoring for twin duel, swap score & survival columns (makes elo/glicko/pl based on survival)
+			    $pair['score_survival'] = $this->calcScorePercent($bot1['score'], $bot2['score'], $pair['score_survival'], $pair['battles']);
+			    $pair['score_pct'] = $this->calcScorePercent($bot1['survival'], $bot2['survival'], $pair['score_pct'], $pair['battles']);		        
+		    }
 			$pair['score_dmg'] = $this->calcScorePercent($bot1['bulletdmg'], $bot2['bulletdmg'], $pair['score_dmg'], $pair['battles']);
-			$pair['score_survival'] = $this->calcScorePercent($bot1['survival'], $bot2['survival'], $pair['score_survival'], $pair['battles']);
-			$pair['count_wins'] = ($pair['score_pct'] > 50000) ? 1 : 0;
+            $pair['count_wins'] = ($pair['score_pct'] > 50000) ? 1 : 0;
 			$pair['battles'] += 1;
 		}
 		if ($do_save)

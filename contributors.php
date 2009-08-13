@@ -28,7 +28,8 @@ $dateinfo = getdate();
 $gameinfo = array(
                 'rumble' => array('gametype' => 'R', 'title' => 'RoboRumble'),
                 'melee' => array('gametype' => 'M', 'title' => 'MeleeRumble'),
-                'team' => array('gametype' => 'T', 'title' => 'TeamRumble')
+                'team' => array('gametype' => 'T', 'title' => 'TeamRumble'),
+                'twinduel' => array('gametype' => 'D', 'title' => 'TwinDuel')
                 );
 
 $monthly = array();

@@ -22,11 +22,13 @@ class GameType {
 	                        'minimeleerumble'   => 'N',
 	                        'micromeleerumble'  => 'O',
 	                        'nanomeleerumble'   => 'P',
-	                        'teamrumble'    => 'T'
+	                        'teamrumble'    => 'T',
+	                        'twinduel'      => 'D'
 	                        );
 	
 	private $code  = '';
 	private $valid = false;
+	private $survival_scoring = false;
 	
 	function __construct($data, $gamedata=null) {
 		
@@ -50,22 +52,27 @@ class GameType {
 			case '1':
 			    $this->code = $this->nameToCode($game);
 				switch($this->code) {
-					case 'R':
+					case 'R':   // 1v1 rumble
 					case 'X':
 					case 'Y':
 					case 'Z':
 						$this->valid = ($field=='800x600') && ($rounds=='35') && !$melee && !$teams;
 						break;
 					
-					case 'M':
+					case 'M':   // melee rumble
 					case 'N':
 					case 'O':
 					case 'P':
 						$this->valid = ($field=='1000x1000') && ($rounds=='35') && $melee && !$teams;
 						break;
 						
-					case 'T':
+					case 'T':   // team rumble
 						$this->valid = ($field=='1200x1200') && ($rounds=='10') && !$melee && $teams;
+						break;
+						
+					case 'D':   // twin duel
+						$this->valid = ($field=='800x800') && ($rounds=='75') && !$melee && $teams;
+						$this->survival_scoring = true;
 						break;
 				}
 				break;
@@ -111,7 +118,10 @@ class GameType {
 		}
 		return true;
 	}
-		
+	
+	function useSurvival() {
+	    return $this->survival_scoring;
+	}	
 }
 
 ?>

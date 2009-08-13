@@ -1,16 +1,30 @@
 RewriteEngine On
+
+# client URLs
 RewriteRule UploadedResults upload_results.php [QSA,L]
 RewriteRule RemoveOldParticipant remove_bot.php [QSA,L]
 RewriteRule RatingsFile ratings_text.php [QSA,L]
-RewriteRule Rankings rankings.php [QSA,L]
+
+# make sure css, flags and js are read out of the correct dirs
+RewriteRule css/(.*)    css/$1      [QSA,L]
+RewriteRule flags/(.*)  flags/$1    [QSA,L]
+RewriteRule js/(.*)     js/$1       [QSA,L]
+
+# fancy rankings URLs:  Rankings/gametype   TODO - fix nesting problem
+RewriteRule ^Rankings/([^/]+)/?$ rankings.php?game=$1 [QSA,L]
+RewriteRule ^Rankings/?$ rankings.php [QSA,L]
+
+# legacy ranking URLs
 RewriteRule RatingsDetails ratings_details.php [QSA,L]
 RewriteRule RatingsLRP lrp.html [QSA,L]
 RewriteRule RatingDetailsJson ratings_details.php?json=1 [QSA,L]
 RewriteRule RatingsCompare ratings_compare.php [QSA,L]
 RewriteRule BattleDetails battle_details.php [QSA,L]
 RewriteRule Contributors contributors.php [QSA,L]
-RewriteRule ViewPairing view_pairing.php [QSA,L]
-RewriteRule ViewFlagged view_flagged.php [QSA,L]
-RewriteRule RemoveFlagged update_flagged.php [QSA,L]
+
+# utility URLs
+RewriteRule ^ViewPairing$ view_pairing.php [QSA,L]
+RewriteRule ^ViewFlagged$ view_flagged.php [QSA,L]
+RewriteRule ^RemoveFlagged$ update_flagged.php [QSA,L]
 
 

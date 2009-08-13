@@ -22,16 +22,16 @@ $template = new Smarty();
 // determine game type
 $version = 1;
 $game    = trim(isset($_GET['game']) ? $_GET['game'] : '');
-$gametype = new GameType($version, $game);
+$gamedef = new GameType($version, $game);
 
 // check bot name
-$party = new Participants($db, $gametype->getCode());
+$party = new Participants($db, $gamedef->getCode());
 $name = trim(isset($_GET['name']) ? $_GET['name'] : '');
 $bot = $party->getByName($name, true);
 
 // get pairings for bot
-$pairings = new GamePairings($db, $gametype->getCode());
-$allrows = $pairings->getBotPairings($gametype->getCode(), $bot['bot_id'], $party->isRetired());
+$pairings = new GamePairings($db, $gamedef->getCode());
+$allrows = $pairings->getBotPairings($gamedef->getCode(), $bot['bot_id'], $party->isRetired());
 
 // ratings calc
 $partylist = $party->getList();
@@ -118,7 +118,7 @@ if ($sort!=null)
 $template->assign('gentime', strftime('%Y-%m-%d %T %z'));
 $template->assign('version', htmlspecialchars($version));
 $template->assign('game', htmlspecialchars($game));
-$template->assign('gametype', $gametype);
+$template->assign('survival', $gamedef->useSurvival());
 $template->assign('name', htmlspecialchars($name));
 $template->assign('details', $details);
 $template->assign('pairings', $allrows);

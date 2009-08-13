@@ -1,5 +1,5 @@
 {* $Id$ *}
-{include file="header.tpl" title="darkcanuck.net - RoboRumble Contributors"}
+{include file="header.tpl" title="darkcanuck.net - RoboRumble Contributors" game=""}
 
 
 <h1>RoboRumble Contributors</h1>

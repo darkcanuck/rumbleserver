@@ -11,8 +11,13 @@
   <thead><tr>
     <th>Rank</th>
     <th>Competitor</th>
+    {if $survival}
+    <th>Survival</th>
+    <th>APS</th>
+    {else}
     <th>APS</th>
     <th>Survival</th>
+    {/if}
     <th>ELO Rating</th>
     <th>Glicko-2 (RD)</th>
     <!-- <th>Details</th> -->

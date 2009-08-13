@@ -22,10 +22,10 @@ $glicko2 = new Glicko2Rating();
 // determine game type
 $version = trim(isset($_GET['version']) ? $_GET['version'] : '1');
 $game    = trim(isset($_GET['game']) ? $_GET['game'] : 'roborumble');
-$gametype = new GameType($version, $game);
+$gamedef = new GameType($version, $game);
 
 // get game results
-$party = new Participants($db, $gametype->getCode(), 'score_pct');
+$party = new Participants($db, $gamedef->getCode(), 'score_pct');
 $allrows = $party->getList();
 
 // calculate & sort
@@ -92,7 +92,7 @@ else if ($maxpair > $totalpair)
 $template->assign('gentime', strftime('%Y-%m-%d %T %z'));
 $template->assign('version', htmlspecialchars($version));
 $template->assign('game', htmlspecialchars($game));
-$template->assign('gametype', $gametype);
+$template->assign('survival', $gamedef->useSurvival());
 $template->assign('totalbattles', $total);
 $template->assign('pagemessage', $message);
 $template->assign('rankings', $allrows);

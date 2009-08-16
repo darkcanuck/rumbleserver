@@ -27,4 +27,6 @@ RewriteRule ^ViewPairing$ view_pairing.php [QSA,L]
 RewriteRule ^ViewFlagged$ view_flagged.php [QSA,L]
 RewriteRule ^RemoveFlagged$ update_flagged.php [QSA,L]
 
+# API URLs
+RewriteRule ^APIQuery$ api_query.php [QSA,L]
 

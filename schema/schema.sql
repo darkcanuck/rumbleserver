@@ -10,6 +10,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `api_stats`
+--
+
+DROP TABLE IF EXISTS `api_stats`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `api_stats` (
+  `apikey` smallint(6) unsigned NOT NULL,
+  `apiuser` varchar(20) NOT NULL,
+  `hour` tinyint(2) unsigned NOT NULL default '0',
+  `minute` tinyint(2) unsigned NOT NULL default '0',
+  `requests` int(7) unsigned NOT NULL default '0',
+  `hreq` smallint(4) unsigned NOT NULL default '0',
+  `mreq` smallint(4) unsigned NOT NULL default '0',
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  `created` timestamp NOT NULL default '0000-00-00 00:00:00',
+  PRIMARY KEY  (`apikey`),
+  UNIQUE KEY `apiuser` (`apiuser`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `battle_results`
 --
 

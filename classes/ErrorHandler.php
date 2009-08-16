@@ -24,6 +24,7 @@ class ErrorHandler {
 	
 	private $is_client = false;
 	private $no_output = false;
+	private $json_output = false;
 	
 	private $debugmode = false;
 	private $dumpvars  = false;
@@ -57,6 +58,9 @@ class ErrorHandler {
 	function setNoOutput($flag) {
 		$this->no_output = $flag;
 	}
+	function setJsonOutput($flag) {
+	    $this->json_output = $flag;
+	}
 	function setDebugMode($flag) {
 		$this->debugmode = $flag;
 	}
@@ -84,6 +88,12 @@ class ErrorHandler {
 		// file requests should send no data
 		if ($this->no_output)
 			die('');
+		
+		// api requests should send json output only
+		if ($this->json_output) {
+		    die(json_encode(array('error' => '1', 'message' => $defaultmsg, 
+		                        'params' => $_REQUEST, 'data' => null)));
+		}
 		
 		if ($this->is_client && !$this->debugmode) {
 			// handle duplicate inserts gracefully

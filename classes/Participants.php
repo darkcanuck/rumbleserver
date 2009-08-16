@@ -32,12 +32,15 @@ class Participants {
 		$qry = "SELECT p.bot_id, p.battles, p.score_pct, p.score_dmg, p.score_survival,
 						p.rating_classic, p.rating_glicko, p.rd_glicko,
 						p.rating_glicko2, p.rd_glicko2, p.vol_glicko2,
-						p.pairings, p.count_wins, p.timestamp,
+						p.pairings, p.count_wins, p.timestamp, p.state,
 						b.full_name AS name, b.timestamp AS created
 				FROM  participants AS p INNER JOIN bot_data AS b ON p.bot_id = b.bot_id
 				WHERE p.gametype='" . mysql_escape_string($this->game) . "'
 				  AND p.state='" . STATE_OK . "'";
-		if ($this->order!='')
+		$valid_orders = array('battles', 'score_pct', 'score_dmg', 'score_survival',
+      						'rating_classic', 'rating_glicko', 'rating_glicko2',
+      						'pairings', 'count_wins', 'timestamp', 'name', 'created');
+		if (($this->order!='') && in_array($this->order, $valid_orders))
 			$qry .= " ORDER BY `" . mysql_escape_string($this->order) . "` DESC";
 		$this->db->query($qry);
 		foreach($this->db->all() as $rs) {
@@ -90,7 +93,7 @@ class Participants {
 		$qry = "SELECT p.bot_id, p.battles, p.score_pct, p.score_dmg, p.score_survival,
 						p.rating_classic, p.rating_glicko, p.rd_glicko,
 						p.rating_glicko2, p.rd_glicko2, p.vol_glicko2,
-						p.pairings, p.count_wins, p.timestamp,
+						p.pairings, p.count_wins, p.timestamp, p.state,
 						b.full_name AS name, b.timestamp AS created
 				FROM  participants AS p INNER JOIN bot_data AS b ON p.bot_id = b.bot_id
 				WHERE p.gametype='" . mysql_escape_string($this->game) . "'

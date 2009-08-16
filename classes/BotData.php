@@ -58,7 +58,7 @@ class BotData {
 		}
 		
 		if (!$addifmissing)
-			trigger_error('Could not find bot "' . substr($this->fullname, 0, 50) . ' in database!', E_USER_ERROR);
+			trigger_error('Could not find bot "' . substr($this->fullname, 0, 50) . '" in database!', E_USER_ERROR);
 		
 		// bot missing from database, create record
 		$qry = 	sprintf("INSERT INTO bot_data SET full_name = '%s', package_name = '%s',

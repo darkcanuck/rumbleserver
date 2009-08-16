@@ -14,6 +14,13 @@
 require_once 'classes/common.php';
 require_once 'classes/ApiUsers.php';
 
+require_once 'classes/Glicko2Rating.php';
+$glicko2 = new Glicko2Rating();         // needed for glicko-2 scaling
+
+// send JSON headers and force error handler to use JSON output
+header('Cache-Control: no-cache, must-revalidate');
+header('Expires: ' . strtotime(DATE_RFC1123));
+header('Content-type: application/json');
 $err->setJsonOutput(true);
 
 define('API_MAXREQ_HOUR', 60);
@@ -85,6 +92,7 @@ switch (strtolower($api_query)) {
             foreach($rankings as $k=>$rs) {
                 foreach($div_fields as $f)
                     $rankings[$k][$f] = (float)$rs[$f] / 1000.0;
+                $rankings[$k]['rating_glicko2'] = $glicko2->eloScale((float)$rankings[$k]['rating_glicko2']);
                 $rankings[$k]['rank'] = $rank;
                 $rank++;
                 // re-assign to new array since getList() uses bot_id's as keys

@@ -16,6 +16,8 @@ class GamePairings {
 	private $db = null;
 	private $gamedef = null;
 	
+	private $divfields = array('score_pct', 'score_dmg', 'score_survival');
+	
 	private $pairing = null;
 	private $newpair = false;
 	
@@ -291,7 +293,7 @@ class GamePairings {
 		*/
 	}
 	
-	function getBotPairings($game='', $id='', $retired=false, $order='vs_name') {
+	function getBotPairings($game='', $id='', $retired=false, $anystate=false, $order='vs_name') {
 		$gametype = ($game!='') ? $game[0] : $this->gametype[0];
 		$id1 = (int)(($id!='') ? $id : $this->id1);
         $qry = "SELECT g.gametype AS gametype, g.bot_id AS bot_id,
@@ -303,9 +305,10 @@ class GamePairings {
 				FROM game_pairings AS g
 				INNER JOIN bot_data AS b ON g.vs_id = b.bot_id
 				WHERE g.gametype = '$gametype'
-				  AND g.bot_id = '$id1'
-				  AND g.state = '" . (($retired) ? STATE_RETIRED : STATE_OK) . "'
-				ORDER BY `" . mysql_escape_string($order) . "` ASC";
+				  AND g.bot_id = '$id1' ";
+		if (!$anystate)
+			$qry .= " AND g.state = '" . (($retired) ? STATE_RETIRED : STATE_OK) . "' ";
+		$qry .= " ORDER BY `" . mysql_escape_string($order) . "` ASC";
 		if ($this->db->query($qry)>0)
 			return $this->db->all();
 		else
@@ -329,10 +332,13 @@ class GamePairings {
 				WHERE g.gametype = '$gametype'
 				  AND g.bot_id = '$id1'
 				  AND g.vs_id = '$id2'";
-		if ($this->db->query($qry)>0)
-			return $this->db->all();
-		else
-			return null;
+		if ($this->db->query($qry)>0) {
+		    $rs = $this->db->next();
+		    foreach($this->divfields as $f)
+                $rs[$f] = (float)$rs[$f] / 1000.0;
+		    return $rs;
+		}
+		return null;
 	}
 	
 }

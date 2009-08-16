@@ -38,13 +38,11 @@
   	<td>{$b.user}@{$b.ip_addr} ver.{$b.version}</td>
   </tr>
   {/foreach}
-  {foreach from=$pairing key=id item=p}
   <tr>
-    <th{if $p.score_pct gt 60} class="highScore"{elseif $p.score_pct lt 40} class="lowScore"{/if}>{$p.score_pct|string_format:"%.3f"}</th>
-    <th{if $p.score_survival gt 60} class="highScore"{elseif $p.score_survival lt 40} class="lowScore"{/if}>{$p.score_survival|string_format:"%.3f"}</th>
-    <th colspan="8">{$p.battles} battles</th>
+    <th{if $pairing.score_pct gt 60} class="highScore"{elseif $pairing.score_pct lt 40} class="lowScore"{/if}>{$pairing.score_pct|string_format:"%.3f"}</th>
+    <th{if $pairing.score_survival gt 60} class="highScore"{elseif $pairing.score_survival lt 40} class="lowScore"{/if}>{$pairing.score_survival|string_format:"%.3f"}</th>
+    <th colspan="8">{$pairing.battles} battles</th>
   </tr>
-  {/foreach}
   </tbody>
 </table>
 

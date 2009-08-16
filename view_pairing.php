@@ -50,11 +50,6 @@ foreach ($allrows as $k=>$rs) {
 	$allrows[$k]['score_survival'] = ($rs['bot_survival']+$rs['vs_survival'] > 0) ?
                                     $rs['bot_survival'] / ($rs['bot_survival'] + $rs['vs_survival']) * 100 : 50.0;
 }
-foreach ($pairdata as $k=>$rs) {
-    $pairdata[$k]['score_pct'] /= 1000.0;
-	$pairdata[$k]['score_dmg'] /= 1000.0;
-	$pairdata[$k]['score_survival'] /= 1000.0;
-}
 
 // assign data to template & display results
 $template->assign('gentime', strftime('%Y-%m-%d %T %z'));

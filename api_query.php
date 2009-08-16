@@ -76,18 +76,20 @@ switch (strtolower($api_query)) {
         $party = new Participants($db, $gamedef->getCode(), $order);
         $rankings = $party->getList();
         
-        // TODO: these fields should be fixed by the Participants class, not by consumers!
-        $div_fields = array('score_pct', 'score_dmg', 'score_survival', 'rating_classic', 'rating_glicko', 'rd_glicko',
-                            'rating_glicko2', 'rd_glicko2', 'vol_glicko2');
-        $results['data'] = array();
-        $rank = 1;
-        foreach($rankings as $k=>$v) {
-            foreach($div_fields as $f)
-                $rankings[$k][$f] = (float)$v[$f] / 1000.0;
-            
-            // re-assign to new array since getList() uses bot_id's as keys
-            $results['data'][$rank] = $rankings[$k];
-            $rank++;
+        if ($rankings!=null) {
+            // TODO: these fields should be fixed by the Participants class, not by consumers!
+            $div_fields = array('score_pct', 'score_dmg', 'score_survival', 'rating_classic', 'rating_glicko', 'rd_glicko',
+                                'rating_glicko2', 'rd_glicko2', 'vol_glicko2');
+            $results['data'] = array();
+            $rank = 1;
+            foreach($rankings as $k=>$rs) {
+                foreach($div_fields as $f)
+                    $rankings[$k][$f] = (float)$rs[$f] / 1000.0;
+                $rankings[$k]['rank'] = $rank;
+                $rank++;
+                // re-assign to new array since getList() uses bot_id's as keys
+                $results['data'][] = $rankings[$k];
+            }
         }
         break;
     
@@ -103,16 +105,85 @@ switch (strtolower($api_query)) {
         // get bot ranking details
         $party = new Participants($db, $gamedef->getCode());
         $participant = $party->getByName($name, true);
+        
+        if ($participant!=null) {
+            // TODO: these fields should be fixed by the Participants class, not by consumers!
+            $div_fields = array('score_pct', 'score_dmg', 'score_survival', 'rating_classic', 'rating_glicko', 'rd_glicko',
+                                'rating_glicko2', 'rd_glicko2', 'vol_glicko2');
+            $results['data'] = array();
+            foreach($div_fields as $f)
+                $participant[$f] = (float)$participant[$f] / 1000.0;   
+            $results['data'][] = $participant;
+        }
+        break;
+    
+    case 'details':
+        // requires params 'game', 'name'
+        if ($gamedef==null)
+            trigger_error('Missing parameter "game"', E_USER_ERROR);
+        $name = trim(isset($_REQUEST['name']) ? $_REQUEST['name'] : '');
+        if ($name=='')
+            trigger_error('Missing parameter "name"', E_USER_ERROR);
+        
+        // get pairings for bot
+        $bot = new BotData($name);
+		$id = $bot->getID($db, false);
+        $pairings = new GamePairings($db, $gamedef->getCode());
+        $details = $pairings->getBotPairings($gamedef->getCode(), $id, false, true);   // get all states
+        
+        if ($details!=null) {
+            // TODO: these fields should be fixed by the GamePairings class, not by consumers!
+            $div_fields = array('score_pct', 'score_dmg', 'score_survival');
+            foreach($details as $k=>$rs) {
+                foreach($div_fields as $f)
+                    $details[$k][$f] = (float)$rs[$f] / 1000.0;
+            }
+            $results['data'] = $details;
+        }
+        break;
 
-        // TODO: these fields should be fixed by the Participants class, not by consumers!
-        $div_fields = array('score_pct', 'score_dmg', 'score_survival', 'rating_classic', 'rating_glicko', 'rd_glicko',
-                            'rating_glicko2', 'rd_glicko2', 'vol_glicko2');
-        $results['data'] = array();
-        foreach($div_fields as $f)
-            $participant[$f] = (float)$participant[$f] / 1000.0;   
-        $results['data'][1] = $participant;
+    case 'pairing':
+        // requires params 'game', 'name', 'vs'
+        if ($gamedef==null)
+            trigger_error('Missing parameter "game"', E_USER_ERROR);
+        $name = trim(isset($_REQUEST['name']) ? $_REQUEST['name'] : '');
+        if ($name=='')
+            trigger_error('Missing parameter "name"', E_USER_ERROR);
+        $vs_name = trim(isset($_REQUEST['vs']) ? $_REQUEST['vs'] : '');
+        if ($vs_name=='')
+            trigger_error('Missing parameter "vs"', E_USER_ERROR);
+
+        // get pairing data for bots
+        $bot = new BotData($name);
+		$id = $bot->getID($db, false);
+		$vs_bot = new BotData($vs_name);
+		$vs = $vs_bot->getID($db, false);
+        $pairings = new GamePairings($db, $gamedef->getCode());
+        $pair = $pairings->getSinglePairing($gamedef->getCode(), $id, $vs);
+        
+        if ($pair!=null)
+            $results['data'][] = $pair;
         break;
         
+    case 'battles':
+        // requires params 'game', 'name', 'vs'
+        if ($gamedef==null)
+            trigger_error('Missing parameter "game"', E_USER_ERROR);
+        $name = trim(isset($_REQUEST['name']) ? $_REQUEST['name'] : '');
+        if ($name=='')
+            trigger_error('Missing parameter "name"', E_USER_ERROR);
+        $vs_name = trim(isset($_REQUEST['vs']) ? $_REQUEST['vs'] : '');
+        if ($vs_name=='')
+            trigger_error('Missing parameter "vs"', E_USER_ERROR);
+        
+        // get battle data for bots
+        $bot = new BotData($name);
+		$id = $bot->getID($db, false);
+		$vs_bot = new BotData($vs_name);
+		$vs = $vs_bot->getID($db, false);
+        $battles = new BattleResults($db);
+        $results['data'] = $battles->getBattleDetails($gamedef->getCode(), $id, $vs);
+        break;
     
     default:
         $results['data']    = array(1,2,3);

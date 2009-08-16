@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS `api_stats`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `api_stats` (
-  `apikey` smallint(6) unsigned NOT NULL,
+  `apikey` int(6) unsigned NOT NULL,
   `apiuser` varchar(20) NOT NULL,
   `hour` tinyint(2) unsigned NOT NULL default '0',
   `minute` tinyint(2) unsigned NOT NULL default '0',

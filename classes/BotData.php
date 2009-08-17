@@ -23,6 +23,9 @@ class BotData {
 	
 	function __construct($fullname) {
 		$this->fullname = trim($fullname);
+		if (strlen($this->fullname)>70)
+			trigger_error('Robot name "' . substr($fullname, 0, 70) . '..." is too long (max 70 chars)', E_USER_ERROR);
+        
 		if (preg_match('/[^a-zA-Z0-9 \.\-\_]/', $this->fullname))
 			trigger_error('Invalid characters in robot name "' . substr($fullname, 0, 50) . '"', E_USER_ERROR);
 		
@@ -35,6 +38,11 @@ class BotData {
 		$this->package = $chunk[0];
 		$this->botname = isset($chunk[1]) ? $chunk[1] : '';
 		
+		if (strlen($this->package)>20)
+			trigger_error('Robot package "' . substr($this->package, 0, 50) . '..." is too long (max 20 chars)', E_USER_ERROR);
+        if (strlen($this->version)>20)
+			trigger_error('Robot version "' . substr($this->version, 0, 50) . '..." is too long (max 20 chars)', E_USER_ERROR);
+        
 		$valid  =  (!empty($this->package) || $this->package[0]=='0')
 				&& (!empty($this->botname) || $this->botname[0]=='0')
 				&& (!empty($this->version) || $this->version[0]=='0')

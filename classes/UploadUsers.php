@@ -71,7 +71,11 @@ class UploadUsers {
 			trigger_error('Invalid user data', E_USER_ERROR);
 		if ($name=='Put_Your_Name_Here')
 		    trigger_error('You must set your username in the config file!', E_USER_ERROR);
-		
+		if (strlen($name)>20)
+			trigger_error('User name "' . substr($name, 0, 50) . '" is too long (max 20 chars)', E_USER_ERROR);
+		$ip = substr($ip, 0, 15);
+		$version = substr($version, 0, 20);
+        
 		$user = null;
 		if ($this->udata==null)
 		    $user = $this->queryUser($name, $ip, $version);

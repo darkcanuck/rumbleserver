@@ -5,8 +5,9 @@
 <head>
 	<title>{$title|default:"darkcanuck.net - RoboRumble"}</title>
 	
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="ROBOTS" content="{$robots|default:"NOINDEX, NOFOLLOW, NOARCHIVE"}" />
 	
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="Content-Style-Type" content="text/css" />
 	<link href="css/styles.css" rel="stylesheet" type="text/css" media="all" />
 	

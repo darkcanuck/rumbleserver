@@ -1,5 +1,5 @@
 {* $Id$ *}
-{include file="header.tpl" title="darkcanuck.net - RoboRumble Rankings" jscript="js/lrp2.js"}
+{include file="header.tpl" title="darkcanuck.net - Rating Details for $name ($game)" jscript="js/lrp2.js"}
 
 
 <h1>RATING DETAILS FOR "{$name}" IN GAME "{$game}"</h1>

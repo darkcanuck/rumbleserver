@@ -1,5 +1,5 @@
 {* $Id$ *}
-{include file="header.tpl" title="darkcanuck.net - RoboRumble Rankings"}
+{include file="header.tpl" title="darkcanuck.net - Battles for $name vs $vs_name ($game)"}
 
 
 <h1>BATTLE DETAILS FOR "{$name}" VS "{$vs_name}" IN GAME "{$game}"</h1>

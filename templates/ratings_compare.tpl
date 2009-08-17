@@ -20,10 +20,10 @@
 		    ({$details.rd_glicko2|string_format:"%.0f"}, {$details.vol_glicko2|string_format:"%.3f"})</td>
 		<td>{$vs_details.rating_glicko2|string_format:"%.1f"}
     		    ({$vs_details.rd_glicko2|string_format:"%.0f"}, {$vs_details.vol_glicko2|string_format:"%.3f"})</td></tr>
-	<tr><td>Average % Score (APS)</td>
+	<tr><td>{if $survival}Average % Survival{else}Average % Score (APS){/if}</td>
 	    <td>{$details.score_pct|string_format:"%.3f"} %</td>
 	    <td>{$vs_details.score_pct|string_format:"%.3f"} %</td></tr>
-	<tr><td>Average % Survival</td>
+	<tr><td>{if $survival}Average % Score{else}Average % Survival{/if}</td>
 	    <td>{$details.score_survival|string_format:"%.3f"} %</td>
 	    <td>{$vs_details.score_survival|string_format:"%.3f"} %</td></tr>
 	<tr><td># Battles</td>
@@ -41,10 +41,10 @@
 	<tr><td>Last Battle</td>
 	    <td>{$details.timestamp}</td>
 	    <td>{$vs_details.timestamp}</td></tr>
-	<tr><td>Common % Score (APS)</td>
+	<tr><td>{if $survival}Common % Survival{else}Common % Score (APS){/if}</td>
         <td>{$details.avg_score|string_format:"%.3f"} %</td>
         <td>{$vs_details.avg_score|string_format:"%.3f"} %</td></tr>
-	<tr><td>Common % Survival</td>
+	<tr><td>{if $survival}Common % Score{else}Common % Survival{/if}</td>
 	    <td>{$details.avg_survival|string_format:"%.3f"} %</td>
 	    <td>{$vs_details.avg_survival|string_format:"%.3f"} %</td></tr>
   </tbody>
@@ -54,12 +54,13 @@
   <thead>
     <tr>
       <th rowspan="2">Enemy</th>
+      {if $survival}<th>% Survival</th>{else}{/if}
       <th>% Score</th>
       <th>% Survival</th>
       <th>% Score</th>
       <th>% Survival</th>
       <th>% Score</th>
-      <th>% Survival</th>
+      {if $survival}{else}<th>% Survival</th>{/if}
     </tr>
     <tr>
       <th colspan='2'><img src="flags/{$details.package}.gif" alt="Flag for {$details.package}" /> {$name}</th>

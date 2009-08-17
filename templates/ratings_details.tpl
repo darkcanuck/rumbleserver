@@ -19,11 +19,11 @@
 	    <td>{$details.momentum|string_format:"%.1f"}</td></tr>
 	<tr><td>Specialization</td>
 	    <td>{$details.special|string_format:"%.3f"}</td></tr>
-	<tr><td>Average % Score (APS)</td>
+	<tr><td>{if $survival}Average % Survival{else}Average % Score (APS){/if}</td>
 	    <td>{$details.score_pct|string_format:"%.3f"} %</td></tr>
 	<tr><td>Standard Deviation</td>
 	    <td>{$details.stddev|string_format:"%.3f"}</td></tr>
-	<tr><td>Average % Survival</td>
+	<tr><td>{if $survival}Average % Score{else}Average % Survival{/if}</td>
 	    <td>{$details.score_survival|string_format:"%.3f"} %</td></tr>
 	<tr><td># Battles</td>
 	    <td>{$details.battles}</td></tr>

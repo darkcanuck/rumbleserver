@@ -22,10 +22,10 @@ $template = new Smarty();
 // determine game type
 $version = 1;
 $game    = trim(isset($_GET['game']) ? $_GET['game'] : '');
-$gametype = new GameType($version, $game);
+$gamedef = new GameType($version, $game);
 
 // check bot name
-$party = new Participants($db, $gametype->getCode());
+$party = new Participants($db, $gamedef->getCode());
 $name = trim(isset($_GET['name']) ? $_GET['name'] : '');
 $bot = $party->getByName($name, true);
 $bot['state'] = ($party->isRetired()) ? '(RETIRED)' : ''; 
@@ -40,9 +40,9 @@ $chunks = explode('.', $vs_name);
 $vs['package'] = $chunks[0];
 
 // get pairings for both
-$pairings = new GamePairings($db, $gametype->getCode());
-$bot_pairs = $pairings->getBotPairings($gametype->getCode(), $bot['bot_id'], $bot['state']!='');
-$vs_pairs = $pairings->getBotPairings($gametype->getCode(), $vs['bot_id'], $vs['state']!='');
+$pairings = new GamePairings($db, $gamedef->getCode());
+$bot_pairs = $pairings->getBotPairings($gamedef->getCode(), $bot['bot_id'], $bot['state']!='');
+$vs_pairs = $pairings->getBotPairings($gamedef->getCode(), $vs['bot_id'], $vs['state']!='');
 
 // ratings calc
 $elo     = new EloRating();
@@ -123,9 +123,11 @@ foreach ($allpairs as $k=>$v) {
 		$sortname[$k] = $allpairs[$k]['vs_name'];
 	}
 }
-foreach ($details as $k=>$v) {
-    $details[$k]['avg_score'] /= (float)$common_pairs;
-    $details[$k]['avg_survival'] /= (float)$common_pairs;
+if ($common_pairs > 0) {
+    foreach ($details as $k=>$v) {
+        $details[$k]['avg_score'] /= (float)$common_pairs;
+        $details[$k]['avg_survival'] /= (float)$common_pairs;
+    }
 }
 if ($sort!=null)
 	array_multisort($sortcol, ($sort=='vs_name') ? SORT_ASC : SORT_DESC, $sortname, SORT_ASC, $allpairs);
@@ -135,7 +137,7 @@ if ($sort!=null)
 $template->assign('gentime', strftime('%Y-%m-%d %T %z'));
 $template->assign('version', htmlspecialchars($version));
 $template->assign('game', htmlspecialchars($game));
-$template->assign('gametype', $gametype);
+$template->assign('survival', $gamedef->useSurvival());
 $template->assign('name', htmlspecialchars($name));
 $template->assign('vs_name', htmlspecialchars($vs_name));
 $template->assign('details', $details[0]);

@@ -121,6 +121,7 @@ switch (strtolower($api_query)) {
             $results['data'] = array();
             foreach($div_fields as $f)
                 $participant[$f] = (float)$participant[$f] / 1000.0;   
+            $participant['rating_glicko2'] = $glicko2->eloScale((float)$participant['rating_glicko2']);
             $results['data'][] = $participant;
         }
         break;

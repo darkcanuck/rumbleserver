@@ -11,6 +11,23 @@
 	<meta http-equiv="Content-Style-Type" content="text/css" />
 	<link href="css/styles.css" rel="stylesheet" type="text/css" media="all" />
 	
+    {if isset($jsdata)}<script language="javascript">
+        var data = new Array();
+        data.name = "{$name}";
+        data.game = "{$game}";
+        data.rating = {$details.rating_classic};
+        data.numBattles = {$details.battles};
+        data.lastBattle = {$details.unixtimestamp};
+        data.specializationIndex = {$details.special};
+        data.momentum = {$details.momentum};
+        data.APS = {$details.percent_score};
+        data.pairings = new Array(
+            {foreach from=$pairings key=id item=bot name=botjs}
+            {ldelim} "name": "{$bot.vs_name}", "ranking": {$bot.rating_classic}, "score": {$bot.score_pct}, "numBattles": {$bot.battles}, "lastBattle": {$bot.unixtimestamp}, "expectedScore": {$bot.expected}, "PBI": {$bot.pbindex} {rdelim}{if !$smarty.foreach.botjs.last},{/if}
+            
+            {/foreach});
+	</script>{/if}
+	
 	<script language="javascript" type="text/javascript" src="js/jquery.js"></script>
 	<script language="javascript" type="text/javascript" src="js/jquery.tablesorter.min.js"></script>
 	<script language="javascript" type="text/javascript" src="js/jquery.flot.js"></script>
@@ -18,6 +35,7 @@
 	{if isset($jscript)}
 	<script language="javascript" type="text/javascript" src="{$jscript}"></script>
 	{/if}
+	
 </head>
 
 <body>

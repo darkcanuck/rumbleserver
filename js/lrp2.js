@@ -2,37 +2,7 @@ function formatDate(d) {
 	return (d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.toLocaleTimeString());
 }
 
-//var bot = {};
-$(function () {
-	var query = location.search;
-	
-	var game;
-	if (query.indexOf("?") == 0) {
-		query1 = query.substr(1);
-		parameters = unescape(query1).split("&");
-	}
-	for (var i in parameters) {
-		if (parameters[i].match("game=")) game = parameters[i].substring(parameters[i].indexOf("=") + 1);
-		if (parameters[i].match("name=")) name = parameters[i].substring(parameters[i].indexOf("=") + 1);
-	}
-	if (!game || game == "") {
-		$("#info").html("Invalid game parameter");
-		return;
-	}
-	
-	
-	
-	$("#info").html("Loading data, please wait...");
-	$.ajax({
-	    url: '/rumble/RatingDetailsJson' + query,
-	    type: 'GET',
-	    dataType: 'json',
-	    timeout: 10000,
-	    error: function(XMLHttpRequest, textStatus, errorThrown){
-			$("#info").html("Error loading JSON document:<br />" + textStatus);
-	        //alert('Error loading JSON document');
-	    },
-	    success: function(data){
+$(document).ready(function() {
 	    	$("#info").html("Computing...");
 	    	bot = data;//eval(text);
 	    	if (bot.error) {
@@ -180,23 +150,4 @@ $(function () {
 
 	    	};
 	    	bot.plot(0);
-	    }
-	});
-	$.getJSON('/rumble/GetOlderVersionsJson' + query,
-		function(data){
-			if (data.versions && data.versions.length > 1) {
-				versions = [];
-				for (var i = 0; i < data.versions.length; i++) 
-					if (data.versions[i] != name) versions.push(data.versions[i]);
-				versions.invert;
-				$("#debug").append("<br /><br />Compare with previous versions:");
-				list = "<ul>";
-				$.each(versions, function(i,item){
-					if (item != name) {
-						list += "<li><a href='compare.html?game="+game+"&name1="+name+"&name2="+item + "'>"+item+"</a></li>";
-					}
-				});
-				$("#debug").append(list+"</ul>");
-			}
-	});
 });

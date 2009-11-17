@@ -19,13 +19,15 @@ class Participants {
 	private $plist = null;
 	private $pname = null;
 	private $order = '';
+	private $limit = 0;
 	
 	private $is_retired = false;
 	
-	function __construct($db, $gametype, $order='') {
+	function __construct($db, $gametype, $order='', $limit=0) {
 		$this->db = $db;
 		$this->game = $gametype;
 		$this->order = $order;
+		$this->limit = $limit;
 	}
 	
 	function queryList() {
@@ -42,6 +44,9 @@ class Participants {
       						'pairings', 'count_wins', 'timestamp', 'name', 'created');
 		if (($this->order!='') && in_array($this->order, $valid_orders))
 			$qry .= " ORDER BY `" . mysql_escape_string($this->order) . "` DESC";
+		if ($this->limit>0)
+    		$qry .= " LIMIT " . (int)$this->limit;
+    	
 		$this->db->query($qry);
 		foreach($this->db->all() as $rs) {
 			$this->plist[ $rs['bot_id'] ] = $rs;

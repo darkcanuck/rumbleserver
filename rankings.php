@@ -25,7 +25,8 @@ $game    = trim(isset($_GET['game']) ? $_GET['game'] : 'roborumble');
 $gamedef = new GameType($version, $game);
 
 // get game results
-$party = new Participants($db, $gamedef->getCode(), 'score_pct');
+$limit = (int)trim(isset($_GET['limit']) ? $_GET['limit'] : '0');
+$party = new Participants($db, $gamedef->getCode(), 'score_pct', $limit);
 $allrows = $party->getList();
 
 // calculate & sort

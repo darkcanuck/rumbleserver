@@ -41,7 +41,7 @@ class GamePairings {
 		$this->pairing = null;
 		
 		$qrystring = "SELECT gametype, bot_id, vs_id, battles, score_pct, score_dmg, " .
-						" score_survival, count_wins, timestamp " .
+						" score_survival, count_wins, timestamp, state " .
 				        " FROM   game_pairings " .
 				        " WHERE  gametype = '%s' AND bot_id=%u AND vs_id=%u " .
 				        " FOR UPDATE ";     // write locks rows if inside transaction
@@ -68,7 +68,8 @@ class GamePairings {
 											'score_dmg' => 0,
 											'score_survival' => 0,
 											'count_wins' => 0,
-											'timestamp' => strftime('%Y-%m-%d %T')
+											'timestamp' => strftime('%Y-%m-%d %T'),
+											'state' => STATE_OK
 											);
 		}
 		return true;
@@ -94,7 +95,7 @@ class GamePairings {
 								score_survival = '" . mysql_escape_string($pair['score_survival']) . "',
 								count_wins     = '" . mysql_escape_string($pair['count_wins']) . "',
 								timestamp = NOW(),
-								state = '" . STATE_OK . "' ";
+								state = '" . mysql_escape_string($pair['state']) . "' ";
 			if (!$this->newpair) {
 				$qry .= " WHERE gametype = '" . $pair['gametype'][0] . "'
 							AND bot_id   = " . ((int)$pair['bot_id']) . "
@@ -158,10 +159,6 @@ class GamePairings {
 	}
 	
 	function recalcScores($id1, $id2) {
-		// $battles must be an array of battle data for this pairing (similar to data returned by getBattleDetails)
-		// each array element should be an assoc. array with at least bot_id, bot_score, bot_bulletdmg, bot_survival,
-		//      vs_id, vs_score, vs_bulletdmg, and vs_survival
-		
 		// load pairing data
         $this->id1 = $id1;
         $this->id2 = $id2;

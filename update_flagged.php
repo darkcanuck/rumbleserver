@@ -26,7 +26,7 @@ $retired = $party->isRetired();
 
 // check vs name
 $vs_name = trim(isset($_REQUEST['vs']) ? $_REQUEST['vs'] : '');
-$vs  = $party->getByName($vs_name);
+$vs  = $party->getByName($vs_name, true);
 $vs_retired = $party->isRetired();
 
 // update pairing scores

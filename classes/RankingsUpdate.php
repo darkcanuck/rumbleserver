@@ -3,7 +3,6 @@
  * RankingsUpdate class  --  Darkcanuck's Roborumble Server
  *
  * TODO:  this class needs to be cleaned up!
- *          The updateScores method is obsolete
  *
  * $HeadURL$
  * $Date$
@@ -25,113 +24,7 @@ class RankingsUpdate {
 	function __construct($db) {
 		$this->db = $db;
 	}
-		
-/* unused function -- kept for reference only	
-	function updateScores($updatesize=100, $pairingdelay=-1) {
-		
-		//echo "\nDOING UPDATE...\n";
-		
-		set_time_limit(5 * $updatesize);
-		
-		// keep other processes out!
-		$this->db->query('LOCK TABLES battle_results WRITE, upload_users READ,
-									game_pairings READ, game_pairings AS g READ,
-									participants WRITE, participants AS p WRITE,
-									bot_data READ, bot_data AS b READ');
-		
-		// get new battle results
-		$results = new BattleResults($this->db);
-		$newbattles = $results->lockNewBattles($updatesize);
-		if (($newbattles==null) || (count($newbattles)<1))
-			return;		// nothing to update
-		
-		// organize update list by game / bot / vs
-		$updatelist = array();
-		foreach($newbattles as $battle) {
-			$updatelist[ $battle['gametype'] ][ $battle['bot_id'] ][ $battle['vs_id'] ][] = $battle;
-			$updatelist[ $battle['gametype'] ][ $battle['vs_id'] ][ $battle['bot_id'] ][] = $battle;
-		}
-		
-		// update scores
-		$party = array();
-		$scores = array();
-		$elo    = new EloRating();
-		$glicko = new GlickoRating();
-		$glicko2 = new Glicko2Rating();
-		foreach($updatelist as $game => $botlist) {
-			$party[$game] = new Participants($this->db, $game);
-			$partylist = $party[$game]->getList();
-			
-			$scores[$game] = array();
-			
-			$pairing = new GamePairings($this->db, $game);
-			
-			foreach($botlist as $id => $vslist) {
-				// get bot's current scores
-				$scores[$game][$id] = $party[$game]->getBot($id);
-				$score =& $scores[$game][$id];
-				
-				$ratingdata = array();
-				foreach($vslist as $vs => $battlelist) {
-					if (isset($partylist[$vs])) {
-						foreach($battlelist as $b) {
-							$ratingdata[] = array(
-								'elo'    => $elo->validRating($partylist[$vs]['rating_classic'], $battles, $partylist[$vs]['score_pct']),
-								'glicko' => $glicko->validRating($partylist[$vs]['rating_glicko'], $partylist[$vs]['battles']),
-								'RD'     => $glicko->validDeviation($partylist[$vs]['rd_glicko'], $partylist[$vs]['battles']),
-								'glicko2' => $glicko2->validRating($partylist[$vs]['rating_glicko2'], $battles, $partylist[$vs]['rating_glicko']),
-								'RD2'     => $glicko2->validDeviation($partylist[$vs]['rd_glicko2'], $battles),
-								'score'  => $b['bot_score'] / ($b['bot_score'] + $b['vs_score'])
-								);
-						}
-					}
-				}
-				// update classic Elo rating (scaling done in class)
-				$score['rating_classic'] = $elo->calcRating($score['rating_classic'], $score['battles'], $score['score_pct'], $ratingdata);
-				
-				// update Glicko rating
-				$newrating = $glicko->calcRating(
-											$glicko->validRating($score['rating_glicko'], $score['battles']),
-											$glicko->validDeviation($score['rd_glicko'], $score['battles']),
-											$ratingdata
-											);
-				$score['rating_glicko'] = (int)($newrating['glicko'] * 1000.0);
-				$score['rd_glicko'] = (int)($newrating['RD'] * 1000.0);
-				
-				// update Glicko-2 rating
-				$newrating = $glicko2->calcRating($score['rating_glicko2'], $score['rd_glicko2'], $score['rd_glicko2'],
-												$score['battles'], $score['rating_glicko'], $ratingdata);
-				$score['rating_glicko2'] = $newrating['glicko2'];
-				$score['rd_glicko2'] = $newrating['RD2'];
-				$score['vol_glicko2'] = $newrating['vol2'];
-				
-				// update pairing scores if needed
-				$nextupdate = strtotime($score['timestamp']) + $pairingdelay;	//speeds up ranking rebuilding
-				if ($nextupdate < time()) {
-					$summary = $pairing->getBotSummary($game, $id);				
-					if ($summary!=null && (count($summary)>0)) {
-						$fields = array('battles', 'score_pct', 'score_dmg', 'score_survival', 'pairings', 'count_wins');
-						foreach($fields as $f) {
-							$score[$f] = $summary[$f];
-						}
-						//if (!$party[$game]->updateScores($id, $score))
-						//	trigger_error('Failed to update scores for ' . $score['name'], E_USER_ERROR);
-					}
-				}
-				
-				// update bot's scores
-				$party[$game]->updateScores($id, $score);
-			}
-		}
-		
-		// mark new battle results as "done"
-		$results->releaseBattles();
-		$this->db->query('UNLOCK TABLES');
-		
-		return true;
-	}
-*/
-
+    
 	function updatePair($gametype, $id1, $id2, $party=null, $allpairings=null) {
 		// create new participants list if needed
 		if ($party==null)

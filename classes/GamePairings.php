@@ -234,62 +234,7 @@ class GamePairings {
 			$qry .= " AND state='" . mysql_escape_string($oldstate) . "'";
 		return ($this->db->query($qry) > 0);
 	}
-	
-	function getBotSummary($game='', $id='') {
-		$gametype = ($game!='') ? $game[0] : $this->gametype[0];
-		$id1 = (int)(($id!='') ? $id : $this->id1);
-		$qry = "SELECT gametype, bot_id,
-						COUNT(bot_id) AS pairings,
-						SUM(battles) AS battles,
-						AVG(score_pct) AS score_pct,
-						AVG(score_dmg) AS score_dmg,
-						AVG(score_survival) AS score_survival,
-						SUM(count_wins) AS count_wins,
-						MAX(timestamp) AS last
-				FROM  game_pairings
-				WHERE gametype = '$gametype'
-				  AND bot_id='$id1'
-				  AND state='" . STATE_OK . "'
-				GROUP BY bot_id
-				ORDER BY NULL";		// optimization!
-		if ($this->db->query($qry)>0)
-			return $this->db->next();
-		else
-			return null;
-		/*
-		$summary = array('gametype' => $gametype, 'bot_id' => $id);
-		$sumfields = array('battles', 'count_wins');
-		$avgfields = array('score_pct', 'score_dmg', 'score_survival');
-		$lasttime = 0;
 		
-		$qry = "SELECT gametype, bot_id, vs_id, battles,
-						score_pct, score_dmg, score_survival,
-						count_wins, timestamp, state
-				FROM  game_pairings
-				WHERE gametype = '$gametype'
-				  AND bot_id='$id1'
-				  AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "')";
-		$summary['pairings'] = $this->db->query($qry);
-		if ($summary['pairings']<1)
-			return null;
-		
-		foreach($this->db->all() as $rs) {
-			foreach($sumfields as $f)
-				$summary[$f] += $rs[$f];
-			foreach($avgfields as $f)
-				$summary[$f] += $rs[$f];
-			$timeval = strtotime($rs['timestamp']);
-			if ($timeval > $lasttime) {
-				$summary['timestamp'] = $rs['timestamp'];
-				$lasttime = $timeval;
-			}
-		}
-		foreach($avgfields as $f)
-			$summary[$f] /= $summary['pairings'];
-		return $summary;
-		*/
-	}
-	
 	function getBotPairings($game='', $id='', $retired=false, $anystate=false, $order='vs_name') {
 		$gametype = ($game!='') ? $game[0] : $this->gametype[0];
 		$id1 = (int)(($id!='') ? $id : $this->id1);

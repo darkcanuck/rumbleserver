@@ -163,13 +163,14 @@ class BattleResults {
 		return ( ($this->db->query($qry1) + $this->db->query($qry2)) > 0);
 	}
 	
-	function updateBattle($gametype, $bot_id, $vs_id, $timestamp, $millisecs, $newstate=STATE_RATED) {
+	function updateBattle($gametype, $bot_id, $vs_id, $timestamp, $millisecs, $oldstate=STATE_FLAGGED, $newstate=STATE_RATED) {
 		$qry = "UPDATE battle_results SET state='" . mysql_escape_string($newstate) . "'
 				WHERE gametype = '" . mysql_escape_string($gametype) . "'
 				  AND bot_id = '" . mysql_escape_string($bot_id) . "'
 				  AND vs_id  = '" . mysql_escape_string($vs_id) . "'
                   AND timestamp = '" . mysql_escape_string($timestamp) . "'
-				  AND millisecs = '" . mysql_escape_string($millisecs) . "'";
+				  AND millisecs = '" . mysql_escape_string($millisecs) . "'
+				  AND state = '" . mysql_escape_string($oldstate) . "'";
 		return ($this->db->query($qry) > 0);
 	}
 

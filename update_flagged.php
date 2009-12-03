@@ -38,7 +38,7 @@ if ($pairings->recalcScores($bot['bot_id'], $vs['bot_id'])) {
     $timestamp = trim(isset($_REQUEST['timestamp']) ? $_REQUEST['timestamp'] : '');
     $millisecs = trim(isset($_REQUEST['millisecs']) ? $_REQUEST['millisecs'] : '');
     $results = new BattleResults($db);
-    if ($results->updateBattle($gametype->getCode(), $bot['bot_id'], $vs['bot_id'], $timestamp, $millisecs, STATE_REMOVED))
+    if ($results->updateBattle($gametype->getCode(), $bot['bot_id'], $vs['bot_id'], $timestamp, $millisecs, STATE_FLAGGED, STATE_REMOVED))
         $msg = "Pairing $name vs $vs_name recalculated; flagged battle removed";
     else
         $msg = "Pairing $name vs $vs_name recalculated; Error removing flagged battle!";    
@@ -48,6 +48,8 @@ if ($pairings->recalcScores($bot['bot_id'], $vs['bot_id'])) {
 }
 $db->query('COMMIT');
 
+if (isset($_REQUEST['noredirect']))
+    die("$msg");
 
 // send redirection header
 header("Location: ViewFlagged?message=$msg");

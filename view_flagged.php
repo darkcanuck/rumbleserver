@@ -33,6 +33,9 @@ $template->assign('battles', $allrows);
 if (isset($_REQUEST['message']))
     $template->assign('message', $_REQUEST['message']);
 
-$template->display('view_flagged.tpl');
+if (isset($_REQUEST['textonly']))
+    $template->display('text_flagged.tpl');
+else
+    $template->display('view_flagged.tpl');
 
 ?>

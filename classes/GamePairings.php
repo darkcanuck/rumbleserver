@@ -197,11 +197,17 @@ class GamePairings {
 	}
 	
 	function getAllPairings() {
-	    $qrystring = "SELECT bot_id, vs_id, battles, score_pct, score_dmg, " .
-						" score_survival, count_wins " .
-				        " FROM   game_pairings " .
-				        " WHERE  gametype = '%s' AND bot_id=%u " .
-				        " AND state = '" . STATE_OK . "' ";
+	    //$qrystring = "SELECT bot_id, vs_id, battles, score_pct, score_dmg, " .
+		//				" score_survival, count_wins " .
+		//		        " FROM   game_pairings " .
+		//		        " WHERE  gametype = '%s' AND bot_id=%u " .
+		//		        " AND state = '" . STATE_OK . "' ";
+		$qrystring = "SELECT g.bot_id, g.vs_id, g.battles, g.score_pct, g.score_dmg, " .
+		                " g.score_survival, g.count_wins " .
+                        " FROM  game_pairings AS g INNER JOIN participants AS p " .
+                        "    ON p.gametype = g.gametype AND p.bot_id = g.vs_id " .
+                        " WHERE g.gametype = '%s' AND g.bot_id=%u " .
+        		        "   AND p.state = '" . STATE_OK . "' ";
 		$qry1 = sprintf($qrystring, $this->gametype[0], (int)$this->id1);
 		$qry2 = sprintf($qrystring, $this->gametype[0], (int)$this->id2);
 		
@@ -215,7 +221,7 @@ class GamePairings {
 	    return $results;
 	}
 	
-	function checkState($bot_id, $state=STATE_OK) {
+	/*function checkState($bot_id, $state=STATE_OK) {
 		$id = (int)$bot_id;
 		$qry = "SELECT vs_id
 		        FROM game_pairings
@@ -233,7 +239,7 @@ class GamePairings {
 		if ($oldstate!='')
 			$qry .= " AND state='" . mysql_escape_string($oldstate) . "'";
 		return ($this->db->query($qry) > 0);
-	}
+	}*/
 		
 	function getBotPairings($game='', $id='', $retired=false, $anystate=false, $order='vs_name') {
 		$gametype = ($game!='') ? $game[0] : $this->gametype[0];
@@ -243,13 +249,14 @@ class GamePairings {
 						g.battles AS battles, g.score_pct AS score_pct,
 						g.score_dmg AS score_dmg, g.score_survival AS score_survival,
 						g.count_wins AS count_wins, g.timestamp AS timestamp,
-						g.state AS state
+						p.state AS state
 				FROM game_pairings AS g
+				INNER JOIN participants AS p ON p.gametype = g.gametype AND p.bot_id = g.vs_id
 				INNER JOIN bot_data AS b ON g.vs_id = b.bot_id
 				WHERE g.gametype = '$gametype'
 				  AND g.bot_id = '$id1' ";
 		if (!$anystate)
-			$qry .= " AND g.state = '" . (($retired) ? STATE_RETIRED : STATE_OK) . "' ";
+			$qry .= " AND p.state = '" . (($retired) ? STATE_RETIRED : STATE_OK) . "' ";
 		$qry .= " ORDER BY `" . mysql_escape_string($order) . "` ASC";
 		if ($this->db->query($qry)>0)
 			return $this->db->all();
@@ -267,9 +274,10 @@ class GamePairings {
 						g.battles AS battles, g.score_pct AS score_pct,
 						g.score_dmg AS score_dmg, g.score_survival AS score_survival,
 						g.count_wins AS count_wins, g.timestamp AS timestamp,
-						g.state AS state
+						p.state AS state
 				FROM game_pairings AS g
-				INNER JOIN bot_data AS b ON g.bot_id = b.bot_id
+				INNER JOIN participants AS p ON p.gametype = g.gametype AND p.bot_id = g.vs_id
+                INNER JOIN bot_data AS b ON g.bot_id = b.bot_id
 				INNER JOIN bot_data AS v ON g.vs_id = v.bot_id
 				WHERE g.gametype = '$gametype'
 				  AND g.bot_id = '$id1'

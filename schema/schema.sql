@@ -101,7 +101,7 @@ CREATE TABLE `game_pairings` (
   PRIMARY KEY  (`gametype`,`bot_id`,`vs_id`),
   KEY `scoring` (`gametype`,`bot_id`,`state`),
   KEY `versus` (`gametype`,`vs_id`,`state`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=0;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -130,7 +130,7 @@ CREATE TABLE `participants` (
   `vol_glicko2` int(5) unsigned NOT NULL default '0',
   PRIMARY KEY  (`gametype`,`bot_id`),
   KEY `active` (`gametype`,`state`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -161,7 +161,7 @@ CREATE TABLE `participants_archive` (
   PRIMARY KEY  (`gametype`,`bot_id`,`timestamp`),
   KEY `active` (`gametype`,`state`),
   KEY `archive` (`gametype`,`archived`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --

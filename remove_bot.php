@@ -21,7 +21,7 @@ require_once 'classes/banned.php';
 
 $admin_user = false;
 if (isset($_SERVER['REMOTE_ADDR']) &&
-    (($_SERVER['REMOTE_ADDR']=='127.0.0.1') || ($_SERVER['REMOTE_ADDR']=='24.85.53.202')) ) {
+    (($_SERVER['REMOTE_ADDR']=='127.0.0.1') || ($_SERVER['REMOTE_ADDR']=='24.85.46.67')) ) {
     $admin_user = true;
     if (isset($_GET['version']))
         $_POST['version'] = $_GET['version'];

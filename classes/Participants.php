@@ -144,6 +144,8 @@ class Participants {
 				  AND  bot_id='" . mysql_escape_string($id) . "'";
 		if ($this->db->query($qry) > 0) {
 			// bring out of retirement
+			
+			/* no longer need to update pairings & battles
 			set_time_limit(600);
 			
 			// TODO -- consider removing this now that battles are no longer retired
@@ -157,8 +159,8 @@ class Participants {
 			    $pairings = new GamePairings($this->db, $this->game);
     			$pairings->updateState($id, STATE_OK, STATE_RETIRED);
     			$pairings->updateState($id, STATE_RETIRED, STATE_RETIRED2);
-		    }
-		
+		    } */
+		    
 			$this->updateParticipant($id);
 		} else {
 			$this->addParticipant($id);
@@ -198,12 +200,14 @@ class Participants {
 		$bot = new BotData($name);
 		$id = $bot->getID($this->db, false);
         
+        /* old code when game pairings status was used 
 		set_time_limit(600);
         //$this->db->query('START TRANSACTION');
         $this->db->query('SET autocommit=0');
         $this->db->query('LOCK TABLES participants WRITE, participants AS p WRITE,
                                     bot_data WRITE, bot_data AS b WRITE,
                                     game_pairings WRITE, game_pairings AS g WRITE');
+        */
         
         /* battles are no longer retired - no real need and it's quite slow
 		$battles = new BattleResults($this->db);
@@ -213,18 +217,20 @@ class Participants {
 		$battles->updateState($this->game, $id, STATE_RETIRED, STATE_RATED);
 		*/
 		
+		/* no longer need to retire pairings
 		// retire any remaining pairings with an "OK" state
 		$pairings = new GamePairings($this->db, $this->game);
 		if ($pairings->checkState($id, STATE_OK)) {
     		//$pairings->updateState($id, STATE_RETIRED, STATE_NEW);
     		$pairings->updateState($id, STATE_RETIRED2, STATE_RETIRED);     // 2nd retire for this pair
     		$pairings->updateState($id, STATE_RETIRED, STATE_OK);		    
-		}
+		} */
 		
 		$this->updateParticipant($id, STATE_RETIRED);
 		
-		$this->db->query('COMMIT');
-		$this->db->query('UNLOCK TABLES');
+		//$this->db->query('COMMIT');
+		//$this->db->query('UNLOCK TABLES');
+		
 		return true;
 	}
 	

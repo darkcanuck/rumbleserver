@@ -44,11 +44,8 @@ class EloRating {
 	}
 	
 	// wrappers to handle our integer *1000 values
-	function validRating($rating, $battles, $avgscore=0) {
-		if (($rating==0) && ($avgscore>0) && ($battles>50))
-			return $this->invE((float)$avgscore/1000.0/100.0, $this->init_rating);
-		else
-			return (($rating==0) || ($battles==0)) ? $this->init_rating : (float)$rating / 1000.0;
+	function validRating($rating, $battles) {
+	    return ($battles==0) ? $this->init_rating : (float)$rating / 1000.0;
 	}
 	
 	function calcExpected($rating, $rj) {

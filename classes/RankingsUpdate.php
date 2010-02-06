@@ -77,10 +77,10 @@ class RankingsUpdate {
 				if (isset($partylist[$vs])) {
 					$battles = $partylist[$vs]['battles'];
 					$ratingdata[] = array(
-							'elo'    => $elo->validRating($partylist[$vs]['rating_classic'], $battles, $partylist[$vs]['score_pct']),
+							'elo'    => $elo->validRating($partylist[$vs]['rating_classic'], $battles),
 							'glicko' => $glicko->validRating($partylist[$vs]['rating_glicko'], $battles),
 							'RD'     => $glicko->validDeviation($partylist[$vs]['rd_glicko'], $battles),
-							'glicko2' => $glicko2->validRating($partylist[$vs]['rating_glicko2'], $battles, $partylist[$vs]['rating_glicko']),
+							'glicko2' => $glicko2->validRating($partylist[$vs]['rating_glicko2'], $battles),
 							'RD2'     => $glicko2->validDeviation($partylist[$vs]['rd_glicko2'], $battles),
 							'score'  => $pair['score_pct'] / 1000.0 / 100.0
 							);

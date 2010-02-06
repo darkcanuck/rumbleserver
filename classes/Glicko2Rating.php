@@ -107,11 +107,8 @@ class Glicko2Rating {
 	}
 	
 	// wrappers to handle our integer *1000 values
-	function validRating($rating, $battles, $glicko=0) {
-		if (($rating==0) && ($glicko>0) && ($battles>50))
-			return (float)$glicko / 1000.0;
-		else
-			return (($rating==0) || ($battles==0)) ? $this->init_rating : (float)$rating / 1000.0;
+	function validRating($rating, $battles) {
+		return ($battles==0) ? $this->init_rating : (float)$rating / 1000.0;
 	}
 	
 	function validDeviation($deviation, $battles) {

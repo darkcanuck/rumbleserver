@@ -256,7 +256,7 @@ class GamePairings {
 				WHERE g.gametype = '$gametype'
 				  AND g.bot_id = '$id1' ";
 		if (!$anystate)
-			$qry .= " AND p.state = '" . (($retired) ? STATE_RETIRED : STATE_OK) . "' ";
+			$qry .= " AND p.state = '" . STATE_OK . "' ";
 		$qry .= " ORDER BY `" . mysql_escape_string($order) . "` ASC";
 		if ($this->db->query($qry)>0)
 			return $this->db->all();

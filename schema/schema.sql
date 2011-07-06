@@ -99,8 +99,7 @@ CREATE TABLE `game_pairings` (
   `timestamp` datetime NOT NULL,
   `state` char(1) NOT NULL default '1',
   PRIMARY KEY  (`gametype`,`bot_id`,`vs_id`),
-  KEY `scoring` (`gametype`,`bot_id`,`state`),
-  KEY `versus` (`gametype`,`vs_id`,`state`)
+  KEY `versus` (`gametype`,`vs_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 

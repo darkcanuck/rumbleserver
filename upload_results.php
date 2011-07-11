@@ -136,17 +136,27 @@ if (isset($_POST['version'])) {
 	// return list of missing pairings
 	$num_missing = 	(isset($botdata['missing'])) ? count($botdata['missing']) : 0;
 	if ($num_missing > 0) {
-        $offset = ($num_missing > 10) ? rand(0, $num_missing-10) : 0;
-		for ($i=$offset; $i<($offset+10); $i++) {
-			if (isset($botdata['missing'][$i])) {
-			    $botpair = $botdata['missing'][$i];
-			    echo("\n[" . str_replace(' ', '_', $botpair[0]) . "," . str_replace(' ', '_', $botpair[1]) . "]");
-		    } else if (isset($_POST['user']) && ($_POST['user']=='darkcanuck')) {
-		        echo("\n missing index $i  offset $offset  total $num_missing");
-            }
+        $i = ($num_missing > 1) ? rand(0, $num_missing-1) : 0;
+		if (isset($botdata['missing'][$i])) {
+		    $botpair = $botdata['missing'][$i];
+		    echo("\n[" . str_replace(' ', '_', $botpair[0]) . "," . str_replace(' ', '_', $botpair[1]) . "]");
 		}
+	} else if (isset($botdata['incomplete']) && (count($botdata['incomplete']) > 0)) {
+	    // return bots with incomplete pairings, randomly paired with one of the uploaded bots
+	    $i = rand(0, count($botdata['incomplete']) - 1);
+		if (isset($botdata['incomplete'][$i])) {
+		    $incbot = $botdata['incomplete'][$i];
+		    $othbot = $params['bot' . rand(1,2)];
+		    echo("\n[" . str_replace(' ', '_', $incbot) . "," . str_replace(' ', '_', $othbot) . "]");
+	    }
+	} else if (isset($botdata['needmore']) && (count($botdata['needmore']) > 0) && (rand(1,100) > 50)) {
+	    // return pairs with low battle counts, but only 50% of the time
+	    $i = rand(0, count($botdata['needmore']) - 1);
+		if (isset($botdata['needmore'][$i])) {
+		    $botpair = $botdata['needmore'][$i];
+		    echo("\n[" . str_replace(' ', '_', $botpair[0]) . "," . str_replace(' ', '_', $botpair[1]) . "]");
+	    }
 	}
-	
 	usleep(500000);
 	
 	// return number of battles

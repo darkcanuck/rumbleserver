@@ -112,23 +112,41 @@ class BattleResults {
 		$party->updateScores($this->id1, $updates[$this->id1]);
 		$party->updateScores($this->id2, $updates[$this->id2]);
 				
-		/* determine missing pairings */
-		$complete = array($this->id1 => array($this->id1 => 1), $this->id2 => array($this->id2 => 1));
-		foreach($allpairings as $pair)
-			$complete[ $pair['bot_id'] ][ $pair['vs_id'] ] = 1;
-		$missing = array();
+		/* determine missing/incomplete and low battle count pairings */
 		$botlist = $party->getList();
+		$complete = array($this->id1 => array($this->id1 => 1), $this->id2 => array($this->id2 => 1));
+		$missing = array();
+		$incomplete = array();
+		$needmore = array();
+		$min_battles = 2000;
+		$paircount = count($botlist) - 1;
+		foreach($allpairings as $pair) {
+			$complete[ $pair['bot_id'] ][ $pair['vs_id'] ] = $pair['battles'];
+			if ($pair['battles'] < $min_battles) {
+			    $min_battles = $pair['battles'];
+			    $needmore = array();
+			}
+			if ($pair['battles'] == $min_battles) {
+			    $needmore[] = array($botlist[ $pair['bot_id'] ]['name'], $botlist[ $pair['vs_id'] ]['name']);
+			}
+		}
 		foreach($botlist as $id => $bot) {
 			if (!isset($complete[$this->id1][$id]) && ($botlist[$this->id1]['battles']>50))
 				$missing[] = array($botlist[$this->id1]['name'], $botlist[$id]['name']);
 			if (!isset($complete[$this->id2][$id]) && ($botlist[$this->id2]['battles']>50))
 				$missing[] = array($botlist[$this->id2]['name'], $botlist[$id]['name']);
+			if ($bot['pairings'] != $paircount)
+			    $incomplete[] = $bot['name'];
+		}
+		if ((count($missing) < 1) && ($min_battles == 1) && (count($needmore) > 0)) {
+		    $missing = $needmore;
+		    $needmore = array();
 		}
 		
 		/* total battles fought to date */
 		$battles = array($botlist[$this->id1]['battles'], $botlist[$this->id2]['battles']);
 		
-		return array('missing' => $missing, 'battles' => $battles);
+		return array('missing' => $missing, 'battles' => $battles, 'incomplete' => $incomplete, 'needmore' => $needmore);
 	}
 		
 	function insertBattle($winner=true) {

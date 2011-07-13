@@ -7,7 +7,7 @@
  * $Revision$
  * $Author$
  *
- * Copyright 2008-2009 Jerome Lavigne (jerome@darkcanuck.net)
+ * Copyright 2008-2011 Jerome Lavigne (jerome@darkcanuck.net)
  * Released under GPL version 3.0 http://www.gnu.org/licenses/gpl-3.0.html
  *****************************************************************************/
 
@@ -65,10 +65,13 @@ if (isset($_POST['version'])) {
 			$party = new Participants($db, $gametype->getCode());
 			
 			// only remove if no new battles in last 4hrs
-			$bot = $party->getByName($name);
-			$ts_bot = strtotime($bot['timestamp']);
-			if ((time()-$ts_bot) < (4*60*60))
-			    trigger_error('Cannot remove ' . substr($name, 0, 70) . ' until at least 4hrs after last battle', E_USER_ERROR);
+			//$bot = $party->getByName($name);
+			//$ts_bot = strtotime($bot['timestamp']);
+			//if ((time()-$ts_bot) < (4*60*60))
+			//    trigger_error('Cannot remove ' . substr($name, 0, 70) . ' until at least 4hrs after last battle', E_USER_ERROR);
+			
+			$priority = new PriorityBattles($properties);
+	        $priority->addIgnored($name);
 			
 			if ($party->retireParticipant($name))
 				die('OK.  Removed bot ' . substr($name, 0, 70));

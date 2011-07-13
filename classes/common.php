@@ -7,7 +7,7 @@
  * $Revision$
  * $Author$
  *
- * Copyright 2008-2009 Jerome Lavigne (jerome@darkcanuck.net)
+ * Copyright 2008-2011 Jerome Lavigne (jerome@darkcanuck.net)
  * Released under GPL version 3.0 http://www.gnu.org/licenses/gpl-3.0.html
  *****************************************************************************/
 
@@ -31,10 +31,10 @@ require_once 'classes/BotData.php';
 require_once 'classes/GamePairings.php';
 require_once 'classes/GameType.php';
 require_once 'classes/Participants.php';
+require_once 'classes/PriorityBattles.php';
 require_once 'classes/RankingsUpdate.php';
 require_once 'classes/ServerProperties.php';
 require_once 'classes/UploadUsers.php';
-//require_once 'classes/PostRequest.php';	// not needed by all scripts
 
 // database 'state' field values
 define('STATE_NEW',		'0');	// battle result needs to be processed
@@ -53,14 +53,5 @@ $db = new DBlite_MySQL($db_creds);
 $properties = new ServerProperties($db);
 if ($properties->get('maintenance'))
 	trigger_error('Sorry, the server is down for maintenance. Please try again later.', E_USER_ERROR);
-
-/* update check no longer used -- keep code in case needed in future?
-// check if periodic update needed
-$update_interval = $properties->getInt('update_interval', 60);
-$update_time = strtotime($properties->get('update_last')) + $update_interval;
-if ( isset($_GET['forceupdate']) || (($update_interval>0) && ($update_time < time())) ) {
-	$properties->set('update_last', strftime("%Y-%m-%d %T"));	// update time now so other processes don't try to update
-}
-*/
 
 ?>

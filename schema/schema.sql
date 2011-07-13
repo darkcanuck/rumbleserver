@@ -172,7 +172,7 @@ SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `properties` (
   `name` varchar(20) NOT NULL,
-  `value` varchar(20) NOT NULL,
+  `value` varchar(400) NOT NULL,
   PRIMARY KEY  (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;

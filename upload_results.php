@@ -7,7 +7,7 @@
  * $Revision$
  * $Author$
  *
- * Copyright 2008-2009 Jerome Lavigne (jerome@darkcanuck.net)
+ * Copyright 2008-2011 Jerome Lavigne (jerome@darkcanuck.net)
  * Released under GPL version 3.0 http://www.gnu.org/licenses/gpl-3.0.html
  *****************************************************************************/
 
@@ -65,7 +65,7 @@ if (isset($_POST['version'])) {
                 $params['teams']  = strtoupper($_POST['teams']);
 			    
 			    // version check
-			    $version_allowed = array('1.6.1.4', '1.7.3.0');
+			    $version_allowed = array('1.7.3.0');
 			    $version_ok = false;
 			    foreach($version_allowed as $ver) {
 			        if($params['client']==$ver)
@@ -75,13 +75,7 @@ if (isset($_POST['version'])) {
 			        trigger_error('OK. Client version ' . substr($params['client'], 0, 15) . ' is not supported by this server! ' .
 			                    'Please use one of these: ' . implode(', ', $version_allowed), E_USER_ERROR);
 			} else {
-			    /*$params['client'] = '1.0';    // older than 1.6.2
-                $params['melee']  = (stristr($params['game'], 'melee')===false) ? 'NOT' : 'YES';
-                $params['teams']  = (stristr($params['game'], 'team')===false) ? 'NOT' : 'YES';
-                
-                echo "  Please consider using the patched roborumble.jar files from the wiki.\n";
-                echo "  Let's make the rumble even better!  -- Darkcanuck\n";*/
-                trigger_error("OK. Unversioned clients are no longer supported by this server!\n" .
+			    trigger_error("OK. Unversioned clients are no longer supported by this server!\n" .
                             '  Please consider using the patched roborumble.jar files from the wiki.', E_USER_ERROR);
 			}
 			
@@ -121,7 +115,6 @@ if (isset($_POST['version'])) {
 	}
 	
 	// save results to database
-	//set_time_limit(600);
 	$results = new BattleResults($db);
 	$botdata = $results->saveBattle($params);
 	
@@ -133,30 +126,14 @@ if (isset($_POST['version'])) {
     	exit(0);
     }
 	
-	// return list of missing pairings
-	$num_missing = 	(isset($botdata['missing'])) ? count($botdata['missing']) : 0;
-	if ($num_missing > 0) {
-        $i = ($num_missing > 1) ? rand(0, $num_missing-1) : 0;
-		if (isset($botdata['missing'][$i])) {
-		    $botpair = $botdata['missing'][$i];
-		    echo("\n[" . str_replace(' ', '_', $botpair[0]) . "," . str_replace(' ', '_', $botpair[1]) . "]");
-		}
-	} else if (isset($botdata['incomplete']) && (count($botdata['incomplete']) > 0)) {
-	    // return bots with incomplete pairings, randomly paired with one of the uploaded bots
-	    $i = rand(0, count($botdata['incomplete']) - 1);
-		if (isset($botdata['incomplete'][$i])) {
-		    $incbot = $botdata['incomplete'][$i];
-		    $othbot = $params['bot' . rand(1,2)];
-		    echo("\n[" . str_replace(' ', '_', $incbot) . "," . str_replace(' ', '_', $othbot) . "]");
-	    }
-	} else if (isset($botdata['needmore']) && (count($botdata['needmore']) > 0) && (rand(1,100) > 50)) {
-	    // return pairs with low battle counts, but only 50% of the time
-	    $i = rand(0, count($botdata['needmore']) - 1);
-		if (isset($botdata['needmore'][$i])) {
-		    $botpair = $botdata['needmore'][$i];
-		    echo("\n[" . str_replace(' ', '_', $botpair[0]) . "," . str_replace(' ', '_', $botpair[1]) . "]");
-	    }
-	}
+	// return list of priority battles for this client
+	$priority = new PriorityBattles($properties);
+	$pairings = $priority->nextPairing($botdata['ids'], $botdata['pairings'], $botdata['participants']);
+	foreach($pairings as $pair) {
+	    if (count($pair) == 2)
+	        echo("\n[" . str_replace(' ', '_', $pair[0]) . "," . str_replace(' ', '_', $pair[1]) . "]");
+    }
+    
 	usleep(500000);
 	
 	// return number of battles

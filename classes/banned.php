@@ -9,7 +9,7 @@
  * $Revision$
  * $Author$
  *
- * Copyright 2008-2009 Jerome Lavigne (jerome@darkcanuck.net)
+ * Copyright 2008-2011 Jerome Lavigne (jerome@darkcanuck.net)
  * Released under GPL version 3.0 http://www.gnu.org/licenses/gpl-3.0.html
  *****************************************************************************/
 
@@ -22,6 +22,5 @@ $check_game = (isset($_REQUEST['game'])) ? $_REQUEST['game'] : '';
 //    trigger_error("Account '$check_user' has been suspended!
 //    Please check your client configuration and the RoboWiki for current issues.
 //    Post a message on the wiki once you have fixed the problem.", E_USER_ERROR);
-
 
 ?>

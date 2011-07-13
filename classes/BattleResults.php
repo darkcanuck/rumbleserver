@@ -7,7 +7,7 @@
  * $Revision$
  * $Author$
  *
- * Copyright 2008-2009 Jerome Lavigne (jerome@darkcanuck.net)
+ * Copyright 2008-2011 Jerome Lavigne (jerome@darkcanuck.net)
  * Released under GPL version 3.0 http://www.gnu.org/licenses/gpl-3.0.html
  *****************************************************************************/
 
@@ -111,42 +111,13 @@ class BattleResults {
 		$updates = $rankings->updatePair($this->gametype, $this->id1, $this->id2, $party, $allpairings);
 		$party->updateScores($this->id1, $updates[$this->id1]);
 		$party->updateScores($this->id2, $updates[$this->id2]);
-				
-		/* determine missing/incomplete and low battle count pairings */
-		$botlist = $party->getList();
-		$complete = array($this->id1 => array($this->id1 => 1), $this->id2 => array($this->id2 => 1));
-		$missing = array();
-		$incomplete = array();
-		$needmore = array();
-		$min_battles = 2000;
-		$paircount = count($botlist) - 1;
-		foreach($allpairings as $pair) {
-			$complete[ $pair['bot_id'] ][ $pair['vs_id'] ] = $pair['battles'];
-			if ($pair['battles'] < $min_battles) {
-			    $min_battles = $pair['battles'];
-			    $needmore = array();
-			}
-			if ($pair['battles'] == $min_battles) {
-			    $needmore[] = array($botlist[ $pair['bot_id'] ]['name'], $botlist[ $pair['vs_id'] ]['name']);
-			}
-		}
-		foreach($botlist as $id => $bot) {
-			if (!isset($complete[$this->id1][$id]) && ($botlist[$this->id1]['battles']>50))
-				$missing[] = array($botlist[$this->id1]['name'], $botlist[$id]['name']);
-			if (!isset($complete[$this->id2][$id]) && ($botlist[$this->id2]['battles']>50))
-				$missing[] = array($botlist[$this->id2]['name'], $botlist[$id]['name']);
-			if ($bot['pairings'] != $paircount)
-			    $incomplete[] = $bot['name'];
-		}
-		if ((count($missing) < 1) && ($min_battles == 1) && (count($needmore) > 0)) {
-		    $missing = $needmore;
-		    $needmore = array();
-		}
 		
 		/* total battles fought to date */
+		$botlist = $party->getList();
 		$battles = array($botlist[$this->id1]['battles'], $botlist[$this->id2]['battles']);
 		
-		return array('missing' => $missing, 'battles' => $battles, 'incomplete' => $incomplete, 'needmore' => $needmore);
+		return array('battles' => $battles, 'ids' => array($this->id1, $this->id2),
+		             'pairings' => $allpairings, 'participants' => $botlist);
 	}
 		
 	function insertBattle($winner=true) {
@@ -191,60 +162,7 @@ class BattleResults {
 				  AND state = '" . mysql_escape_string($oldstate) . "'";
 		return ($this->db->query($qry) > 0);
 	}
-
-/* unused functions -- originally used by RankingsUpdate->updateScores()	
-	function getNewBattles($limit=100, $state=STATE_OK) {
-		$qry = "SELECT user_id, timestamp, millisecs, gametype, state,
-					   bot_id, bot_score, bot_bulletdmg, bot_survival,
-					   vs_id,  vs_score,  vs_bulletdmg,  vs_survival
-				FROM   battle_results
-				WHERE  state = '" . mysql_escape_string($state) . "'
-				ORDER BY timestamp, millisecs ASC
-				LIMIT " . ((int)$limit);
-		if ($this->db->query($qry)>0)
-			return $this->db->all();
-		else
-			return null;
-	}
-	
-	function lockNewBattles($limit=100) {
-		$qry = "UPDATE battle_results
-				SET   state='" . STATE_LOCKED . "'
-				WHERE state IN ('" . STATE_OK . "', '" . STATE_LOCKED . "')
-				ORDER BY timestamp, millisecs ASC
-				LIMIT " . ((int)$limit);
-		$this->db->query($qry);
-		return $this->getNewBattles($limit*10, STATE_LOCKED);
-	}
-	
-	function releaseBattles($newstate=STATE_RATED) {
-		$qry = "UPDATE battle_results
-				SET   state='" . mysql_escape_string($newstate) . "'
-				WHERE state='" . STATE_LOCKED . "'";
-		return ($this->db->query($qry)>0);
-	}
-*/	
-	
-/* unused - update to new schema if re-enabled
-	function getPairingSummary($gametype, $id, $vs) {
-		$qry = "SELECT bot_id, vs_id,
-					AVG(bot_score / (bot_score+vs_score)),
-					AVG(bot_bulletdmg / (bot_bulletdmg+vs_bulletdmg)),
-					AVG(bot_survival / (bot_survival+vs_survival)),
-					MAX(timestamp) AS last
-			FROM battle_results
-			WHERE gametype = '" . mysql_escape_string($gametype) . "'
-			  AND bot_id = '" . mysql_escape_string($id) . "'
-			  AND state IN ('" . STATE_NEW . "', '" . STATE_OK . "', '" . STATE_RATED . "')
-			  AND vs_id = '" . mysql_escape_string($vs) . "'
-			GROUP BY vs_id
-			ORDER BY NULL";		// optimization!
-		if ($this->db->query($qry)>0)
-			return $this->db->all();
-		else
-			return null;
-	}
-*/
+    
 	function getBattleDetails($gametype, $id, $vs, $retired=false) {
 		$botcombo = "'" .  mysql_escape_string($id) . "', '" . mysql_escape_string($vs) . "'";
 		$qry = "SELECT u.username AS user, u.ip_addr, u.version,

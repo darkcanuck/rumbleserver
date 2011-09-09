@@ -78,8 +78,14 @@ foreach ($allrows as $k=>$rs) {
 	}
 }
 $total /= 2;	// because each bot counted twice
-if ($sort!=null)
+if ($sort!=null) {
 	array_multisort($sortcol, SORT_DESC, $sortaps, SORT_DESC, $allrows);
+    $rank = 1;
+    foreach ($allrows as $k=>$rs) {
+        $allrows[$k]['rank'] = $rank;
+	    $rank++;
+    }
+}
 
 // generate page message re pairings
 $totalpair = count($allrows) - 1;

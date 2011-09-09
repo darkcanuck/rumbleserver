@@ -1,6 +1,16 @@
-$(document).ready(function() { 
+$(document).ready(function() {
+        /*$.tablesorter.addWidget( {
+            // from http://stackoverflow.com/questions/437290/exclude-a-column-from-being-sorted-using-jquery-tablesorter/437408#437408
+            id: "indexFirstColumn",
+            format: function(table) {   // format is called when the on init and when a sorting has finished
+                        for(var i=0; i < table.tBodies[0].rows.length; i++) {
+                            $("tbody tr:eq(" + (i - 1) + ") td:first",table).html(i);
+                        }
+                    }
+            });*/
+
         $("#rankingdata").tablesorter( {
-            widgets: ['zebra'],
+            widgets: ['zebra', 'indexFirstColumn'],
             headers: {  0: {sorter: "digit"},
                         1: {sorter: "text"},
                         2: {sorter: "digit"},

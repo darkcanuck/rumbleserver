@@ -68,6 +68,9 @@ class BattleResults {
 		} else {
 			trigger_error('Invalid data received: ' . print_r($this, true), E_USER_ERROR);
 		}
+		if ($this->bot1 == $this->bot2) {
+		    trigger_error('Bot versus itself received: ' . print_r($this, true), E_USER_ERROR);
+		}
 		
 		/* start database transaction */
         set_time_limit(600);    // allow time to finish once we have locks

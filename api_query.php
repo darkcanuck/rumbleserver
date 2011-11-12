@@ -23,8 +23,8 @@ header('Expires: ' . strtotime(DATE_RFC1123));
 header('Content-type: application/json');
 $err->setJsonOutput(true);
 
-define('API_MAXREQ_HOUR', 60);
-define('API_MAXREQ_MIN' , 10);
+define('API_MAXREQ_HOUR', 2000);
+define('API_MAXREQ_MIN' , 60);
 
 // check for valid API user
 $api_user = trim(isset($_REQUEST['user']) ? $_REQUEST['user'] : '');

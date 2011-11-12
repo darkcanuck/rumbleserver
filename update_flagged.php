@@ -37,11 +37,15 @@ if ($pairings->recalcScores($bot['bot_id'], $vs['bot_id'])) {
     // remove battle from active listings
     $timestamp = trim(isset($_REQUEST['timestamp']) ? $_REQUEST['timestamp'] : '');
     $millisecs = trim(isset($_REQUEST['millisecs']) ? $_REQUEST['millisecs'] : '');
-    $results = new BattleResults($db);
-    if ($results->updateBattle($gametype->getCode(), $bot['bot_id'], $vs['bot_id'], $timestamp, $millisecs, STATE_FLAGGED, STATE_REMOVED))
-        $msg = "Pairing $name vs $vs_name recalculated; flagged battle removed";
-    else
-        $msg = "Pairing $name vs $vs_name recalculated; Error removing flagged battle!";    
+    if (($timestamp != '') && ($millisecs != '')) {
+        $results = new BattleResults($db);
+        if ($results->updateBattle($gametype->getCode(), $bot['bot_id'], $vs['bot_id'], $timestamp, $millisecs, STATE_FLAGGED, STATE_REMOVED))
+            $msg = "Pairing $name vs $vs_name recalculated; flagged battle removed";
+        else
+            $msg = "Pairing $name vs $vs_name recalculated; Error removing flagged battle!";
+    } else {
+        $msg = "Pairing $name vs $vs_name recalculated";
+    }
     //print_r($db->debug());
 } else {
     $msg = "Error updating pairing $name vs $vs_name !";

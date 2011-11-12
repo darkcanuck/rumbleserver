@@ -37,7 +37,7 @@ class RankingsUpdate {
 			$allpairings = $gamepairings->getAllPairings();
 		}
 		$allfields = array('score_pct', 'score_dmg', 'score_survival', 'battles', 'count_wins', 'pairings');
-		$sumfields = array('score_pct', 'score_dmg', 'score_survival', 'battles', 'count_wins');
+		$sumfields = array('score_pct', 'score_dmg', 'score_survival', 'battles');
 		$avgfields = array('score_pct', 'score_dmg', 'score_survival');
 		$pairings = array($id1 => array(), $id2 => array());
 		foreach($pairings as $id => $data) {
@@ -48,6 +48,8 @@ class RankingsUpdate {
 		foreach($allpairings as $p) {
 			foreach($sumfields as $f)
 				$pairings[ $p['bot_id'] ][$f] += $p[$f];
+			if ($p['score_pct'] > 50000)
+			    $pairings[ $p['bot_id'] ]['count_wins']++;
 			$pairings[ $p['bot_id'] ]['pairings']++;
 			$pairings[ $p['bot_id'] ]['list'][] = $p;
 		}

@@ -75,7 +75,7 @@ class GamePairings {
 		return true;
 	}
 	
-	function savePairing() {
+	function savePairing($keep_time=false) {
 		$rows = 0;
 		foreach($this->pairing as $id => $pair) {
 			$qry = '';
@@ -84,17 +84,19 @@ class GamePairings {
 							SET gametype = '" . $pair['gametype'][0] . "',
 								bot_id   = " . ((int)$pair['bot_id']) . ",
 								vs_id    = " . ((int)$pair['vs_id']) . ",
+								timestamp = NOW(),
 								";
 			} else {
 				$qry = "UPDATE game_pairings
 							SET ";
+				if (!$keep_time)
+				    $qry .=    "timestamp = NOW(), ";
 			}
 			$qry .=			   "battles   = '" . mysql_escape_string($pair['battles']) . "',
 								score_pct = '" . mysql_escape_string($pair['score_pct']) . "',
 								score_dmg = '" . mysql_escape_string($pair['score_dmg']) . "',
 								score_survival = '" . mysql_escape_string($pair['score_survival']) . "',
 								count_wins     = '" . mysql_escape_string($pair['count_wins']) . "',
-								timestamp = NOW(),
 								state = '" . mysql_escape_string($pair['state']) . "' ";
 			if (!$this->newpair) {
 				$qry .= " WHERE gametype = '" . $pair['gametype'][0] . "'
@@ -176,6 +178,7 @@ class GamePairings {
         // reset pairing scores & battle count
         foreach(array($this->id1, $this->id2) as $id) {
 			$this->pairing[$id]['battles'] = 0;
+			$this->pairing[$id]['count_wins'] = 0;
 			$this->pairing[$id]['score_pct'] = 0;
 			$this->pairing[$id]['score_dmg'] = 0;
 			$this->pairing[$id]['score_survival'] = 0;
@@ -193,7 +196,7 @@ class GamePairings {
 						    );
 		    $this->updateScores($scores, false);
         }
-		return $this->savePairing();
+		return $this->savePairing(true);
 	}
 	
 	function getAllPairings() {

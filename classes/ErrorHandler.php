@@ -6,12 +6,7 @@
  *  in the rumble client.  Cannot handle E_ERROR, E_PARSE, E_CORE_ERROR,
  *  E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING
  *
- * $HeadURL$
- * $Date$
- * $Revision$
- * $Author$
- *
- * Copyright 2008-2009 Jerome Lavigne (jerome@darkcanuck.net)
+ * Copyright 2008-2011 Jerome Lavigne (jerome@darkcanuck.net)
  * Released under GPL version 3.0 http://www.gnu.org/licenses/gpl-3.0.html
  *****************************************************************************/
 

@@ -3,7 +3,6 @@
 /*
  * From http://www.jonasjohn.de/snippets/php/post-request.htm (public domain)
  *
- * $Id$
  */
  
 function PostRequest($url, $referer, $_data, $wait=true) {

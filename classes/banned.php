@@ -4,11 +4,6 @@
  *
  *  Suspended users can be manually added here to prevent bad uploads.
  *
- * $HeadURL$
- * $Date$
- * $Revision$
- * $Author$
- *
  * Copyright 2008-2011 Jerome Lavigne (jerome@darkcanuck.net)
  * Released under GPL version 3.0 http://www.gnu.org/licenses/gpl-3.0.html
  *****************************************************************************/

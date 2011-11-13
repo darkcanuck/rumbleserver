@@ -1,4 +1,3 @@
-{* $Id$ *}
 {include file="header.tpl" title="darkcanuck.net - Rankings for $game" robots="INDEX, NOFOLLOW"}
 
 

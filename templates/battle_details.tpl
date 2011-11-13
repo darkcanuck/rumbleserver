@@ -1,4 +1,3 @@
-{* $Id$ *}
 {include file="header.tpl" title="darkcanuck.net - Battles for $name vs $vs_name ($game)"}
 
 

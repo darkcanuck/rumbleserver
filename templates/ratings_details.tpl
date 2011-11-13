@@ -1,4 +1,3 @@
-{* $Id$ *}
 {include file="header.tpl" title="darkcanuck.net - Rating Details for $name ($game)"}
 
 

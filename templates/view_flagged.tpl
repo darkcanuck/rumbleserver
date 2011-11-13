@@ -1,4 +1,3 @@
-{* $Id$ *}
 {include file="header.tpl" title="darkcanuck.net - Flagged Battles"}
 
 {if isset($message)}

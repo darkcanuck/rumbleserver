@@ -1,4 +1,3 @@
-{* $Id$ *}
 {include file="header.tpl" title="darkcanuck.net - RoboRumble Contributors" game="" robots="INDEX, NOFOLLOW"}
 
 

@@ -1,0 +1,23 @@
+## generic files to ignore
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+*.orig
+*.class
+
+#RRServer config
+config/config.php
+
+# Package Files #
+*.war
+*.ear
+*.zip
+*.gz
+*.tgz
+
+#eclipse stuff
+.settings
+.metadata
+/.classpath
